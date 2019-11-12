@@ -1,0 +1,60 @@
+﻿<Window x:Class="Admin.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Admin.Desktop"
+        xmlns:common="clr-namespace:Admin.Desktop.Common"
+        mc:Ignorable="d"
+        Title="Big Game Admin Console"
+        Height="600"
+        Width="800"
+        WindowStartupLocation="CenterScreen">
+    
+    <Window.Resources>
+        <common:MaterialListToStringConverter x:Key="ListToStringConverterKey"/>
+    </Window.Resources>
+    
+    <Grid>
+        <TabControl>
+            <TabItem Header="Материалы">
+                <Grid>
+                    <ListBox ItemsSource="{Binding Materials}" Margin="10,10,193,10">
+                        <ListBox.Template>
+                            <ControlTemplate>
+                                <DockPanel LastChildFill="True">
+                                    <Grid DockPanel.Dock="Top" Height="30">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="300"></ColumnDefinition>
+                                            <ColumnDefinition Width="200"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Column="0">Исходные материалы</Label>
+                                        <Label Grid.Column="1">Конечный материал</Label>
+                                    </Grid>
+                                    <ItemsPresenter></ItemsPresenter>
+                                </DockPanel>
+                            </ControlTemplate>
+                        </ListBox.Template>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Path=InputMaterials, Converter={StaticResource ListToStringConverterKey}}" FontSize="15" Width="300" />
+                                    <TextBlock Text="{Binding DisplayName}" FontSize="15" Width="100"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <StackPanel HorizontalAlignment="Left" Height="202" Margin="598,10,0,0" VerticalAlignment="Top" Width="178">
+                        <Button Content="Создать"/>
+                        <Button Content="Изменить"/>
+                        <Button Content="Удалить"/>
+                        <Button Content="Показать дерево"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="TabItem">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
