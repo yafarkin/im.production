@@ -20,7 +20,7 @@ namespace IM.Production.CalculationEngine.Tests
         }
 
         [TestMethod]
-        public void Calculate_NoContractsWithGame_KeepsSum()
+        public void Calculate_NoContractsWithGame_SumNotChanged()
         {
             var sum = 0;
             var customer = new Customer { Sum = sum };
@@ -35,7 +35,7 @@ namespace IM.Production.CalculationEngine.Tests
         }
 
         [TestMethod]
-        public void Calculate_ContractWithGameAndNoMaterialOnStock_DeliversNewMaterial()
+        public void Calculate_ContractWithGameAndNoMaterialOnStock_NewMaterialAdded()
         {
             var material = ReferenceData.GetMaterialByKey(MaterialKeys.MetalRuda);
             var amount = 100;
@@ -55,7 +55,7 @@ namespace IM.Production.CalculationEngine.Tests
         }
 
         [TestMethod]
-        public void Calculate_ContractWithGameAndMaterialOnStock_IncreasesMaterialAmount()
+        public void Calculate_ContractWithGameAndMaterialOnStock_MaterialAmountIncreased()
         {
             var material = ReferenceData.GetMaterialByKey(MaterialKeys.MetalRuda);
             var customer = new Customer { Sum = 10 };
@@ -71,6 +71,67 @@ namespace IM.Production.CalculationEngine.Tests
 
             Assert.AreEqual(101, materialOnStock.Amount);
             Assert.AreEqual(9, customer.Sum);
+        }
+
+        [TestMethod]
+        public void Calculate_SumForNextGenerationLevelIsZero_SetCorrectSum()
+        {
+            var customer = new Customer { SumToNextGenerationLevel = 0, FactoryGenerationLevel = 1 };
+            var game = new Game();
+            game.Customers.Add(customer);
+
+            _calculationEgnine.Calculate(game);
+
+            Assert.AreEqual(5000, customer.SumToNextGenerationLevel);
+        }
+
+        [DataTestMethod]
+        [DataRow(0)]
+        [DataRow(-1)]
+        public void Calculate_SumOnRDIsLowerThanZero_SumsNotChanged(int sumOnRD)
+        {
+            var sum = 1;
+            var spent = 1;
+            var customer = new Customer { SumOnRD = sumOnRD, Sum = sum, SpentSumToNextGenerationLevel = spent };
+            var game = new Game();
+            game.Customers.Add(customer);
+
+            _calculationEgnine.Calculate(game);
+
+            Assert.AreEqual(sum, customer.Sum);
+            Assert.AreEqual(spent, customer.SpentSumToNextGenerationLevel);
+        }
+
+        [TestMethod]
+        public void Calculate_ReadyForNextGenerationLevel_GenerationLevelIncreasedAndSumsChanged()
+        {
+            var customer = new Customer { Sum = 10000, SumOnRD = 6000, FactoryGenerationLevel = 1 };
+            var game = new Game();
+            game.Customers.Add(customer);
+
+            _calculationEgnine.Calculate(game);
+
+            Assert.AreEqual(2, customer.FactoryGenerationLevel);
+            Assert.AreEqual(4000, customer.Sum);
+            Assert.AreEqual(1000, customer.SpentSumToNextGenerationLevel);
+            Assert.AreEqual(15000, customer.SumToNextGenerationLevel);
+        }
+
+        [TestMethod]
+        public void Calculate_PositiveSumOnRDAndNotReady_SumsChangedAndGenerationLevelAndSumToNextNotChanged()
+        {
+            const int generationLevel = 1;
+            const int sumToNext = 5000;
+            var customer = new Customer { Sum = 10, SumOnRD = 1, SpentSumToNextGenerationLevel = 2, FactoryGenerationLevel = generationLevel, SumToNextGenerationLevel = sumToNext };
+            var game = new Game();
+            game.Customers.Add(customer);
+
+            _calculationEgnine.Calculate(game);
+
+            Assert.AreEqual(9, customer.Sum);
+            Assert.AreEqual(3, customer.SpentSumToNextGenerationLevel);
+            Assert.AreEqual(generationLevel, customer.FactoryGenerationLevel);
+            Assert.AreEqual(sumToNext, customer.SumToNextGenerationLevel);
         }
     }
 }

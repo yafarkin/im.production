@@ -140,13 +140,8 @@ namespace Epam.ImitationGames.Production.Common.ReferenceData
         public static decimal CalculateRDSummToNextGenerationLevel(Customer customer)
         {
             var currentGenerationLevel = customer.FactoryGenerationLevel;
-            var kv = GenerationFactoryRDCost.FirstOrDefault(c => c.Key == currentGenerationLevel + 1);
-            if (kv.Key == 0)
-            {
-                kv = GenerationFactoryRDCost.Last();
-            }
-
-            return kv.Value;
+            var cost = GenerationFactoryRDCost.FirstOrDefault(c => c.Key == currentGenerationLevel + 1);
+            return cost.Value;
         }
 
         /// <summary>

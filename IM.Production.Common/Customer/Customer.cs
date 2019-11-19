@@ -14,6 +14,7 @@ namespace Epam.ImitationGames.Production.Common
         {
             Factories = new List<Factory>();
             Contracts = new List<Contract>();
+            FactoryGenerationLevel = 1;
         }
 
         /// <summary>
@@ -64,17 +65,19 @@ namespace Epam.ImitationGames.Production.Common
         /// <summary>
         /// Требуемая сумма для открытия фабрик следующего уровня.
         /// </summary>
-        public decimal NeedSumToNextGenerationLevel { get; set; }
+        public decimal SumToNextGenerationLevel { get; set; }
 
         /// <summary>
         /// Уже потраченная сумма на исследования фабрик следующего уровня.
         /// </summary>
         public decimal SpentSumToNextGenerationLevel { get; set; }
 
+        public bool ReadyForNextGenerationLevel => SpentSumToNextGenerationLevel > SumToNextGenerationLevel;
+
         /// <summary>
         /// Общий прогресс иследования, для открытия фабрик следующего уровня.
         /// </summary>
-        public decimal RDProgress => NeedSumToNextGenerationLevel / SpentSumToNextGenerationLevel;
+        public decimal RDProgress => SumToNextGenerationLevel / SpentSumToNextGenerationLevel;
 
         /// <summary>
         /// Итоговая сумма на счету команды

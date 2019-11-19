@@ -44,9 +44,9 @@ namespace CalculationEngine
             }
 
             // п. 2. Выплачиваем суммы за исследования на следующее поколение мероприятий
-            foreach (var customer in Game.Customers)
+            foreach (var customer in game.Customers)
             {
-                ProcessCustomerRD(customer);
+                ProcessCustomerRD(customer, game);
             }
 
             // п. 3. Выплачиваем суммы за модернизацию предприятия и осуществляем его модернизацию
@@ -204,16 +204,11 @@ namespace CalculationEngine
             }
         }
 
-        protected void ProcessCustomerRD(Customer customer)
+        protected void ProcessCustomerRD(Customer customer, Game game)
         {
-            if (0 == customer.FactoryGenerationLevel)
+            if (customer.SumToNextGenerationLevel == 0)
             {
-                customer.FactoryGenerationLevel = 1;
-            }
-
-            if (0 == customer.NeedSumToNextGenerationLevel)
-            {
-                customer.NeedSumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
+                customer.SumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
             }
 
             if (customer.SumOnRD <= 0)
@@ -221,49 +216,39 @@ namespace CalculationEngine
                 return;
             }
 
-            if (customer.FactoryGenerationLevel >= ReferenceData.GenerationFactoryRDCost.Max(kv => kv.Key))
-            {
-                return;
-            }
+            var sumOnRD = customer.SumOnRD;
+
+            customer.Sum -= sumOnRD;
+            customer.SpentSumToNextGenerationLevel += sumOnRD;
 
             var time = new GameTime();
-            var rdSum = customer.SumOnRD;
 
-            // списываем сумму на R&D со счёта
-            customer.Sum -= rdSum;
-            customer.SpentSumToNextGenerationLevel += rdSum;
+            var customerChange = new CustomerChange(time, customer, $"Оплата исследований следующего поколения фабрик, сумма {sumOnRD};") { SumChange = -sumOnRD };
+            game.AddActivity(customerChange);
 
-            // добавляем активность по изменению состояния команды
-            var customerChange = new CustomerChange(time, customer, $"Оплата исследований следующего поколения фабрик, сумма {rdSum};")
-            {
-                SumChange = -rdSum
-            };
-            Game.AddActivity(customerChange);
             customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress:P}")
             {
                 RDProgressChange = customerChange.RDProgressChange
             };
-            Game.AddActivity(customerChange);
+            game.AddActivity(customerChange);
 
-            if (customer.SpentSumToNextGenerationLevel > customer.NeedSumToNextGenerationLevel)
+            if (customer.ReadyForNextGenerationLevel)
             {
-                // достигли следующего уровня
-                customer.FactoryGenerationLevel++;
-                customer.SpentSumToNextGenerationLevel -= customer.NeedSumToNextGenerationLevel;
-                customer.NeedSumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
+                customer.FactoryGenerationLevel += 1;
+                customer.SpentSumToNextGenerationLevel -= customer.SumToNextGenerationLevel;
+                customer.SumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
 
-                // добавляем активность по изменению уровня доступных фабрик
                 customerChange = new CustomerChange(time, customer, $"Исследован новый уровень поколения фабрик: {customer.FactoryGenerationLevel}")
                 {
                     FactoryGenerationLevelChange = customer.FactoryGenerationLevel
                 };
-                Game.AddActivity(customerChange);
+                game.AddActivity(customerChange);
 
                 customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress:P}")
                 {
                     RDProgressChange = customerChange.RDProgressChange
                 };
-                Game.AddActivity(customerChange);
+                game.AddActivity(customerChange);
             }
         }
 
