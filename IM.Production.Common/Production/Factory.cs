@@ -8,6 +8,11 @@ namespace Epam.ImitationGames.Production.Common.Production
     /// </summary>
     public class Factory : BaseProduction, IVisibleEntity
     {
+        public Factory()
+        {
+            Stock = new List<MaterialOnStock>();
+        }
+
         /// <summary>
         /// Ссылка на команду, которой принадлежит фабрика.
         /// </summary>
