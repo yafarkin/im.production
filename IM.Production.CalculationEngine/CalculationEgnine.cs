@@ -14,7 +14,7 @@ namespace CalculationEngine
     {
         public Game Game { get; set; }
 
-        public void Calculate()
+        public void Calculate(Game game)
         {
             // 1. Осуществляем поставки по контрактам от игры на фабрику
             // 2. Выплачиваем суммы за модернизацию предприятия
@@ -34,12 +34,12 @@ namespace CalculationEngine
             UpdateCurrentGameProperties();
 
             // п.1. Осуществляем поставки по контрактам от игры на фабрику
-            foreach (var customer in Game.Customers)
+            foreach (var customer in game.Customers)
             {
-                var gameSupplyContracts = customer.Contracts.Where(c => c.SourceFactory == null);
-                foreach (var contract in gameSupplyContracts)
+                var contracts = customer.Contracts.Where(c => c.SourceFactory == null);
+                foreach (var contract in contracts)
                 {
-                    ProcessContract(contract);
+                    ProcessGameToCustomerContract(contract, game);
                 }
             }
 
@@ -127,7 +127,6 @@ namespace CalculationEngine
             // п. 9. В последний игровой день автоматически закрываем все кредиты и вклады в банках.
             if (Game.Time.Day == Game.TotalGameDays)
             {
-                throw new NotImplementedException();
             }
 
             // п. 10. Прибавляем счётчик игровых дней.
@@ -304,7 +303,7 @@ namespace CalculationEngine
             };
             Game.AddActivity(customerChange);
 
-            var factoryChange = new FactoryChange(time, factory) {RDProgressChange = factory.RDProgress};
+            var factoryChange = new FactoryChange(time, factory) { RDProgressChange = factory.RDProgress };
             Game.AddActivity(factoryChange);
 
             if (factory.SpentSumToNextLevelUp >= factory.NeedSumToNextLevelUp)
@@ -315,7 +314,7 @@ namespace CalculationEngine
                 factory.NeedSumToNextLevelUp = ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory);
 
                 // добавляем активность по изменению уровня производительности фабрики
-                factoryChange = new FactoryChange(time, factory) {LevelChange = factory.Level};
+                factoryChange = new FactoryChange(time, factory) { LevelChange = factory.Level };
                 Game.AddActivity(factoryChange);
             }
         }
@@ -325,7 +324,7 @@ namespace CalculationEngine
             var time = new GameTime();
             var tax = ReferenceData.CalculateTaxOnFactory(factory);
             var taxSum = customer.Sum * tax;
-            var taxChange = new Tax(time, factory) {Sum = taxSum};
+            var taxChange = new Tax(time, factory) { Sum = taxSum };
 
             // списываем налог со счёта
             customer.Sum -= taxSum;
@@ -374,7 +373,8 @@ namespace CalculationEngine
 
                         currentUsedMaterialsOnStock.Add(new MaterialOnStock
                         {
-                            Material = inputMaterial.Material, Amount = inputAmount
+                            Material = inputMaterial.Material,
+                            Amount = inputAmount
                         });
                     }
 
@@ -404,7 +404,7 @@ namespace CalculationEngine
             foreach (var material in willProductionMaterials)
             {
                 var producedAmount = material.AmountPerDay * performancePerMaterial * factory.Performance;
-                var producedMaterial = new MaterialOnStock {Amount = producedAmount, Material = material};
+                var producedMaterial = new MaterialOnStock { Amount = producedAmount, Material = material };
 
                 // добавляем произведенный материал на склад
                 ReferenceData.AddMaterialToStock(factory.Stock, producedMaterial);
@@ -437,56 +437,67 @@ namespace CalculationEngine
             Game.AddActivity(customerChange);
         }
 
+        private void ProcessGameToCustomerContract(Contract contract, Game game)
+        {
+            var factory = contract.DestinationFactory;
+            var material = contract.MaterialWithPrice.Material;
+            var materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == material.Id);
+
+            if (materialOnStock == null)
+            {
+                materialOnStock = new MaterialOnStock { Material = material };
+                factory.Stock.Add(materialOnStock);
+            }
+
+            var amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
+            var totalPrice = ReferenceData.Supply.Materials.First(m => m.Material.Id == material.Id).SellPrice * amount;
+
+            // начисляем материал на склад
+            materialOnStock.Amount += amount;
+
+            // списываем деньги со счёта игрока
+            contract.DestinationFactory.Customer.Sum -= totalPrice;
+
+            var time = new GameTime();
+
+            // добавляем активность по поставке материала
+            var materialLogistic = new MaterialLogistic(time, contract.MaterialWithPrice)
+            {
+                SourceFactory = contract.SourceFactory,
+                DestinationFactory = contract.DestinationFactory
+            };
+
+            // добавляем активность по изменению суммы на счету игрока
+            var customerChange = new CustomerChange(time, contract.DestinationFactory.Customer, $"Оплата товара (игре) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice}")
+            {
+                SumChange = totalPrice
+            };
+
+            game.AddActivity(materialLogistic);
+            game.AddActivity(customerChange);
+        }
+
         /// <summary>
         /// Выполнение заключенных контрактов.
         /// </summary>
         /// <param name="contract">Контракт.</param>
         protected void ProcessContract(Contract contract)
         {
-            // определяем, покупается материал (т.е. зачисляется на указанную фабрику) или продается игре (то тогда берем исходную фабрику)
             var time = new GameTime();
 
+            // определяем, покупается материал (т.е. зачисляется на указанную фабрику) или продается игре (то тогда берем исходную фабрику)
             var factory = contract.DestinationFactory ?? contract.SourceFactory;
-
             var material = contract.MaterialWithPrice.Material;
-
-            var materialOnStock =
-                factory.Stock.FirstOrDefault(m => m.Material.Id == material.Id) ??
-                new MaterialOnStock { Material = material };
+            var materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == material.Id) ?? new MaterialOnStock { Material = material };
 
             MaterialLogistic materialLogistic;
-
             CustomerChange customerChange;
 
             int amount;
             decimal totalPrice;
 
-            if (null == contract.SourceFactory)
+            if (contract.SourceFactory == null)
             {
-                // поставка идёт от игры
-                amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
-                totalPrice = -(ReferenceData.Supply.Materials.First(m => m.Material.Id == material.Id).SellPrice * amount);
-
-                // начисляем материал на склад
-                materialOnStock.Amount += amount;
-
-                // списываем деньги со счёта игрока
-                contract.DestinationFactory.Customer.Sum += totalPrice;
-
-                // добавляем активность по поставке материала
-                materialLogistic =
-                    new MaterialLogistic(time, contract.MaterialWithPrice)
-                    {
-                        SourceFactory = contract.SourceFactory, DestinationFactory = contract.DestinationFactory
-                    };
-                Game.AddActivity(materialLogistic);
-
-                // добавляем активность по изменению суммы на счету игрока
-                customerChange = new CustomerChange(time, contract.DestinationFactory.Customer, $"Оплата товара (игре) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice}")
-                {
-                    SumChange = totalPrice
-                };
-                Game.AddActivity(customerChange);
             }
             else
             {
@@ -510,7 +521,7 @@ namespace CalculationEngine
                 // сумма налога
                 var tax = ReferenceData.CalculateTaxOnMaterial(material);
                 var taxSum = totalPrice * tax;
-                var taxChange = new Tax(time, contract.SourceFactory) {Sum = taxSum};
+                var taxChange = new Tax(time, contract.SourceFactory) { Sum = taxSum };
 
                 // чистая сумма
                 var netSum = totalPrice - taxSum;
@@ -533,7 +544,7 @@ namespace CalculationEngine
                 if (!isGameDemand)
                 {
                     // начисляем материал на склад другой фабрики
-                    ReferenceData.AddMaterialToStock(contract.DestinationFactory.Stock, new MaterialOnStock { Material = material, Amount = amount});
+                    ReferenceData.AddMaterialToStock(contract.DestinationFactory.Stock, new MaterialOnStock { Material = material, Amount = amount });
 
                     // списываем деньги со счёта игрока другой фабрики
                     contract.DestinationFactory.Customer.Sum -= totalPrice;
@@ -548,7 +559,7 @@ namespace CalculationEngine
 
                 // добавляем активность по поставке материала
                 materialLogistic = new MaterialLogistic(time,
-                    new MaterialWithPrice {Amount = amount, Material = material, SellPrice = sellPrice})
+                    new MaterialWithPrice { Amount = amount, Material = material, SellPrice = sellPrice })
                 {
                     Tax = taxChange,
                     SourceFactory = contract.SourceFactory,

@@ -294,7 +294,6 @@ namespace Epam.ImitationGames.Production.Common.ReferenceData
         public static void CalculateDemandPrices(IEnumerable<Factory> allFactories)
         {
             Demand = new GameDemand();
-            throw new NotImplementedException();
         }
 
         /// <summary>

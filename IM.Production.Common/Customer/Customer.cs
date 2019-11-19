@@ -10,6 +10,12 @@ namespace Epam.ImitationGames.Production.Common
     /// </summary>
     public class Customer : VisibleEntity
     {
+        public Customer()
+        {
+            Factories = new List<Factory>();
+            Contracts = new List<Contract>();
+        }
+
         /// <summary>
         /// Логин.
         /// </summary>
