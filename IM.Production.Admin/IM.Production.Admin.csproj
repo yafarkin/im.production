@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IM.Production.Common\IM.Production.Common.csproj" />
+    <ProjectReference Include="..\IM.Production.Domain\IM.Production.Domain.csproj" />
     <ProjectReference Include="..\IM.Production.SantaHelpers\IM.Production.SantaHelpers.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,6 @@
-﻿using Epam.ImitationGames.Production.Common;
-using Epam.ImitationGames.Production.Common.Activity;
-using Epam.ImitationGames.Production.Common.Base;
+﻿using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Activity;
+using Epam.ImitationGames.Production.Domain.Base;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

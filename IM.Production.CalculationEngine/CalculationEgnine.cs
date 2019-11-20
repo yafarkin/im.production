@@ -1,12 +1,12 @@
-﻿using Epam.ImitationGames.Production.Common;
-using Epam.ImitationGames.Production.Common.Bank;
-using Epam.ImitationGames.Production.Common.Base;
-using Epam.ImitationGames.Production.Common.Production;
-using Epam.ImitationGames.Production.Common.Static;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Epam.ImitationGames.Production.Common.ReferenceData;
+using Epam.ImitationGames.Production.Domain.Bank;
+using Epam.ImitationGames.Production.Domain.Base;
+using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Production;
+using Epam.ImitationGames.Production.Domain.ReferenceData;
+using Epam.ImitationGames.Production.Domain.Static;
 
 namespace CalculationEngine
 {
@@ -44,17 +44,17 @@ namespace CalculationEngine
             }
 
             // п. 2. Выплачиваем суммы за исследования на следующее поколение мероприятий
-            foreach (var customer in Game.Customers)
+            foreach (var customer in game.Customers)
             {
-                ProcessCustomerRD(customer);
+                ProcessCustomerRD(customer, game);
             }
 
             // п. 3. Выплачиваем суммы за модернизацию предприятия и осуществляем его модернизацию
-            foreach (var customer in Game.Customers)
+            foreach (var customer in game.Customers)
             {
                 foreach (var factory in customer.Factories)
                 {
-                    ProcessFactoryRD(factory, customer);
+                    ProcessFactoryRD(factory, customer, game);
                 }
             }
 
@@ -204,16 +204,11 @@ namespace CalculationEngine
             }
         }
 
-        protected void ProcessCustomerRD(Customer customer)
+        protected void ProcessCustomerRD(Customer customer, Game game)
         {
-            if (0 == customer.FactoryGenerationLevel)
+            if (customer.SumToNextGenerationLevel == 0)
             {
-                customer.FactoryGenerationLevel = 1;
-            }
-
-            if (0 == customer.NeedSumToNextGenerationLevel)
-            {
-                customer.NeedSumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
+                customer.SumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
             }
 
             if (customer.SumOnRD <= 0)
@@ -221,60 +216,45 @@ namespace CalculationEngine
                 return;
             }
 
-            if (customer.FactoryGenerationLevel >= ReferenceData.GenerationFactoryRDCost.Max(kv => kv.Key))
-            {
-                return;
-            }
+            var sumOnRD = customer.SumOnRD;
+
+            customer.Sum -= sumOnRD;
+            customer.SpentSumToNextGenerationLevel += sumOnRD;
 
             var time = new GameTime();
-            var rdSum = customer.SumOnRD;
 
-            // списываем сумму на R&D со счёта
-            customer.Sum -= rdSum;
-            customer.SpentSumToNextGenerationLevel += rdSum;
+            var customerChange = new CustomerChange(time, customer, $"Оплата исследований следующего поколения фабрик, сумма {sumOnRD};") { SumChange = -sumOnRD };
+            game.AddActivity(customerChange);
 
-            // добавляем активность по изменению состояния команды
-            var customerChange = new CustomerChange(time, customer, $"Оплата исследований следующего поколения фабрик, сумма {rdSum};")
-            {
-                SumChange = -rdSum
-            };
-            Game.AddActivity(customerChange);
             customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress:P}")
             {
                 RDProgressChange = customerChange.RDProgressChange
             };
-            Game.AddActivity(customerChange);
+            game.AddActivity(customerChange);
 
-            if (customer.SpentSumToNextGenerationLevel > customer.NeedSumToNextGenerationLevel)
+            if (customer.ReadyForNextGenerationLevel)
             {
-                // достигли следующего уровня
-                customer.FactoryGenerationLevel++;
-                customer.SpentSumToNextGenerationLevel -= customer.NeedSumToNextGenerationLevel;
-                customer.NeedSumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
+                customer.FactoryGenerationLevel += 1;
+                customer.SpentSumToNextGenerationLevel -= customer.SumToNextGenerationLevel;
+                customer.SumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
 
-                // добавляем активность по изменению уровня доступных фабрик
                 customerChange = new CustomerChange(time, customer, $"Исследован новый уровень поколения фабрик: {customer.FactoryGenerationLevel}")
                 {
                     FactoryGenerationLevelChange = customer.FactoryGenerationLevel
                 };
-                Game.AddActivity(customerChange);
+                game.AddActivity(customerChange);
 
                 customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress:P}")
                 {
                     RDProgressChange = customerChange.RDProgressChange
                 };
-                Game.AddActivity(customerChange);
+                game.AddActivity(customerChange);
             }
         }
 
-        protected void ProcessFactoryRD(Factory factory, Customer customer)
+        protected void ProcessFactoryRD(Factory factory, Customer customer, Game game)
         {
-            if (0 == factory.Level)
-            {
-                factory.Level = 1;
-            }
-
-            if (0 == factory.NeedSumToNextLevelUp)
+            if (factory.NeedSumToNextLevelUp == 0)
             {
                 factory.NeedSumToNextLevelUp = ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory);
             }
@@ -284,38 +264,29 @@ namespace CalculationEngine
                 return;
             }
 
-            if (factory.Level >= ReferenceData.FactoryLevelUpRDCost.Max(kv => kv.Key))
-            {
-                return;
-            }
+            var sumOnRD = factory.SumOnRD;
+
+            customer.Sum -= sumOnRD;
+            factory.SpentSumToNextLevelUp += sumOnRD;
 
             var time = new GameTime();
-            var rdSum = factory.SumOnRD;
-
-            // списываем сумму на R&D со счёта
-            customer.Sum -= rdSum;
-            factory.SpentSumToNextLevelUp += rdSum;
-
-            // добавляем активность по изменению суммы на счету игрока
-            var customerChange = new CustomerChange(time, customer, $"Оплата исследований на фабрике {factory.DisplayName} ({factory.FactoryDefinition.ProductionType.DisplayName}), сумма {rdSum}")
+            var customerChange = new CustomerChange(time, customer, $"Оплата исследований на фабрике {factory.DisplayName} ({factory.FactoryDefinition.ProductionType.DisplayName}), сумма {sumOnRD}")
             {
-                SumChange = -rdSum
+                SumChange = -sumOnRD
             };
-            Game.AddActivity(customerChange);
-
             var factoryChange = new FactoryChange(time, factory) { RDProgressChange = factory.RDProgress };
-            Game.AddActivity(factoryChange);
 
-            if (factory.SpentSumToNextLevelUp >= factory.NeedSumToNextLevelUp)
+            game.AddActivity(customerChange);
+            game.AddActivity(factoryChange);
+
+            if (factory.ReadyForNextLevel)
             {
-                // достигли следующего уровня производительности фабрики
-                factory.Level++;
+                factory.Level += 1;
                 factory.SpentSumToNextLevelUp -= factory.NeedSumToNextLevelUp;
                 factory.NeedSumToNextLevelUp = ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory);
 
-                // добавляем активность по изменению уровня производительности фабрики
                 factoryChange = new FactoryChange(time, factory) { LevelChange = factory.Level };
-                Game.AddActivity(factoryChange);
+                game.AddActivity(factoryChange);
             }
         }
 
