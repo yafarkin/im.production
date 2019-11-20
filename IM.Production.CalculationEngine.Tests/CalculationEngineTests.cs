@@ -3,6 +3,8 @@ using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Production;
 using Epam.ImitationGames.Production.Domain.ReferenceData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace IM.Production.CalculationEngine.Tests
@@ -132,6 +134,78 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(3, customer.SpentSumToNextGenerationLevel);
             Assert.AreEqual(generationLevel, customer.FactoryGenerationLevel);
             Assert.AreEqual(sumToNext, customer.SumToNextGenerationLevel);
+        }
+
+        [TestMethod]
+        public void Calculate_FactoryNeedSumToNextLevelUpIsZero_SumSet()
+        {
+            var definition = ReferenceData.FactoryDefinitions.First();
+            var factory = new Factory { NeedSumToNextLevelUp = 0, Level = 1, FactoryDefinition = definition };
+            var customer = new Customer();
+            var game = new Game();
+            customer.Factories.Add(factory);
+            game.Customers.Add(customer);
+
+            _calculationEgnine.Calculate(game);
+
+            Assert.AreEqual(330000, factory.NeedSumToNextLevelUp);
+        }
+
+        [DataTestMethod]
+        [DataRow(0)]
+        [DataRow(-1)]
+        public void Calculate_FactorySumOnRDIsLessThanZero_SumsNotChanged(int sumOnRD)
+        {
+            var sum = 1;
+            var spentSum = 1;
+            var factory = new Factory { NeedSumToNextLevelUp = 1, SumOnRD = sumOnRD, SpentSumToNextLevelUp = spentSum };
+            var customer = new Customer { Sum = sum };
+            var game = new Game();
+            customer.Factories.Add(factory);
+            game.Customers.Add(customer);
+
+            _calculationEgnine.Calculate(game);
+
+            Assert.AreEqual(sum, customer.Sum);
+            Assert.AreEqual(spentSum, factory.SpentSumToNextLevelUp);
+        }
+
+        [TestMethod]
+        public void Calculate_PositiveFactorySumOnRDAndNotReady_SumsChagendAndLevelNeedSuToNextLevelNotChanged()
+        {
+            var definition = ReferenceData.FactoryDefinitions.First();
+            const int level = 1;
+            const int needSum = 1000;
+            var factory = new Factory { Level = level, NeedSumToNextLevelUp = needSum, SumOnRD = 10, SpentSumToNextLevelUp = 2, FactoryDefinition = definition };
+            var customer = new Customer { Sum = 100 };
+            var game = new Game();
+            customer.Factories.Add(factory);
+            game.Customers.Add(customer);
+
+            _calculationEgnine.Calculate(game);
+
+            Assert.AreEqual(90, customer.Sum);
+            Assert.AreEqual(12, factory.SpentSumToNextLevelUp);
+            Assert.AreEqual(level, factory.Level);
+            Assert.AreEqual(1000, factory.NeedSumToNextLevelUp);
+        }
+
+        [TestMethod]
+        public void Calculate_ReadyForNextLevel_LevelIncreasedAndSumsChanged()
+        {
+            var definition = ReferenceData.FactoryDefinitions.First();
+            var factory = new Factory { Level = 1, SumOnRD = 50, NeedSumToNextLevelUp = 10, SpentSumToNextLevelUp = 0, FactoryDefinition = definition };
+            var customer = new Customer { Sum = 100 };
+            var game = new Game();
+            customer.Factories.Add(factory);
+            game.Customers.Add(customer);
+
+            _calculationEgnine.Calculate(game);
+
+            Assert.AreEqual(2, factory.Level);
+            Assert.AreEqual(50, customer.Sum);
+            Assert.AreEqual(40, factory.SpentSumToNextLevelUp);
+            Assert.AreEqual(750000, factory.NeedSumToNextLevelUp);
         }
     }
 }

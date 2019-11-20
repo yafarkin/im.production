@@ -8,6 +8,15 @@ namespace IM.Production.Domain.Tests
     public class CustomerTests
     {
         [TestMethod]
+        public void Constructor_Default_InitializedFactories()
+        {
+            var customer = new Customer();
+
+            Assert.IsNotNull(customer.Factories);
+            Assert.IsFalse(customer.Factories.Any());
+        }
+
+        [TestMethod]
         public void Constructor_Default_InitializedContracts()
         {
             var customer = new Customer();

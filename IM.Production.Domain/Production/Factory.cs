@@ -12,6 +12,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         public Factory()
         {
             Stock = new List<MaterialOnStock>();
+            Level = 1;
         }
 
         /// <summary>
@@ -64,6 +65,8 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// </summary>
         public decimal RDProgress => NeedSumToNextLevelUp / SpentSumToNextLevelUp;
 
+        public bool ReadyForNextLevel => SpentSumToNextLevelUp >= NeedSumToNextLevelUp;
+
         /// <summary>
         /// Склад материалов на фабрике.
         /// </summary>
@@ -72,7 +75,6 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// <summary>
         /// Отображаемое в интерфейсе описание.
         /// </summary>
-        public string DisplayName =>
-            $"Фабрика {FactoryDefinition.DisplayName} (уровень {FactoryDefinition.GenerationLevel}, рабочих {Workers}, производительность {Performance}";
+        public string DisplayName => $"Фабрика {FactoryDefinition.DisplayName} (уровень {FactoryDefinition.GenerationLevel}, рабочих {Workers}, производительность {Performance}";
     }
 }

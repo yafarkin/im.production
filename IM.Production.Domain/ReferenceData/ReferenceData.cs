@@ -152,13 +152,8 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static decimal CalculateRDSummToNextFactoryLevelUp(Factory factory)
         {
             var currentFactoryLevel = factory.Level;
-            var kv = FactoryLevelUpRDCost.FirstOrDefault(c => c.Key == currentFactoryLevel + 1);
-            if (kv.Key == 0)
-            {
-                kv = FactoryLevelUpRDCost.Last();
-            }
-
-            return CalculateFactoryCost(factory.FactoryDefinition) * kv.Value;
+            var cost = FactoryLevelUpRDCost.FirstOrDefault(c => c.Key == currentFactoryLevel + 1);
+            return CalculateFactoryCost(factory.FactoryDefinition) * cost.Value;
         }
 
         /// <summary>
@@ -167,18 +162,18 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <param name="factoryDefinition">Описание фабрики.</param>
         /// <returns>Стоимость фабрики.</returns>
         public static decimal CalculateFactoryCost(FactoryDefinition factoryDefinition)
-        {
+        { 
             decimal cost;
-            var costData = FactoryCost.FirstOrDefault(f => f.Key == factoryDefinition.Id);
-            if (costData.Key == Guid.Empty)
+            var factoryCost = FactoryCost.FirstOrDefault(f => f.Key == factoryDefinition.Id);
+            if (factoryCost.Key == Guid.Empty)
             {
                 // считаем что данные по уровням упорядочены уже в определении
                 cost = DefaultFactoryCost.First().Value;
-                foreach (var kv in DefaultFactoryCost)
+                foreach (var defaultCost in DefaultFactoryCost)
                 {
-                    if (kv.Key >= factoryDefinition.GenerationLevel)
+                    if (defaultCost.Key >= factoryDefinition.GenerationLevel)
                     {
-                        cost = kv.Value;
+                        cost = defaultCost.Value;
                     }
                     else
                     {
@@ -188,7 +183,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             }
             else
             {
-                cost = costData.Value;
+                cost = factoryCost.Value;
             }
 
             return cost;
@@ -988,13 +983,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 CanProductionMaterials = new Dictionary<int, List<Material>>
                 {
                     {1, new List<Material> {GetMaterialByKey("metall_zelezo_list")}},
-                    {
-                        2,
-                        new List<Material>
-                        {
-                            GetMaterialByKey("metall_med_list"), GetMaterialByKey("metall_zoloto_list")
-                        }
-                    }
+                    {2,new List<Material>{GetMaterialByKey("metall_med_list"), GetMaterialByKey("metall_zoloto_list")}}
                 }
             });
 
@@ -1019,29 +1008,9 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 Name = "Литейное производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
                 {
-                    {
-                        1,
-                        new List<Material>
-                        {
-                            GetMaterialByKey("metall_korpus_kpp"), GetMaterialByKey("metall_korpus_dvig")
-                        }
-                    },
-                    {
-                        2,
-                        new List<Material>
-                        {
-                            GetMaterialByKey("metall_korpus_auto_kpp"),
-                            GetMaterialByKey("metall_korpus_turbo_dvig")
-                        }
-                    },
-                    {
-                        3,
-                        new List<Material>
-                        {
-                            GetMaterialByKey("metall_korpus_gruz_kpp"),
-                            GetMaterialByKey("metall_korpus_gruz_dvig")
-                        }
-                    }
+                    {1,new List<Material>{GetMaterialByKey("metall_korpus_kpp"), GetMaterialByKey("metall_korpus_dvig")}},
+                    {2,new List<Material>{GetMaterialByKey("metall_korpus_auto_kpp"),GetMaterialByKey("metall_korpus_turbo_dvig")}},
+                    {3,new List<Material>{GetMaterialByKey("metall_korpus_gruz_kpp"),GetMaterialByKey("metall_korpus_gruz_dvig")}}
                 }
             });
 
