@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Production;
 
 namespace Epam.ImitationGames.Production.Domain.ReferenceData

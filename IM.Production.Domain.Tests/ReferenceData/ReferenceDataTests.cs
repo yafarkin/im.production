@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using Epam.ImitationGames.Production.Domain.Production;
+﻿using Epam.ImitationGames.Production.Domain.Production;
 using Epam.ImitationGames.Production.Domain.ReferenceData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
-namespace dev
+namespace IM.Production.Domain.Tests
 {
     [TestClass]
-    public class CalcTests
+    public class ReferenceDataTests
     {
         [TestInitialize]
         public void Init()
@@ -209,7 +209,6 @@ namespace dev
             Assert.AreEqual(0.0375m, sm[4].Amount);
             Assert.AreEqual("metall_ruda", sm[5].Material.Key);
             Assert.AreEqual(18.75m, sm[5].Amount);
-
         }
     }
 }

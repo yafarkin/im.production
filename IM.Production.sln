@@ -12,8 +12,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.Domain", "IM.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.CalculationEngine", "IM.Production.CalculationEngine\IM.Production.CalculationEngine.csproj", "{BBCF7CAF-92D3-4832-ACED-618EB488CA70}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.dev", "IM.Production.dev\IM.Production.dev.csproj", "{4D13A1AA-E107-46E2-B7F4-96D136C06CC2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.SantaHelpers", "IM.Production.SantaHelpers\IM.Production.SantaHelpers.csproj", "{2BC001E7-2A68-4908-8765-942FBC46F57D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.SantaHelpers.Tests", "IM.Production.SantaHelpers.Tests\IM.Production.SantaHelpers.Tests.csproj", "{9196592D-282F-4C80-9726-E7F5C359D447}"
@@ -38,10 +36,6 @@ Global
 		{BBCF7CAF-92D3-4832-ACED-618EB488CA70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBCF7CAF-92D3-4832-ACED-618EB488CA70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBCF7CAF-92D3-4832-ACED-618EB488CA70}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4D13A1AA-E107-46E2-B7F4-96D136C06CC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D13A1AA-E107-46E2-B7F4-96D136C06CC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D13A1AA-E107-46E2-B7F4-96D136C06CC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D13A1AA-E107-46E2-B7F4-96D136C06CC2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2BC001E7-2A68-4908-8765-942FBC46F57D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2BC001E7-2A68-4908-8765-942FBC46F57D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BC001E7-2A68-4908-8765-942FBC46F57D}.Release|Any CPU.ActiveCfg = Release|Any CPU
