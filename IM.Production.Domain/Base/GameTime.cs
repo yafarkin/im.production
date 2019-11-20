@@ -1,7 +1,7 @@
-﻿using Epam.ImitationGames.Production.Common.Static;
+﻿using Epam.ImitationGames.Production.Domain.Static;
 using System;
 
-namespace Epam.ImitationGames.Production.Common.Base
+namespace Epam.ImitationGames.Production.Domain.Base
 {
     /// <summary>
     /// Игоровое время.

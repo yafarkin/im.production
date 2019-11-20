@@ -1,7 +1,7 @@
-﻿using Epam.ImitationGames.Production.Common.Base;
-using Epam.ImitationGames.Production.Common.Production;
+﻿using Epam.ImitationGames.Production.Domain.Base;
+using Epam.ImitationGames.Production.Domain.Production;
 
-namespace Epam.ImitationGames.Production.Common
+namespace Epam.ImitationGames.Production.Domain
 {
     /// <summary>
     /// Описание заключенного контракта.

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Epam.ImitationGames.Production.Common.Base
+namespace Epam.ImitationGames.Production.Domain.Base
 {
     /// <summary>
     /// Базовая сущность для всего в игре.

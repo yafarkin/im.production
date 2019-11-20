@@ -1,4 +1,4 @@
-﻿namespace Epam.ImitationGames.Production.Common.Base
+﻿namespace Epam.ImitationGames.Production.Domain.Base
 {
     /// <summary>
     /// Класс для информирования игрока о чём либо

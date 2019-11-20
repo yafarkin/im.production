@@ -1,4 +1,4 @@
-﻿namespace Epam.ImitationGames.Production.Common.Production
+﻿namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Список ресурсов, покупаемых игрой.

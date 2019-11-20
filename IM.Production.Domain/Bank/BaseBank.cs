@@ -1,6 +1,6 @@
-﻿using Epam.ImitationGames.Production.Common.Base;
+﻿using Epam.ImitationGames.Production.Domain.Base;
 
-namespace Epam.ImitationGames.Production.Common.Bank
+namespace Epam.ImitationGames.Production.Domain.Bank
 {
     /// <summary>
     /// Базовый класс для сущностей, связанных с банковскими операциями.
@@ -10,7 +10,7 @@ namespace Epam.ImitationGames.Production.Common.Bank
         public abstract string DisplayName { get; }
 
         protected BaseBank(GameTime time, Customer customer, string description = null)
-            : base(time, customer,  description)
+            : base(time, customer, description)
         {
         }
     }

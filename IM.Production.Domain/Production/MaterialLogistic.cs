@@ -1,7 +1,7 @@
-﻿using Epam.ImitationGames.Production.Common.Base;
+﻿using Epam.ImitationGames.Production.Domain.Base;
 using System;
 
-namespace Epam.ImitationGames.Production.Common.Production
+namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Операция перемещения материала с одной фабрики на другую.

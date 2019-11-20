@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Epam.ImitationGames.Production.Common.Production
+﻿namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Материал со стоимостью за единицу.

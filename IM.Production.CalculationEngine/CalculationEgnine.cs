@@ -1,12 +1,12 @@
-﻿using Epam.ImitationGames.Production.Common;
-using Epam.ImitationGames.Production.Common.Bank;
-using Epam.ImitationGames.Production.Common.Base;
-using Epam.ImitationGames.Production.Common.Production;
-using Epam.ImitationGames.Production.Common.Static;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Epam.ImitationGames.Production.Common.ReferenceData;
+using Epam.ImitationGames.Production.Domain.Bank;
+using Epam.ImitationGames.Production.Domain.Base;
+using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Production;
+using Epam.ImitationGames.Production.Domain.ReferenceData;
+using Epam.ImitationGames.Production.Domain.Static;
 
 namespace CalculationEngine
 {

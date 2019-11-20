@@ -1,8 +1,8 @@
-﻿using Epam.ImitationGames.Production.Common;
+﻿using Epam.ImitationGames.Production.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
-namespace IM.Production.Common.Tests
+namespace IM.Production.Domain.Tests
 {
     [TestClass]
     public class CustomerTests

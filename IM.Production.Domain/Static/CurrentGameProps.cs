@@ -1,4 +1,4 @@
-﻿namespace Epam.ImitationGames.Production.Common.Static
+﻿namespace Epam.ImitationGames.Production.Domain.Static
 {
     /// <summary>
     /// Контейнер для хранения актуальной информации о текущей игре.

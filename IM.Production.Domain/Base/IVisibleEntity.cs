@@ -1,4 +1,4 @@
-﻿namespace Epam.ImitationGames.Production.Common.Base
+﻿namespace Epam.ImitationGames.Production.Domain.Base
 {
     /// <summary>
     /// Интерфейс, указывающий что сущность может отображаться в интерфейсе.

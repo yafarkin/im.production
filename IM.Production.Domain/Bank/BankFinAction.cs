@@ -1,6 +1,6 @@
-﻿using Epam.ImitationGames.Production.Common.Base;
+﻿using Epam.ImitationGames.Production.Domain.Base;
 
-namespace Epam.ImitationGames.Production.Common.Bank
+namespace Epam.ImitationGames.Production.Domain.Bank
 {
     /// <summary>
     /// Какое либо банковское действие со счётом команды.

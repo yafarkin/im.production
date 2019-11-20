@@ -1,7 +1,7 @@
 ﻿using CalculationEngine;
-using Epam.ImitationGames.Production.Common;
-using Epam.ImitationGames.Production.Common.Production;
-using Epam.ImitationGames.Production.Common.ReferenceData;
+using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Production;
+using Epam.ImitationGames.Production.Domain.ReferenceData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 

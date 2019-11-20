@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Epam.ImitationGames.Production.Common.Production;
+using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Production;
 
-namespace Epam.ImitationGames.Production.Common.ReferenceData
+namespace Epam.ImitationGames.Production.Domain.ReferenceData
 {
     /// <summary>
     /// Класс, хранящий справочные данные и расчитывающий разные показатели
@@ -176,7 +177,7 @@ namespace Epam.ImitationGames.Production.Common.ReferenceData
                 cost = DefaultFactoryCost.First().Value;
                 foreach (var kv in DefaultFactoryCost)
                 {
-                    if(kv.Key >= factoryDefinition.GenerationLevel)
+                    if (kv.Key >= factoryDefinition.GenerationLevel)
                     {
                         cost = kv.Value;
                     }
@@ -233,7 +234,8 @@ namespace Epam.ImitationGames.Production.Common.ReferenceData
             {
                 var forOne = new MaterialOnStock
                 {
-                    Amount = inputMaterial.Amount / material.AmountPerDay * amountPerDay, Material = inputMaterial.Material
+                    Amount = inputMaterial.Amount / material.AmountPerDay * amountPerDay,
+                    Material = inputMaterial.Material
                 };
 
                 CalculateMaterialInDetails(forOne.Material, out var subPrice, out var subSourceMaterials, forOne.Amount);
@@ -241,7 +243,9 @@ namespace Epam.ImitationGames.Production.Common.ReferenceData
                 AddMaterialToStock(sourceMaterials,
                     new MaterialWithPrice
                     {
-                        Amount = forOne.Amount, Material = forOne.Material, SellPrice = subPrice / forOne.Amount
+                        Amount = forOne.Amount,
+                        Material = forOne.Material,
+                        SellPrice = subPrice / forOne.Amount
                     });
 
                 price += subPrice;

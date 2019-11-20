@@ -1,6 +1,6 @@
-﻿using Epam.ImitationGames.Production.Common.Base;
+﻿using Epam.ImitationGames.Production.Domain.Base;
 
-namespace Epam.ImitationGames.Production.Common.Activity
+namespace Epam.ImitationGames.Production.Domain.Activity
 {
     /// <summary>
     /// Лог активности действий.

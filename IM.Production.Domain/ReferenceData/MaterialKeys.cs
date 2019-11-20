@@ -1,4 +1,4 @@
-﻿namespace Epam.ImitationGames.Production.Common.ReferenceData
+﻿namespace Epam.ImitationGames.Production.Domain.ReferenceData
 {
     public static class MaterialKeys
     {

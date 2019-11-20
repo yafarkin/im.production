@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Epam.ImitationGames.Production.Common.Base;
+using Epam.ImitationGames.Production.Domain.Base;
 
-namespace Epam.ImitationGames.Production.Common.Production
+namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Общее описание фабрики.

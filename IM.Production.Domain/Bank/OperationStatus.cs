@@ -1,4 +1,4 @@
-﻿namespace Epam.ImitationGames.Production.Common.Bank
+﻿namespace Epam.ImitationGames.Production.Domain.Bank
 {
     public enum OperationStatus
     {

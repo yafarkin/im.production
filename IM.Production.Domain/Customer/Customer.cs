@@ -1,9 +1,9 @@
-﻿using Epam.ImitationGames.Production.Common.Bank;
-using Epam.ImitationGames.Production.Common.Base;
-using Epam.ImitationGames.Production.Common.Production;
+﻿using Epam.ImitationGames.Production.Domain.Bank;
+using Epam.ImitationGames.Production.Domain.Base;
+using Epam.ImitationGames.Production.Domain.Production;
 using System.Collections.Generic;
 
-namespace Epam.ImitationGames.Production.Common
+namespace Epam.ImitationGames.Production.Domain
 {
     /// <summary>
     /// Команда (производитель).
