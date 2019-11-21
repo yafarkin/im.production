@@ -59,11 +59,11 @@ namespace CalculationEngine
             }
 
             // п. 4. Выплачиваем налоги на фабрики
-            foreach (var customer in Game.Customers)
+            foreach (var customer in game.Customers)
             {
                 foreach (var factory in customer.Factories)
                 {
-                    PaidTaxes(factory, customer);
+                    PaidTaxes(factory, customer, game);
                 }
             }
 
@@ -290,25 +290,22 @@ namespace CalculationEngine
             }
         }
 
-        protected void PaidTaxes(Factory factory, Customer customer)
+        protected void PaidTaxes(Factory factory, Customer customer, Game game)
         {
-            var time = new GameTime();
             var tax = ReferenceData.CalculateTaxOnFactory(factory);
             var taxSum = customer.Sum * tax;
-            var taxChange = new Tax(time, factory) { Sum = taxSum };
 
-            // списываем налог со счёта
             customer.Sum -= taxSum;
 
-            // добавляем активность по изменению суммы на счету игрока
+            var time = new GameTime();
             var customerChange = new CustomerChange(time, customer, $"Оплата налога на фабрику {factory.DisplayName} ({factory.FactoryDefinition.ProductionType.DisplayName}), % налога {tax}, сумма налога {taxSum}")
             {
                 SumChange = -taxSum
             };
-            Game.AddActivity(customerChange);
+            var taxChange = new TaxChange(time, factory) { Sum = taxSum };
 
-            // добавляем активность о снятом налоге
-            Game.AddActivity(taxChange);
+            game.AddActivity(customerChange);
+            game.AddActivity(taxChange);
         }
 
         protected void ProduceFactory(Factory factory)
@@ -492,7 +489,7 @@ namespace CalculationEngine
                 // сумма налога
                 var tax = ReferenceData.CalculateTaxOnMaterial(material);
                 var taxSum = totalPrice * tax;
-                var taxChange = new Tax(time, contract.SourceFactory) { Sum = taxSum };
+                var taxChange = new TaxChange(time, contract.SourceFactory) { Sum = taxSum };
 
                 // чистая сумма
                 var netSum = totalPrice - taxSum;

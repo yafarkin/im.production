@@ -156,17 +156,17 @@ namespace IM.Production.CalculationEngine.Tests
         [DataRow(-1)]
         public void Calculate_FactorySumOnRDIsLessThanZero_SumsNotChanged(int sumOnRD)
         {
-            var sum = 1;
             var spentSum = 1;
-            var factory = new Factory { NeedSumToNextLevelUp = 1, SumOnRD = sumOnRD, SpentSumToNextLevelUp = spentSum };
-            var customer = new Customer { Sum = sum };
+            var description = ReferenceData.FactoryDefinitions.First();
+            var factory = new Factory { NeedSumToNextLevelUp = 1, SumOnRD = sumOnRD, SpentSumToNextLevelUp = spentSum, FactoryDefinition = description };
+            var customer = new Customer { Sum = 1 };
             var game = new Game();
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
             _calculationEgnine.Calculate(game);
 
-            Assert.AreEqual(sum, customer.Sum);
+            Assert.AreEqual(0.9M, customer.Sum);
             Assert.AreEqual(spentSum, factory.SpentSumToNextLevelUp);
         }
 
@@ -184,7 +184,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEgnine.Calculate(game);
 
-            Assert.AreEqual(90, customer.Sum);
+            Assert.AreEqual(81, customer.Sum);
             Assert.AreEqual(12, factory.SpentSumToNextLevelUp);
             Assert.AreEqual(level, factory.Level);
             Assert.AreEqual(1000, factory.NeedSumToNextLevelUp);
@@ -203,9 +203,24 @@ namespace IM.Production.CalculationEngine.Tests
             _calculationEgnine.Calculate(game);
 
             Assert.AreEqual(2, factory.Level);
-            Assert.AreEqual(50, customer.Sum);
+            Assert.AreEqual(45, customer.Sum);
             Assert.AreEqual(40, factory.SpentSumToNextLevelUp);
             Assert.AreEqual(750000, factory.NeedSumToNextLevelUp);
+        }
+
+        [TestMethod]
+        public void Calculate_FactoryWithoutSpecialTax_SumDecreasedByDefaultTax()
+        {
+            var description = ReferenceData.FactoryDefinitions.First();
+            var factory = new Factory { FactoryDefinition = description };
+            var customer = new Customer { Sum = 100 };
+            var game = new Game();
+            customer.Factories.Add(factory);
+            game.Customers.Add(customer);
+
+            _calculationEgnine.Calculate(game);
+
+            Assert.AreEqual(90, customer.Sum);
         }
     }
 }

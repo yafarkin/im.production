@@ -5,7 +5,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
     /// <summary>
     /// Налог на фабрику или продажу материала.
     /// </summary>
-    public class Tax : BaseChanging
+    public class TaxChange : BaseChanging
     {
         /// <summary>
         /// Фабрика, с которой списывается налог.
@@ -17,7 +17,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// </summary>
         public decimal Sum { get; set; }
 
-        public Tax(GameTime time, Factory factory, string description = null)
+        public TaxChange(GameTime time, Factory factory, string description = null)
             : base(time, factory.Customer, description)
         {
             Factory = factory;
