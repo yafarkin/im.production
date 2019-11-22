@@ -280,36 +280,25 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             return costPerOne;
         }
 
-        public static decimal CalculateMaterialExtraChargePercent(Material material, IEnumerable<Factory> factories)
-        {
-            const decimal defaultExtraChargePercent = 0.1M;
-            const decimal extendedExtraChargePercent = 0.5M;
-
-            var extraChargePercent = defaultExtraChargePercent;
-
-            var maxGenerationLevel = factories.Max(f => f.FactoryDefinition.GenerationLevel);
-            var developed = factories.Where(f => f.FactoryDefinition.GenerationLevel > 1 && f.FactoryDefinition.GenerationLevel >= maxGenerationLevel);
-
-            if (developed.Any(f => f.ProductionMaterials.Contains(material)))
-            {
-                extraChargePercent = extendedExtraChargePercent;
-            }
-
-            return extraChargePercent;
-        }
-
         public static void UpdateGameDemand(IEnumerable<Factory> factories)
         {
+            var maxGeneration = factories.Max(f => f.FactoryDefinition.GenerationLevel);
+
             foreach (var factory in factories)
             {
+                var isDeveloped = factory.FactoryDefinition.GenerationLevel > 1 && factory.FactoryDefinition.GenerationLevel >= maxGeneration;
+
                 foreach (var material in factory.ProductionMaterials)
                 {
                     var demand = Demand.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
 
                     if (demand == null)
                     {
+                        const decimal defaultExtraChargePercent = 0.1M;
+                        const decimal advancedExtraChargePercent = 0.5M;
+
                         var costPrice = CalculateMaterialCostPrice(material);
-                        var extraChargePercent = CalculateMaterialExtraChargePercent(material, factories);
+                        var extraChargePercent = isDeveloped ? advancedExtraChargePercent : defaultExtraChargePercent;
                         var extraCharge = costPrice * extraChargePercent;
 
                         Demand.Materials.Add(new MaterialWithPrice
