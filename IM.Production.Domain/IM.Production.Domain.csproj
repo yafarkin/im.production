@@ -2,10 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>Epam.ImitationGames.Production.Domain</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\IM.Production.Domain\IM.Production.Domain.csproj" />
-  </ItemGroup>
 
 </Project>

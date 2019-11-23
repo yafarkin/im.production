@@ -1,12 +1,12 @@
-﻿using Epam.ImitationGames.Production.Common;
-using Epam.ImitationGames.Production.Common.Bank;
-using Epam.ImitationGames.Production.Common.Base;
-using Epam.ImitationGames.Production.Common.Production;
-using Epam.ImitationGames.Production.Common.Static;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Epam.ImitationGames.Production.Common.ReferenceData;
+using Epam.ImitationGames.Production.Domain.Bank;
+using Epam.ImitationGames.Production.Domain.Base;
+using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Production;
+using Epam.ImitationGames.Production.Domain.ReferenceData;
+using Epam.ImitationGames.Production.Domain.Static;
 
 namespace CalculationEngine
 {
@@ -14,7 +14,7 @@ namespace CalculationEngine
     {
         public Game Game { get; set; }
 
-        public void Calculate()
+        public void Calculate(Game game)
         {
             // 1. Осуществляем поставки по контрактам от игры на фабрику
             // 2. Выплачиваем суммы за модернизацию предприятия
@@ -34,36 +34,36 @@ namespace CalculationEngine
             UpdateCurrentGameProperties();
 
             // п.1. Осуществляем поставки по контрактам от игры на фабрику
-            foreach (var customer in Game.Customers)
+            foreach (var customer in game.Customers)
             {
-                var gameSupplyContracts = customer.Contracts.Where(c => c.SourceFactory == null);
-                foreach (var contract in gameSupplyContracts)
+                var contracts = customer.Contracts.Where(c => c.SourceFactory == null);
+                foreach (var contract in contracts)
                 {
-                    ProcessContract(contract);
+                    ProcessGameToCustomerContract(contract, game);
                 }
             }
 
             // п. 2. Выплачиваем суммы за исследования на следующее поколение мероприятий
-            foreach (var customer in Game.Customers)
+            foreach (var customer in game.Customers)
             {
-                ProcessCustomerRD(customer);
+                ProcessCustomerRD(customer, game);
             }
 
             // п. 3. Выплачиваем суммы за модернизацию предприятия и осуществляем его модернизацию
-            foreach (var customer in Game.Customers)
+            foreach (var customer in game.Customers)
             {
                 foreach (var factory in customer.Factories)
                 {
-                    ProcessFactoryRD(factory, customer);
+                    ProcessFactoryRD(factory, customer, game);
                 }
             }
 
             // п. 4. Выплачиваем налоги на фабрики
-            foreach (var customer in Game.Customers)
+            foreach (var customer in game.Customers)
             {
                 foreach (var factory in customer.Factories)
                 {
-                    PaidTaxes(factory, customer);
+                    PaidTaxes(factory, customer, game);
                 }
             }
 
@@ -127,7 +127,6 @@ namespace CalculationEngine
             // п. 9. В последний игровой день автоматически закрываем все кредиты и вклады в банках.
             if (Game.Time.Day == Game.TotalGameDays)
             {
-                throw new NotImplementedException();
             }
 
             // п. 10. Прибавляем счётчик игровых дней.
@@ -205,16 +204,11 @@ namespace CalculationEngine
             }
         }
 
-        protected void ProcessCustomerRD(Customer customer)
+        protected void ProcessCustomerRD(Customer customer, Game game)
         {
-            if (0 == customer.FactoryGenerationLevel)
+            if (customer.SumToNextGenerationLevel == 0)
             {
-                customer.FactoryGenerationLevel = 1;
-            }
-
-            if (0 == customer.NeedSumToNextGenerationLevel)
-            {
-                customer.NeedSumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
+                customer.SumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
             }
 
             if (customer.SumOnRD <= 0)
@@ -222,60 +216,45 @@ namespace CalculationEngine
                 return;
             }
 
-            if (customer.FactoryGenerationLevel >= ReferenceData.GenerationFactoryRDCost.Max(kv => kv.Key))
-            {
-                return;
-            }
+            var sumOnRD = customer.SumOnRD;
+
+            customer.Sum -= sumOnRD;
+            customer.SpentSumToNextGenerationLevel += sumOnRD;
 
             var time = new GameTime();
-            var rdSum = customer.SumOnRD;
 
-            // списываем сумму на R&D со счёта
-            customer.Sum -= rdSum;
-            customer.SpentSumToNextGenerationLevel += rdSum;
+            var customerChange = new CustomerChange(time, customer, $"Оплата исследований следующего поколения фабрик, сумма {sumOnRD};") { SumChange = -sumOnRD };
+            game.AddActivity(customerChange);
 
-            // добавляем активность по изменению состояния команды
-            var customerChange = new CustomerChange(time, customer, $"Оплата исследований следующего поколения фабрик, сумма {rdSum};")
-            {
-                SumChange = -rdSum
-            };
-            Game.AddActivity(customerChange);
             customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress:P}")
             {
                 RDProgressChange = customerChange.RDProgressChange
             };
-            Game.AddActivity(customerChange);
+            game.AddActivity(customerChange);
 
-            if (customer.SpentSumToNextGenerationLevel > customer.NeedSumToNextGenerationLevel)
+            if (customer.ReadyForNextGenerationLevel)
             {
-                // достигли следующего уровня
-                customer.FactoryGenerationLevel++;
-                customer.SpentSumToNextGenerationLevel -= customer.NeedSumToNextGenerationLevel;
-                customer.NeedSumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
+                customer.FactoryGenerationLevel += 1;
+                customer.SpentSumToNextGenerationLevel -= customer.SumToNextGenerationLevel;
+                customer.SumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
 
-                // добавляем активность по изменению уровня доступных фабрик
                 customerChange = new CustomerChange(time, customer, $"Исследован новый уровень поколения фабрик: {customer.FactoryGenerationLevel}")
                 {
                     FactoryGenerationLevelChange = customer.FactoryGenerationLevel
                 };
-                Game.AddActivity(customerChange);
+                game.AddActivity(customerChange);
 
                 customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress:P}")
                 {
                     RDProgressChange = customerChange.RDProgressChange
                 };
-                Game.AddActivity(customerChange);
+                game.AddActivity(customerChange);
             }
         }
 
-        protected void ProcessFactoryRD(Factory factory, Customer customer)
+        protected void ProcessFactoryRD(Factory factory, Customer customer, Game game)
         {
-            if (0 == factory.Level)
-            {
-                factory.Level = 1;
-            }
-
-            if (0 == factory.NeedSumToNextLevelUp)
+            if (factory.NeedSumToNextLevelUp == 0)
             {
                 factory.NeedSumToNextLevelUp = ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory);
             }
@@ -285,60 +264,48 @@ namespace CalculationEngine
                 return;
             }
 
-            if (factory.Level >= ReferenceData.FactoryLevelUpRDCost.Max(kv => kv.Key))
-            {
-                return;
-            }
+            var sumOnRD = factory.SumOnRD;
+
+            customer.Sum -= sumOnRD;
+            factory.SpentSumToNextLevelUp += sumOnRD;
 
             var time = new GameTime();
-            var rdSum = factory.SumOnRD;
-
-            // списываем сумму на R&D со счёта
-            customer.Sum -= rdSum;
-            factory.SpentSumToNextLevelUp += rdSum;
-
-            // добавляем активность по изменению суммы на счету игрока
-            var customerChange = new CustomerChange(time, customer, $"Оплата исследований на фабрике {factory.DisplayName} ({factory.FactoryDefinition.ProductionType.DisplayName}), сумма {rdSum}")
+            var customerChange = new CustomerChange(time, customer, $"Оплата исследований на фабрике {factory.DisplayName} ({factory.FactoryDefinition.ProductionType.DisplayName}), сумма {sumOnRD}")
             {
-                SumChange = -rdSum
+                SumChange = -sumOnRD
             };
-            Game.AddActivity(customerChange);
+            var factoryChange = new FactoryChange(time, factory) { RDProgressChange = factory.RDProgress };
 
-            var factoryChange = new FactoryChange(time, factory) {RDProgressChange = factory.RDProgress};
-            Game.AddActivity(factoryChange);
+            game.AddActivity(customerChange);
+            game.AddActivity(factoryChange);
 
-            if (factory.SpentSumToNextLevelUp >= factory.NeedSumToNextLevelUp)
+            if (factory.ReadyForNextLevel)
             {
-                // достигли следующего уровня производительности фабрики
-                factory.Level++;
+                factory.Level += 1;
                 factory.SpentSumToNextLevelUp -= factory.NeedSumToNextLevelUp;
                 factory.NeedSumToNextLevelUp = ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory);
 
-                // добавляем активность по изменению уровня производительности фабрики
-                factoryChange = new FactoryChange(time, factory) {LevelChange = factory.Level};
-                Game.AddActivity(factoryChange);
+                factoryChange = new FactoryChange(time, factory) { LevelChange = factory.Level };
+                game.AddActivity(factoryChange);
             }
         }
 
-        protected void PaidTaxes(Factory factory, Customer customer)
+        protected void PaidTaxes(Factory factory, Customer customer, Game game)
         {
-            var time = new GameTime();
             var tax = ReferenceData.CalculateTaxOnFactory(factory);
             var taxSum = customer.Sum * tax;
-            var taxChange = new Tax(time, factory) {Sum = taxSum};
 
-            // списываем налог со счёта
             customer.Sum -= taxSum;
 
-            // добавляем активность по изменению суммы на счету игрока
+            var time = new GameTime();
             var customerChange = new CustomerChange(time, customer, $"Оплата налога на фабрику {factory.DisplayName} ({factory.FactoryDefinition.ProductionType.DisplayName}), % налога {tax}, сумма налога {taxSum}")
             {
                 SumChange = -taxSum
             };
-            Game.AddActivity(customerChange);
+            var taxChange = new TaxChange(time, factory) { Sum = taxSum };
 
-            // добавляем активность о снятом налоге
-            Game.AddActivity(taxChange);
+            game.AddActivity(customerChange);
+            game.AddActivity(taxChange);
         }
 
         protected void ProduceFactory(Factory factory)
@@ -374,7 +341,8 @@ namespace CalculationEngine
 
                         currentUsedMaterialsOnStock.Add(new MaterialOnStock
                         {
-                            Material = inputMaterial.Material, Amount = inputAmount
+                            Material = inputMaterial.Material,
+                            Amount = inputAmount
                         });
                     }
 
@@ -404,7 +372,7 @@ namespace CalculationEngine
             foreach (var material in willProductionMaterials)
             {
                 var producedAmount = material.AmountPerDay * performancePerMaterial * factory.Performance;
-                var producedMaterial = new MaterialOnStock {Amount = producedAmount, Material = material};
+                var producedMaterial = new MaterialOnStock { Amount = producedAmount, Material = material };
 
                 // добавляем произведенный материал на склад
                 ReferenceData.AddMaterialToStock(factory.Stock, producedMaterial);
@@ -437,56 +405,67 @@ namespace CalculationEngine
             Game.AddActivity(customerChange);
         }
 
+        private void ProcessGameToCustomerContract(Contract contract, Game game)
+        {
+            var factory = contract.DestinationFactory;
+            var material = contract.MaterialWithPrice.Material;
+            var materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == material.Id);
+
+            if (materialOnStock == null)
+            {
+                materialOnStock = new MaterialOnStock { Material = material };
+                factory.Stock.Add(materialOnStock);
+            }
+
+            var amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
+            var totalPrice = ReferenceData.Supply.Materials.First(m => m.Material.Id == material.Id).SellPrice * amount;
+
+            // начисляем материал на склад
+            materialOnStock.Amount += amount;
+
+            // списываем деньги со счёта игрока
+            contract.DestinationFactory.Customer.Sum -= totalPrice;
+
+            var time = new GameTime();
+
+            // добавляем активность по поставке материала
+            var materialLogistic = new MaterialLogistic(time, contract.MaterialWithPrice)
+            {
+                SourceFactory = contract.SourceFactory,
+                DestinationFactory = contract.DestinationFactory
+            };
+
+            // добавляем активность по изменению суммы на счету игрока
+            var customerChange = new CustomerChange(time, contract.DestinationFactory.Customer, $"Оплата товара (игре) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice}")
+            {
+                SumChange = totalPrice
+            };
+
+            game.AddActivity(materialLogistic);
+            game.AddActivity(customerChange);
+        }
+
         /// <summary>
         /// Выполнение заключенных контрактов.
         /// </summary>
         /// <param name="contract">Контракт.</param>
         protected void ProcessContract(Contract contract)
         {
-            // определяем, покупается материал (т.е. зачисляется на указанную фабрику) или продается игре (то тогда берем исходную фабрику)
             var time = new GameTime();
 
+            // определяем, покупается материал (т.е. зачисляется на указанную фабрику) или продается игре (то тогда берем исходную фабрику)
             var factory = contract.DestinationFactory ?? contract.SourceFactory;
-
             var material = contract.MaterialWithPrice.Material;
-
-            var materialOnStock =
-                factory.Stock.FirstOrDefault(m => m.Material.Id == material.Id) ??
-                new MaterialOnStock { Material = material };
+            var materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == material.Id) ?? new MaterialOnStock { Material = material };
 
             MaterialLogistic materialLogistic;
-
             CustomerChange customerChange;
 
             int amount;
             decimal totalPrice;
 
-            if (null == contract.SourceFactory)
+            if (contract.SourceFactory == null)
             {
-                // поставка идёт от игры
-                amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
-                totalPrice = -(ReferenceData.Supply.Materials.First(m => m.Material.Id == material.Id).SellPrice * amount);
-
-                // начисляем материал на склад
-                materialOnStock.Amount += amount;
-
-                // списываем деньги со счёта игрока
-                contract.DestinationFactory.Customer.Sum += totalPrice;
-
-                // добавляем активность по поставке материала
-                materialLogistic =
-                    new MaterialLogistic(time, contract.MaterialWithPrice)
-                    {
-                        SourceFactory = contract.SourceFactory, DestinationFactory = contract.DestinationFactory
-                    };
-                Game.AddActivity(materialLogistic);
-
-                // добавляем активность по изменению суммы на счету игрока
-                customerChange = new CustomerChange(time, contract.DestinationFactory.Customer, $"Оплата товара (игре) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice}")
-                {
-                    SumChange = totalPrice
-                };
-                Game.AddActivity(customerChange);
             }
             else
             {
@@ -510,7 +489,7 @@ namespace CalculationEngine
                 // сумма налога
                 var tax = ReferenceData.CalculateTaxOnMaterial(material);
                 var taxSum = totalPrice * tax;
-                var taxChange = new Tax(time, contract.SourceFactory) {Sum = taxSum};
+                var taxChange = new TaxChange(time, contract.SourceFactory) { Sum = taxSum };
 
                 // чистая сумма
                 var netSum = totalPrice - taxSum;
@@ -533,7 +512,7 @@ namespace CalculationEngine
                 if (!isGameDemand)
                 {
                     // начисляем материал на склад другой фабрики
-                    ReferenceData.AddMaterialToStock(contract.DestinationFactory.Stock, new MaterialOnStock { Material = material, Amount = amount});
+                    ReferenceData.AddMaterialToStock(contract.DestinationFactory.Stock, new MaterialOnStock { Material = material, Amount = amount });
 
                     // списываем деньги со счёта игрока другой фабрики
                     contract.DestinationFactory.Customer.Sum -= totalPrice;
@@ -548,7 +527,7 @@ namespace CalculationEngine
 
                 // добавляем активность по поставке материала
                 materialLogistic = new MaterialLogistic(time,
-                    new MaterialWithPrice {Amount = amount, Material = material, SellPrice = sellPrice})
+                    new MaterialWithPrice { Amount = amount, Material = material, SellPrice = sellPrice })
                 {
                     Tax = taxChange,
                     SourceFactory = contract.SourceFactory,
