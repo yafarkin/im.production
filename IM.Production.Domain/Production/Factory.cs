@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
@@ -12,6 +11,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         public Factory()
         {
             Stock = new List<MaterialOnStock>();
+            ProductionMaterials = new List<Material>();
             Level = 1;
         }
 

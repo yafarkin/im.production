@@ -162,7 +162,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <param name="factoryDefinition">Описание фабрики.</param>
         /// <returns>Стоимость фабрики.</returns>
         public static decimal CalculateFactoryCost(FactoryDefinition factoryDefinition)
-        { 
+        {
             decimal cost;
             var factoryCost = FactoryCost.FirstOrDefault(f => f.Key == factoryDefinition.Id);
             if (factoryCost.Key == Guid.Empty)
@@ -280,13 +280,41 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             return costPerOne;
         }
 
-        /// <summary>
-        /// Производит расчёт цен на материалы, которые покупает игра.
-        /// </summary>
-        /// <param name="allFactories">Список всех фабрик в игре.</param>
-        public static void CalculateDemandPrices(IEnumerable<Factory> allFactories)
+        public static decimal CalculateFactoryExtraChargePercent(Factory factory, IEnumerable<Factory> factories)
         {
-            Demand = new GameDemand();
+            const decimal defaultExtraChargePercent = 0.1M;
+            const decimal advancedExtraChargePercent = 0.5M;
+
+            var maxGeneration = factories.Max(f => f.FactoryDefinition.GenerationLevel);
+            var developed = factory.FactoryDefinition.GenerationLevel > 1 && factory.FactoryDefinition.GenerationLevel == maxGeneration;
+
+            return developed ? advancedExtraChargePercent : defaultExtraChargePercent;
+        }
+
+        // TODO It might become redundant
+        public static void UpdateGameDemand(IEnumerable<Factory> factories)
+        {
+            foreach (var factory in factories)
+            {
+                var extraChargePercent = CalculateFactoryExtraChargePercent(factory, factories);
+
+                foreach (var material in factory.ProductionMaterials)
+                {
+                    var demand = Demand.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
+
+                    if (demand == null)
+                    {
+                        var costPrice = CalculateMaterialCostPrice(material);                        
+                        var extraCharge = costPrice * extraChargePercent;
+
+                        Demand.Materials.Add(new MaterialWithPrice
+                        {
+                            Material = material,
+                            SellPrice = costPrice + extraCharge
+                        });
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -956,6 +984,8 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             };
         }
 
+        private static void InitDemand() => Demand = new GameDemand();
+
         private static void InitFactoryDefinition()
         {
             FactoryDefinitions = new List<FactoryDefinition>();
@@ -983,7 +1013,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 CanProductionMaterials = new Dictionary<int, List<Material>>
                 {
                     {1, new List<Material> {GetMaterialByKey("metall_zelezo_list")}},
-                    {2,new List<Material>{GetMaterialByKey("metall_med_list"), GetMaterialByKey("metall_zoloto_list")}}
+                    {2, new List<Material>{GetMaterialByKey("metall_med_list"), GetMaterialByKey("metall_zoloto_list")}}
                 }
             });
 
@@ -1159,6 +1189,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             InitProductionTypes();
             InitMaterials();
             InitSupply();
+            InitDemand();
             InitFactoryDefinition();
         }
 

@@ -2,6 +2,7 @@
 using Epam.ImitationGames.Production.Domain.ReferenceData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace IM.Production.Domain.Tests
 {
@@ -209,6 +210,69 @@ namespace IM.Production.Domain.Tests
             Assert.AreEqual(0.0375m, sm[4].Amount);
             Assert.AreEqual("metall_ruda", sm[5].Material.Key);
             Assert.AreEqual(18.75m, sm[5].Amount);
+        }
+
+        [TestMethod]
+        public void CalculateFactoryExtraChargePercent_DefaultGeneration_DefaultPercentReturned()
+        {
+            var factory = new Factory { FactoryDefinition = new FactoryDefinition { GenerationLevel = 1 } };
+            var factories = new List<Factory>
+            {
+                new Factory{FactoryDefinition = new FactoryDefinition{GenerationLevel = 2}},
+                factory
+            };
+
+            var percent = ReferenceData.CalculateFactoryExtraChargePercent(factory, factories);
+
+            Assert.AreEqual(0.1M, percent);
+        }
+
+        [TestMethod]
+        public void CalculateFactoryExtraChargePercent_NotDefaultNorNotDeveloped_DefaultPercentReturned()
+        {
+            var factory = new Factory { FactoryDefinition = new FactoryDefinition { GenerationLevel = 2 } };
+            var factories = new List<Factory>
+            {
+                new Factory{FactoryDefinition = new FactoryDefinition{GenerationLevel = 3}},
+                factory
+            };
+
+            var percent = ReferenceData.CalculateFactoryExtraChargePercent(factory, factories);
+
+            Assert.AreEqual(0.1M, percent);
+        }
+
+        [TestMethod]
+        public void CalculateFactoryExtraChargePercent_Developed_AdvancedPercentReturned()
+        {
+            var factory = new Factory { FactoryDefinition = new FactoryDefinition { GenerationLevel = 3 } };
+            var factories = new List<Factory>
+            {
+                new Factory{FactoryDefinition = new FactoryDefinition{GenerationLevel = 2}},
+                factory
+            };
+
+            var percent = ReferenceData.CalculateFactoryExtraChargePercent(factory, factories);
+
+            Assert.AreEqual(0.5M, percent);
+        }
+
+        [TestMethod]
+        public void UpdateGameDemand_NotExistingMaterial_MaterialAdded()
+        {
+            var material = ReferenceData.GetMaterialByKey("metall_ruda");
+            var factory = new Factory
+            {
+                FactoryDefinition = new FactoryDefinition(),
+                ProductionMaterials = new List<Material> { material }
+            };
+            var factories = new List<Factory> { factory };
+
+            ReferenceData.UpdateGameDemand(factories);
+
+            var demand = ReferenceData.Demand.Materials.First();
+            Assert.AreSame(material, demand.Material);
+            Assert.AreEqual(0.022M, demand.SellPrice);
         }
     }
 }

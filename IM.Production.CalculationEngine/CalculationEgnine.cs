@@ -68,8 +68,7 @@ namespace CalculationEngine
             }
 
             // п.5. Выполняем расчёт цен, по которым игра покупает материалы
-            var allFactories = Game.Customers.SelectMany(c => c.Factories);
-            ReferenceData.CalculateDemandPrices(allFactories);
+            ReferenceData.UpdateGameDemand(Game.Customers.SelectMany(c => c.Factories));
 
             // п.6. Осуществление производства
             var maxFactoryLevel = 1;
