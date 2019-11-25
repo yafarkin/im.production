@@ -280,13 +280,23 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             return costPerOne;
         }
 
+        public static decimal CalculateFactoryExtraChargePercent(Factory factory, IEnumerable<Factory> factories)
+        {
+            const decimal defaultExtraChargePercent = 0.1M;
+            const decimal advancedExtraChargePercent = 0.5M;
+
+            var maxGeneration = factories.Max(f => f.FactoryDefinition.GenerationLevel);
+            var developed = factory.FactoryDefinition.GenerationLevel > 1 && factory.FactoryDefinition.GenerationLevel == maxGeneration;
+
+            return developed ? advancedExtraChargePercent : defaultExtraChargePercent;
+        }
+
+        // TODO It might become redundant
         public static void UpdateGameDemand(IEnumerable<Factory> factories)
         {
-            var maxGeneration = factories.Max(f => f.FactoryDefinition.GenerationLevel);
-
             foreach (var factory in factories)
             {
-                var isDeveloped = factory.FactoryDefinition.GenerationLevel > 1 && factory.FactoryDefinition.GenerationLevel >= maxGeneration;
+                var extraChargePercent = CalculateFactoryExtraChargePercent(factory, factories);
 
                 foreach (var material in factory.ProductionMaterials)
                 {
@@ -294,11 +304,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
 
                     if (demand == null)
                     {
-                        const decimal defaultExtraChargePercent = 0.1M;
-                        const decimal advancedExtraChargePercent = 0.5M;
-
-                        var costPrice = CalculateMaterialCostPrice(material);
-                        var extraChargePercent = isDeveloped ? advancedExtraChargePercent : defaultExtraChargePercent;
+                        var costPrice = CalculateMaterialCostPrice(material);                        
                         var extraCharge = costPrice * extraChargePercent;
 
                         Demand.Materials.Add(new MaterialWithPrice
