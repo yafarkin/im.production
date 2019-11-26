@@ -68,14 +68,14 @@ namespace CalculationEngine
             }
 
             // п.5. Выполняем расчёт цен, по которым игра покупает материалы
-            ReferenceData.UpdateGameDemand(Game.Customers.SelectMany(c => c.Factories));
+            ReferenceData.UpdateGameDemand(game.Customers.SelectMany(c => c.Factories));
 
             // п.6. Осуществление производства
             var maxFactoryLevel = 1;
             var currentFactoryLevel = 1;
             while (true)
             {
-                foreach (var customer in Game.Customers)
+                foreach (var customer in game.Customers)
                 {
                     var maxCustomerLevel = customer.Factories.Max(f => f.FactoryDefinition.GenerationLevel);
                     if (maxCustomerLevel > maxFactoryLevel)
