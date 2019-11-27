@@ -274,18 +274,5 @@ namespace IM.Production.Domain.Tests
             Assert.AreSame(material, demand.Material);
             Assert.AreEqual(0.022M, demand.SellPrice);
         }
-
-        [TestMethod]
-        public void UpdateGameDemand_MaterialExists_MaterialNotAddedAdditionally()
-        {
-            var material = ReferenceData.GetMaterialByKey("metal_ruda");
-            var factories = new List<Factory> { new Factory { ProductionMaterials = new List<Material> { material } } };
-            ReferenceData.Demand.Materials.Add(new MaterialWithPrice { Material = material });
-
-            ReferenceData.UpdateGameDemand(factories);
-
-            Assert.AreEqual(1, ReferenceData.Demand.Materials.Count);
-            Assert.AreEqual(material, ReferenceData.Demand.Materials.First());
-        }
     }
 }

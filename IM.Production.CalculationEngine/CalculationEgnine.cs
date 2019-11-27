@@ -71,37 +71,26 @@ namespace CalculationEngine
             ReferenceData.UpdateGameDemand(game.Customers.SelectMany(c => c.Factories));
 
             // п.6. Осуществление производства
-            var maxFactoryLevel = 1;
-            var currentFactoryLevel = 1;
-            while (true)
+            // TODO It might be we don't need to process factories sequentually to generations, but it can be done in a random order
+            var maxGeneration = game.Customers.SelectMany(c => c.Factories).Select(f => f.FactoryDefinition.GenerationLevel).DefaultIfEmpty().Max();
+
+            for (var generation = 1; generation <= maxGeneration; generation++)
             {
                 foreach (var customer in game.Customers)
                 {
-                    var maxCustomerLevel = customer.Factories.Max(f => f.FactoryDefinition.GenerationLevel);
-                    if (maxCustomerLevel > maxFactoryLevel)
-                    {
-                        maxFactoryLevel = maxCustomerLevel;
-                    }
+                    var factories = customer.Factories.Where(f => f.FactoryDefinition.GenerationLevel == generation);
 
-                    var factories = customer.Factories.Where(f => f.FactoryDefinition.GenerationLevel == currentFactoryLevel).ToList();
                     foreach (var factory in factories)
                     {
-                        // п. 6.1. Выполняем производство согласно настройкам фабрики и помещаем на склад.
                         ProduceFactory(factory);
 
-                        // п. 6.2. Осуществляем передачу материалов согласно контрактам этой фабрики (другим игрокам или игре), включая выплаты штрафов, страховым премий, получения страховок
                         var contracts = customer.Contracts.Where(c => c.SourceFactory.Id == factory.Id);
+
                         foreach (var contract in contracts)
                         {
                             ProcessContract(contract);
                         }
                     }
-                }
-
-                currentFactoryLevel++;
-                if (currentFactoryLevel > maxFactoryLevel)
-                {
-                    break;
                 }
             }
 

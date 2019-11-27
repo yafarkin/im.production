@@ -140,8 +140,8 @@ namespace IM.Production.CalculationEngine.Tests
         public void Calculate_FactoryNeedSumToNextLevelUpIsZero_SumSet()
         {
             var definition = ReferenceData.FactoryDefinitions.First();
-            var factory = new Factory { NeedSumToNextLevelUp = 0, Level = 1, FactoryDefinition = definition };
             var customer = new Customer();
+            var factory = new Factory { NeedSumToNextLevelUp = 0, Level = 1, FactoryDefinition = definition, Customer = customer };
             var game = new Game();
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
@@ -158,8 +158,8 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var spentSum = 1;
             var description = ReferenceData.FactoryDefinitions.First();
-            var factory = new Factory { NeedSumToNextLevelUp = 1, SumOnRD = sumOnRD, SpentSumToNextLevelUp = spentSum, FactoryDefinition = description };
             var customer = new Customer { Sum = 1 };
+            var factory = new Factory { NeedSumToNextLevelUp = 1, SumOnRD = sumOnRD, SpentSumToNextLevelUp = spentSum, FactoryDefinition = description, Customer = customer };
             var game = new Game();
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
@@ -176,8 +176,8 @@ namespace IM.Production.CalculationEngine.Tests
             var definition = ReferenceData.FactoryDefinitions.First();
             const int level = 1;
             const int needSum = 1000;
-            var factory = new Factory { Level = level, NeedSumToNextLevelUp = needSum, SumOnRD = 10, SpentSumToNextLevelUp = 2, FactoryDefinition = definition };
             var customer = new Customer { Sum = 100 };
+            var factory = new Factory { Level = level, NeedSumToNextLevelUp = needSum, SumOnRD = 10, SpentSumToNextLevelUp = 2, FactoryDefinition = definition, Customer = customer };
             var game = new Game();
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
@@ -194,8 +194,8 @@ namespace IM.Production.CalculationEngine.Tests
         public void Calculate_ReadyForNextLevel_LevelIncreasedAndSumsChanged()
         {
             var definition = ReferenceData.FactoryDefinitions.First();
-            var factory = new Factory { Level = 1, SumOnRD = 50, NeedSumToNextLevelUp = 10, SpentSumToNextLevelUp = 0, FactoryDefinition = definition };
             var customer = new Customer { Sum = 100 };
+            var factory = new Factory { Level = 1, SumOnRD = 50, NeedSumToNextLevelUp = 10, SpentSumToNextLevelUp = 0, FactoryDefinition = definition, Customer = customer };
             var game = new Game();
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
@@ -212,8 +212,8 @@ namespace IM.Production.CalculationEngine.Tests
         public void Calculate_FactoryWithoutSpecialTax_SumDecreasedByDefaultTax()
         {
             var description = ReferenceData.FactoryDefinitions.First();
-            var factory = new Factory { FactoryDefinition = description };
             var customer = new Customer { Sum = 100 };
+            var factory = new Factory { FactoryDefinition = description, Customer = customer };
             var game = new Game();
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
