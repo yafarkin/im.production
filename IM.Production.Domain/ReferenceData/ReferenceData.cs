@@ -304,7 +304,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
 
                     if (demand == null)
                     {
-                        var costPrice = CalculateMaterialCostPrice(material);                        
+                        var costPrice = CalculateMaterialCostPrice(material);
                         var extraCharge = costPrice * extraChargePercent;
 
                         Demand.Materials.Add(new MaterialWithPrice
@@ -333,26 +333,28 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// Расчёт производительности фабрики.
         /// </summary>
         /// <param name="factory">Фабрика.</param>
-        public static void CalculateFactoryPerformance(Factory factory)
+        public static decimal CalculateFactoryPerformance(Factory factory)
         {
-            var performance = 0m;
+            var performance = 0M;
             var workers = factory.Workers;
+
             if (workers > 0)
             {
                 var baseWorkers = factory.FactoryDefinition.BaseWorkers;
+                performance = decimal.Divide(workers, baseWorkers);
 
                 // Если количество сотрудников меньше чем требуемое, то зависимость линейная.
                 // т.е. скажем если нужно 10 сотрудников на фабрике, а работают 3 - то производительность = 30%
-                performance = decimal.Divide(workers, baseWorkers);
                 if (workers > baseWorkers)
                 {
                     // если же сотрудников больше, то зависимость уже не линейная
-                    var lastFoundPerformance = 1m;
-                    foreach (var kv in FactoryOverPerformance)
+                    var foundPerformance = 1m;
+
+                    foreach (var value in FactoryOverPerformance)
                     {
-                        if (performance >= kv.Key)
+                        if (performance >= value.Key)
                         {
-                            lastFoundPerformance = kv.Value;
+                            foundPerformance = value.Value;
                         }
                         else
                         {
@@ -362,12 +364,11 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                         }
                     }
 
-                    performance = lastFoundPerformance;
+                    performance = foundPerformance;
                 }
             }
 
-            var factoryLevel = factory.Level;
-            factory.Performance = performance * factoryLevel;
+            return performance * factory.Level;
         }
 
         public static ProductionType GetProductionTypeByKey(string key)

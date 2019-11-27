@@ -82,7 +82,7 @@ namespace CalculationEngine
 
                     foreach (var factory in factories)
                     {
-                        ProduceFactory(factory);
+                        ProduceFactory(factory, game);
 
                         var contracts = customer.Contracts.Where(c => c.SourceFactory.Id == factory.Id);
 
@@ -296,23 +296,23 @@ namespace CalculationEngine
             game.AddActivity(taxChange);
         }
 
-        protected void ProduceFactory(Factory factory)
+        protected void ProduceFactory(Factory factory, Game game)
         {
-            var time = new GameTime();
-
             // 1. определяем уровень производительности фабрики
-            ReferenceData.CalculateFactoryPerformance(factory);
+            factory.Performance = ReferenceData.CalculateFactoryPerformance(factory);
 
             // 2. выполняем производство материалов и помещаем их на склад
 
             // 2.1. определяем, что вообще сможем произвести
-            var willProductionMaterials = factory.ProductionMaterials;
+            var productionMaterials = factory.ProductionMaterials;
             var usedMaterialsOnStock = new List<MaterialOnStock>();
             decimal performancePerMaterial = 0;
-            while (willProductionMaterials.Any())
+            var time = new GameTime();
+
+            while (productionMaterials.Any())
             {
-                performancePerMaterial = decimal.Divide(1, willProductionMaterials.Count);
-                foreach (var material in willProductionMaterials)
+                performancePerMaterial = decimal.Divide(1, productionMaterials.Count);
+                foreach (var material in productionMaterials)
                 {
                     var currentUsedMaterialsOnStock = new List<MaterialOnStock>();
                     // смотрим - есть ли все необходимые исходные материалы на складе
@@ -337,11 +337,11 @@ namespace CalculationEngine
                     if (!allMaterialsOnStock)
                     {
                         // не хватает материалов. выполняем полный пересчёт, с пересчётом производительности в т.ч.
-                        willProductionMaterials.Remove(material);
+                        productionMaterials.Remove(material);
                         usedMaterialsOnStock.Clear();
 
                         var infoChanging = new InfoChanging(time, factory.Customer, $"Не хватает ресурсов для производства материала {material.DisplayName}");
-                        Game.AddActivity(infoChanging);
+                        game.AddActivity(infoChanging);
 
                         continue;
                     }
@@ -357,7 +357,7 @@ namespace CalculationEngine
             }
 
             // 2.2. осуществляем производство материала и помещение его на склад
-            foreach (var material in willProductionMaterials)
+            foreach (var material in productionMaterials)
             {
                 var producedAmount = material.AmountPerDay * performancePerMaterial * factory.Performance;
                 var producedMaterial = new MaterialOnStock { Amount = producedAmount, Material = material };
@@ -366,7 +366,7 @@ namespace CalculationEngine
                 ReferenceData.AddMaterialToStock(factory.Stock, producedMaterial);
 
                 var infoChanging = new InfoChanging(time, factory.Customer, $"Произведен материал {material.DisplayName} в количестве {producedMaterial.Amount}");
-                Game.AddActivity(infoChanging);
+                game.AddActivity(infoChanging);
             }
 
             // 2.3. Списываем со склада исходные материалы, потраченные на производство этого
@@ -390,7 +390,7 @@ namespace CalculationEngine
             {
                 SumChange = -totalSalary
             };
-            Game.AddActivity(customerChange);
+            game.AddActivity(customerChange);
         }
 
         private void ProcessGameToCustomerContract(Contract contract, Game game)

@@ -274,5 +274,21 @@ namespace IM.Production.Domain.Tests
             Assert.AreSame(material, demand.Material);
             Assert.AreEqual(0.022M, demand.SellPrice);
         }
+
+        [DataTestMethod]
+        [DataRow(1, 0, 10, 0)]
+        [DataRow(1, 1, 10, 0.1)]
+        [DataRow(1, 2, 10, 0.2)]
+        [DataRow(2, 0, 1, 0)]
+        [DataRow(2, 1, 1, 1.55)]
+        [DataRow(2, 2, 1, 3.1)]
+        public void CalculateFactoryPerformance_AnyWorkersAndLevel_PerformanceReturned(int workers, int level, int baseWorkers, double expected)
+        {
+            var factory = new Factory { Workers = workers, Level = level, FactoryDefinition = new FactoryDefinition { BaseWorkers = baseWorkers } };
+
+            var performnce = ReferenceData.CalculateFactoryPerformance(factory);
+
+            Assert.AreEqual((decimal)expected, performnce);
+        }
     }
 }
