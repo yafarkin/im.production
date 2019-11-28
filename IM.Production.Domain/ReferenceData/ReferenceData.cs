@@ -1175,7 +1175,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static void AddMaterialToStock(IList<MaterialOnStock> materials, MaterialOnStock materialToAdd)
         {
             var material = materials.FirstOrDefault(m => m.Material.Id == materialToAdd.Material.Id);
-            if (null == material)
+            if (material == null)
             {
                 materials.Add(materialToAdd);
             }

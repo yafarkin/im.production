@@ -97,8 +97,8 @@ namespace CalculationEngine
             // п.7. Осуществляем поставки по контрактам от игры на фабрику
             foreach (var customer in Game.Customers)
             {
-                var gameDemandContracts = customer.Contracts.Where(c => c.DestinationFactory == null);
-                foreach (var contract in gameDemandContracts)
+                var contracts = customer.Contracts.Where(c => c.DestinationFactory == null);
+                foreach (var contract in contracts)
                 {
                     ProcessContract(contract);
                 }
@@ -298,7 +298,6 @@ namespace CalculationEngine
 
         protected void ProduceFactory(Factory factory, Game game)
         {
-            // 1. определяем уровень производительности фабрики
             factory.Performance = ReferenceData.CalculateFactoryPerformance(factory);
 
             // 2. выполняем производство материалов и помещаем их на склад
@@ -306,22 +305,26 @@ namespace CalculationEngine
             // 2.1. определяем, что вообще сможем произвести
             var productionMaterials = factory.ProductionMaterials;
             var usedMaterialsOnStock = new List<MaterialOnStock>();
+
             decimal performancePerMaterial = 0;
             var time = new GameTime();
 
             while (productionMaterials.Any())
             {
                 performancePerMaterial = decimal.Divide(1, productionMaterials.Count);
+
                 foreach (var material in productionMaterials)
                 {
-                    var currentUsedMaterialsOnStock = new List<MaterialOnStock>();
                     // смотрим - есть ли все необходимые исходные материалы на складе
+                    var currentUsedMaterialsOnStock = new List<MaterialOnStock>();
                     var allMaterialsOnStock = true;
+
                     foreach (var inputMaterial in material.InputMaterials)
                     {
-                        var inputAmount = inputMaterial.Amount * factory.Performance * performancePerMaterial;
+                        var amount = inputMaterial.Amount * factory.Performance * performancePerMaterial;
                         var materialOnStock = factory.Stock.FirstOrDefault(m => m.Id == inputMaterial.Id);
-                        if (null == materialOnStock || materialOnStock.Amount < inputAmount)
+
+                        if (materialOnStock == null || materialOnStock.Amount < amount)
                         {
                             allMaterialsOnStock = false;
                             break;
@@ -330,7 +333,7 @@ namespace CalculationEngine
                         currentUsedMaterialsOnStock.Add(new MaterialOnStock
                         {
                             Material = inputMaterial.Material,
-                            Amount = inputAmount
+                            Amount = amount
                         });
                     }
 
@@ -373,23 +376,26 @@ namespace CalculationEngine
             foreach (var usedMaterial in usedMaterialsOnStock)
             {
                 var materialOnStock = factory.Stock.First(m => m.Material.Id == usedMaterial.Material.Id);
+
                 materialOnStock.Amount -= usedMaterial.Amount;
+
                 if (materialOnStock.Amount == 0)
                 {
                     factory.Stock.Remove(materialOnStock);
                 }
             }
 
-            // 3. списываем ФОТ.
+            // 3. списываем ФОТ. Cписываем деньги со счёта игрока
             var totalSalary = factory.Workers * ReferenceData.CalculateWorkerSalary(factory);
 
-            // списываем деньги со счёта игрока
             factory.Customer.Sum -= totalSalary;
+
             // добавляем активность по изменению суммы на счету игрока
             var customerChange = new CustomerChange(time, factory.Customer, $"Выплата зарплаты на фабрике {factory.DisplayName}, рабочих {factory.Workers}, общая сумма {totalSalary:C}")
             {
                 SumChange = -totalSalary
             };
+
             game.AddActivity(customerChange);
         }
 
