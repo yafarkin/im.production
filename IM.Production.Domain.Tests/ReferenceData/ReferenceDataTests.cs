@@ -290,5 +290,16 @@ namespace IM.Production.Domain.Tests
 
             Assert.AreEqual((decimal)expected, performnce);
         }
+
+        [TestMethod]
+        public void CalculateWorkerSalary_AnyFactory_WorkerSalaryReturned()
+        {
+            var definition = new FactoryDefinition { GenerationLevel = 10 };
+            var factory = new Factory { FactoryDefinition = definition };
+
+            var salary = ReferenceData.CalculateWorkerSalary(factory);
+
+            Assert.AreEqual(100, salary);
+        }
     }
 }

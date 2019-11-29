@@ -322,10 +322,12 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// </summary>
         /// <param name="factory">Фабрика.</param>
         /// <returns>Зарплата рабочего.</returns>
+        /// <remarks>Рассчитывается, как 10% от поколения фабрики, умноженные на базовую зарплату.</remarks>
         public static decimal CalculateWorkerSalary(Factory factory)
         {
-            // расчитываем как 10% от от уровня фабрики * базовая зарплата
-            var salary = (1 + decimal.Divide(1, factory.FactoryDefinition.GenerationLevel)) * BaseWorkerSalay;
+            var decile = factory.FactoryDefinition.GenerationLevel * 0.1M;
+            var salary = decile * BaseWorkerSalay;
+
             return salary;
         }
 

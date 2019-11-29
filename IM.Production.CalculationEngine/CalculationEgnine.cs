@@ -309,22 +309,24 @@ namespace CalculationEngine
             decimal performancePerMaterial = 0;
             var time = new GameTime();
 
+            // TODO Checking algorith to be regactored
             while (productionMaterials.Any())
             {
-                performancePerMaterial = decimal.Divide(1, productionMaterials.Count);
-
-                foreach (var material in productionMaterials)
+                for (var i = 0; i < productionMaterials.Count; i++)
                 {
                     // смотрим - есть ли все необходимые исходные материалы на складе
+                    var material = productionMaterials[i];
                     var currentUsedMaterialsOnStock = new List<MaterialOnStock>();
                     var allMaterialsOnStock = true;
 
+                    performancePerMaterial = decimal.Divide(1, productionMaterials.Count);
+
                     foreach (var inputMaterial in material.InputMaterials)
                     {
-                        var amount = inputMaterial.Amount * factory.Performance * performancePerMaterial;
-                        var materialOnStock = factory.Stock.FirstOrDefault(m => m.Id == inputMaterial.Id);
+                        var materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == inputMaterial.Material.Id);
+                        var requiredAmount = inputMaterial.Amount * factory.Performance * performancePerMaterial;
 
-                        if (materialOnStock == null || materialOnStock.Amount < amount)
+                        if (materialOnStock == null || materialOnStock.Amount < requiredAmount)
                         {
                             allMaterialsOnStock = false;
                             break;
@@ -333,7 +335,7 @@ namespace CalculationEngine
                         currentUsedMaterialsOnStock.Add(new MaterialOnStock
                         {
                             Material = inputMaterial.Material,
-                            Amount = amount
+                            Amount = requiredAmount
                         });
                     }
 
@@ -346,6 +348,7 @@ namespace CalculationEngine
                         var infoChanging = new InfoChanging(time, factory.Customer, $"Не хватает ресурсов для производства материала {material.DisplayName}");
                         game.AddActivity(infoChanging);
 
+                        i = -1;
                         continue;
                     }
 
