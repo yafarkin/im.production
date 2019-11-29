@@ -417,7 +417,7 @@ namespace CalculationEngine
             }
 
             var amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
-            var totalPrice = ReferenceData.Supply.Materials.First(m => m.Material.Id == material.Id).SellPrice * amount;
+            var totalPrice = ReferenceData.Data.Supply.Materials.First(m => m.Material.Id == material.Id).SellPrice * amount;
 
             // начисляем материал на склад
             materialOnStock.Amount += amount;
@@ -472,7 +472,7 @@ namespace CalculationEngine
                 var isGameDemand = null == contract.DestinationFactory;
                 var needAmount = 0;
 
-                var sellPrice = isGameDemand ? ReferenceData.Demand.Materials.First(m => m.Material.Id == material.Id).SellPrice : contract.MaterialWithPrice.SellPrice;
+                var sellPrice = isGameDemand ? ReferenceData.Data.Demand.Materials.First(m => m.Material.Id == material.Id).SellPrice : contract.MaterialWithPrice.SellPrice;
 
                 amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
 

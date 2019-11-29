@@ -139,7 +139,7 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_FactoryNeedSumToNextLevelUpIsZero_SumSet()
         {
-            var definition = ReferenceData.FactoryDefinitions.First();
+            var definition = ReferenceData.Data.FactoryDefinitions.First();
             var factory = new Factory { NeedSumToNextLevelUp = 0, Level = 1, FactoryDefinition = definition };
             var customer = new Customer();
             var game = new Game();
@@ -157,7 +157,7 @@ namespace IM.Production.CalculationEngine.Tests
         public void Calculate_FactorySumOnRDIsLessThanZero_SumsNotChanged(int sumOnRD)
         {
             var spentSum = 1;
-            var description = ReferenceData.FactoryDefinitions.First();
+            var description = ReferenceData.Data.FactoryDefinitions.First();
             var factory = new Factory { NeedSumToNextLevelUp = 1, SumOnRD = sumOnRD, SpentSumToNextLevelUp = spentSum, FactoryDefinition = description };
             var customer = new Customer { Sum = 1 };
             var game = new Game();
@@ -173,7 +173,7 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_PositiveFactorySumOnRDAndNotReady_SumsChagendAndLevelNeedSuToNextLevelNotChanged()
         {
-            var definition = ReferenceData.FactoryDefinitions.First();
+            var definition = ReferenceData.Data.FactoryDefinitions.First();
             const int level = 1;
             const int needSum = 1000;
             var factory = new Factory { Level = level, NeedSumToNextLevelUp = needSum, SumOnRD = 10, SpentSumToNextLevelUp = 2, FactoryDefinition = definition };
@@ -193,7 +193,7 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_ReadyForNextLevel_LevelIncreasedAndSumsChanged()
         {
-            var definition = ReferenceData.FactoryDefinitions.First();
+            var definition = ReferenceData.Data.FactoryDefinitions.First();
             var factory = new Factory { Level = 1, SumOnRD = 50, NeedSumToNextLevelUp = 10, SpentSumToNextLevelUp = 0, FactoryDefinition = definition };
             var customer = new Customer { Sum = 100 };
             var game = new Game();
@@ -211,7 +211,7 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_FactoryWithoutSpecialTax_SumDecreasedByDefaultTax()
         {
-            var description = ReferenceData.FactoryDefinitions.First();
+            var description = ReferenceData.Data.FactoryDefinitions.First();
             var factory = new Factory { FactoryDefinition = description };
             var customer = new Customer { Sum = 100 };
             var game = new Game();

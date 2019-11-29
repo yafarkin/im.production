@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Epam.ImitationGames.Production.Domain.Production;
+using Epam.ImitationGames.Production.Domain.ReferenceData;
 
 namespace Epam.ImitationGames.Production.Domain.ReferenceData
 {
@@ -10,128 +11,17 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
     /// </summary>
     public static class ReferenceData
     {
-        /// <summary>
-        /// Области производства.
-        /// </summary>
-        public static List<ProductionType> ProductionTypes { get; private set; }
+        public static InitialData Data = new InitialData();
 
         /// <summary>
-        /// Общий список материалов в игре.
+        /// Инициализация данных.
         /// </summary>
-        public static List<Material> Materials { get; private set; }
-
-        /// <summary>
-        /// Какие материалы игра поставляет изначально.
-        /// </summary>
-        public static GameSupply Supply { get; private set; }
-
-        /// <summary>
-        /// Какие ресурсы игра покупает и по какой цене.
-        /// </summary>
-        public static GameDemand Demand { get; private set; }
-
-        /// <summary>
-        /// Определения фабрик, которые есть в игре.
-        /// </summary>
-        public static List<FactoryDefinition> FactoryDefinitions { get; private set; }
-
-        /// <summary>
-        /// Налог на продажу материалов.
-        /// </summary>
-        public static readonly List<TaxOnMaterial> MaterialTaxes = new List<TaxOnMaterial>();
-
-        /// <summary>
-        /// Налог на фабрики.
-        /// </summary>
-        public static readonly List<TaxOnFactory> FactoryTaxes = new List<TaxOnFactory>();
-
-        /// <summary>
-        /// Справочные данные по производительности фабрики, если количество рабочих больше чем нужно.
-        /// </summary>
-        /// <remarks>Key - насколько рабочих больше чем нужно; Value - на сколько измениться общая производительность фабрики.</remarks>
-        public static readonly List<KeyValuePair<decimal, decimal>> FactoryOverPerformance = new List<KeyValuePair<decimal, decimal>>
+        public static InitialData GetData()
         {
-            new KeyValuePair<decimal, decimal>(1.1m, 1.1m),
-            new KeyValuePair<decimal, decimal>(1.2m, 1.15m),
-            new KeyValuePair<decimal, decimal>(1.3m, 1.2m),
-            new KeyValuePair<decimal, decimal>(1.4m, 1.25m),
-            new KeyValuePair<decimal, decimal>(1.5m, 1.4m),
-            new KeyValuePair<decimal, decimal>(1.6m, 1.45m),
-            new KeyValuePair<decimal, decimal>(1.8m, 1.5m),
-            new KeyValuePair<decimal, decimal>(2m, 1.55m)
-        };
-
-        /// <summary>
-        /// Стоимость фабрики по умолчанию.
-        /// </summary>
-        /// <remarks>Key - уровень поколения фабрики, Value - стоимость фабрики.</remarks>
-        public static readonly List<KeyValuePair<int, decimal>> DefaultFactoryCost =
-            new List<KeyValuePair<int, decimal>>
-            {
-                new KeyValuePair<int, decimal>(1, 10000),
-                new KeyValuePair<int, decimal>(2, 25000),
-                new KeyValuePair<int, decimal>(3, 50000),
-                new KeyValuePair<int, decimal>(4, 75000),
-                new KeyValuePair<int, decimal>(5, 110000),
-                new KeyValuePair<int, decimal>(6, 150000),
-                new KeyValuePair<int, decimal>(7, 200000),
-                new KeyValuePair<int, decimal>(8, 300000),
-                new KeyValuePair<int, decimal>(9, 500000),
-                new KeyValuePair<int, decimal>(10, 1000000)
-            };
-
-        /// <summary>
-        /// Стоимость конкретного типа фабрики.
-        /// </summary>
-        /// <remarks>Key - ID определения фабрики, Value - стоимость фабрики.</remarks>
-        public static readonly List<KeyValuePair<Guid, decimal>> FactoryCost = new List<KeyValuePair<Guid, decimal>>();
-
-        /// <summary>
-        /// Стоимость исследования следующего поколения фабрики.
-        /// </summary>
-        /// <remarks>По умолчанию первое поколение уже исследовано. Key - уровень поколения, Value - стоимость исследования.</remarks>
-        public static readonly List<KeyValuePair<int, decimal>> GenerationFactoryRDCost = new List<KeyValuePair<int, decimal>>
-        {
-            new KeyValuePair<int, decimal>(2, 5000),
-            new KeyValuePair<int, decimal>(3, 15000),
-            new KeyValuePair<int, decimal>(4, 25000),
-            new KeyValuePair<int, decimal>(5, 40000),
-            new KeyValuePair<int, decimal>(6, 60000),
-            new KeyValuePair<int, decimal>(7, 80000),
-            new KeyValuePair<int, decimal>(8, 120000),
-            new KeyValuePair<int, decimal>(9, 200000),
-            new KeyValuePair<int, decimal>(10, 400000)
-        };
-
-        /// <summary>
-        /// Справочные данные по прокачке уровня на конкретной фабрике
-        /// </summary>
-        /// <remarks>По умолчанию первый уровень фабрики уже исследован. Key - уровень поколения, Value - процент от стоимости фабрики.</remarks>
-        /// <remarks>Т.е. указано - 5, 1.5. Это означает что что бы исследовать фабирку 5 уровня (находясь на 4), надо будет потратить 1.5 цены стоимости этой фабрики</remarks>
-        public static readonly List<KeyValuePair<int, decimal>> FactoryLevelUpRDCost =
-            new List<KeyValuePair<int, decimal>>
-            {
-                new KeyValuePair<int, decimal>(2, 0.33m),
-                new KeyValuePair<int, decimal>(3, 0.75m),
-                new KeyValuePair<int, decimal>(4, 1m),
-                new KeyValuePair<int, decimal>(5, 1.5m),
-            };
-
-        /// <summary>
-        /// Базовая зарплата одного рабочего на фабрике.
-        /// </summary>
-        public static decimal BaseWorkerSalay = 100m;
-
-        /// <summary>
-        /// Налог на фабрику по умолчанию.
-        /// </summary>
-        public static decimal DefaultFactoryTax = 0.1m;
-
-        /// <summary>
-        /// Налог на продажу единицы материала по умолчанию.
-        /// </summary>
-        public static decimal DefaultMaterialTax = 0.01m;
-
+            ReferenceData.InitReferences();
+            return Data;
+        }
+        
         /// <summary>
         /// Расчёт общей стоимости для исследования фабрик следующего поколения.
         /// </summary>
@@ -140,7 +30,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static decimal CalculateRDSummToNextGenerationLevel(Customer customer)
         {
             var currentGenerationLevel = customer.FactoryGenerationLevel;
-            var cost = GenerationFactoryRDCost.FirstOrDefault(c => c.Key == currentGenerationLevel + 1);
+            var cost = Data.GenerationFactoryRDCost.FirstOrDefault(c => c.Key == currentGenerationLevel + 1);
             return cost.Value;
         }
 
@@ -152,7 +42,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static decimal CalculateRDSummToNextFactoryLevelUp(Factory factory)
         {
             var currentFactoryLevel = factory.Level;
-            var cost = FactoryLevelUpRDCost.FirstOrDefault(c => c.Key == currentFactoryLevel + 1);
+            var cost = Data.FactoryLevelUpRDCost.FirstOrDefault(c => c.Key == currentFactoryLevel + 1);
             return CalculateFactoryCost(factory.FactoryDefinition) * cost.Value;
         }
 
@@ -164,12 +54,12 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static decimal CalculateFactoryCost(FactoryDefinition factoryDefinition)
         {
             decimal cost;
-            var factoryCost = FactoryCost.FirstOrDefault(f => f.Key == factoryDefinition.Id);
+            var factoryCost = Data.FactoryCost.FirstOrDefault(f => f.Key == factoryDefinition.Id);
             if (factoryCost.Key == Guid.Empty)
             {
                 // считаем что данные по уровням упорядочены уже в определении
-                cost = DefaultFactoryCost.First().Value;
-                foreach (var defaultCost in DefaultFactoryCost)
+                cost = Data.DefaultFactoryCost.First().Value;
+                foreach (var defaultCost in Data.DefaultFactoryCost)
                 {
                     if (defaultCost.Key >= factoryDefinition.GenerationLevel)
                     {
@@ -196,7 +86,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <returns>Сумма налога.</returns>
         public static decimal CalculateTaxOnFactory(Factory factory)
         {
-            var tax = FactoryTaxes.FirstOrDefault(f => f.FactoryDefinition.Id == factory.FactoryDefinition.Id)?.Percent ?? DefaultFactoryTax;
+            var tax = Data.FactoryTaxes.FirstOrDefault(f => f.FactoryDefinition.Id == factory.FactoryDefinition.Id)?.Percent ?? Data.DefaultFactoryTax;
             return tax;
         }
 
@@ -207,7 +97,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <returns>Сумма налога.</returns>
         public static decimal CalculateTaxOnMaterial(Material material)
         {
-            var tax = MaterialTaxes.FirstOrDefault(m => m.Material.Id == material.Id)?.Percent ?? DefaultMaterialTax;
+            var tax = Data.MaterialTaxes.FirstOrDefault(m => m.Material.Id == material.Id)?.Percent ?? Data.DefaultMaterialTax;
             return tax;
         }
 
@@ -216,7 +106,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             price = 0;
             sourceMaterials = new List<MaterialWithPrice>();
 
-            var supplyMaterial = Supply.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
+            var supplyMaterial = Data.Supply.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
             if (supplyMaterial != null)
             {
                 // если материал поставляет игра, то стоимость за единицу материала составляет цену, по которой игра его продаёт * запрашиваемое количество
@@ -260,7 +150,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <returns>Себестоимость его производства.</returns>
         public static decimal CalculateMaterialCostPrice(Material material)
         {
-            var supplyMaterial = Supply.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
+            var supplyMaterial = Data.Supply.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
             if (supplyMaterial != null)
             {
                 // если материал поставляет игра, то стоимость за единицу материала составляет цену, по которой игра его продаёт
@@ -300,14 +190,14 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
 
                 foreach (var material in factory.ProductionMaterials)
                 {
-                    var demand = Demand.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
+                    var demand = Data.Demand.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
 
                     if (demand == null)
                     {
                         var costPrice = CalculateMaterialCostPrice(material);                        
                         var extraCharge = costPrice * extraChargePercent;
 
-                        Demand.Materials.Add(new MaterialWithPrice
+                        Data.Demand.Materials.Add(new MaterialWithPrice
                         {
                             Material = material,
                             SellPrice = costPrice + extraCharge
@@ -325,7 +215,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static decimal CalculateWorkerSalary(Factory factory)
         {
             // расчитываем как 10% от от уровня фабрики * базовая зарплата
-            var salary = (1 + decimal.Divide(1, factory.FactoryDefinition.GenerationLevel)) * BaseWorkerSalay;
+            var salary = (1 + decimal.Divide(1, factory.FactoryDefinition.GenerationLevel)) * Data.BaseWorkerSalay;
             return salary;
         }
 
@@ -348,7 +238,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 {
                     // если же сотрудников больше, то зависимость уже не линейная
                     var lastFoundPerformance = 1m;
-                    foreach (var kv in FactoryOverPerformance)
+                    foreach (var kv in Data.FactoryOverPerformance)
                     {
                         if (performance >= kv.Key)
                         {
@@ -372,12 +262,12 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
 
         public static ProductionType GetProductionTypeByKey(string key)
         {
-            return ProductionTypes.First(x => x.Key.ToLower() == key.ToLower());
+            return Data.ProductionTypes.First(x => x.Key.ToLower() == key.ToLower());
         }
 
         public static Material GetMaterialByKey(string key)
         {
-            var result = Materials.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
+            var result = Data.Materials.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
             if (null == result)
             {
                 //throw new InvalidOperationException($"Отсутствует указанный ключ материала: {key}");
@@ -388,27 +278,27 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
 
         private static void InitProductionTypes()
         {
-            ProductionTypes = new List<ProductionType>
+            Data.ProductionTypes = new List<ProductionType>
             {
                 new ProductionType {Key = "metall", DisplayName = "Металлургическая промышленность"},
                 new ProductionType {Key = "electronic", DisplayName = "Электронная промышленность"},
-                new ProductionType {Key = "derevo", DisplayName = "Дерево-обрататывающая промышленность"},
-                new ProductionType {Key = "neft_gaz", DisplayName = "Нефте-газо-химическая промышленность"}
+                new ProductionType {Key = "chemical", DisplayName = "Химическая промышленность"}
             };
         }
 
         private static void InitMaterials()
         {
-            Materials = new List<Material>();
+            //Материалы металлургии и производства самолетов
+            Data.Materials = new List<Material>();
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 Key = "metall_ruda",
                 ProductionType = GetProductionTypeByKey("metall"),
                 DisplayName = "Металлосодержащая руда",
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,      // произведем 1 единицу материала "металл железо"
                 Key = "metall_zelezo",
@@ -424,7 +314,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Железная руда",
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_med",
@@ -440,7 +330,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Медная руда",
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 0.01m,   // здесь играемся цифрами - мы произведем 0.01 материала "золотая руда"
                 Key = "metall_zoloto",
@@ -456,7 +346,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Золотая руда",
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_zelezo_list",
@@ -464,7 +354,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 {
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_ruda"),
+                        Material = GetMaterialByKey("metall_zelezo"),
                         Amount = 5
                     }
                 },
@@ -472,7 +362,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Стальной лист"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_med_list",
@@ -480,7 +370,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 {
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_ruda"),
+                        Material = GetMaterialByKey("metall_med"),
                         Amount = 5
                     }
                 },
@@ -488,7 +378,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Медный лист"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_zoloto_list",
@@ -496,7 +386,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 {
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_ruda"),
+                        Material = GetMaterialByKey("metall_zoloto"),
                         Amount = 5
                     }
                 },
@@ -504,473 +394,1544 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Золотой лист"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
-                AmountPerDay = 1,
-                Key = "metall_kuzov_auto",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_zelezo_list"),
-                        Amount = 12
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Кузов для авто"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_gruz_auto",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_zelezo_list"),
-                        Amount = 40
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Кузов для грузового авто"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_korpus_kpp",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_zelezo"),
-                        Amount = 10
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Корпус для коробки переключения передач"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_korpus_dvig",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_zelezo"),
-                        Amount = 30
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Корпус для двигателя"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_korpus_auto_kpp",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_zelezo"),
-                        Amount = 12
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Корпус для автоматической коробки переключения передач"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_korpus_turbo_dvig",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_zelezo"),
-                        Amount = 30
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Корпус для турбо-двигателя"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_korpus_gruz_kpp",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_zelezo"),
-                        Amount = 30
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Корпус для грузовой коробки переключения передач"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_korpus_gruz_dvig",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_zelezo"),
-                        Amount = 50
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Корпус для грузового двигателя"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_detali_kpp",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_zelezo_list"),
-                        Amount = 2
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Детали для коробки переключения передач"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_detali_dvig",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_zelezo_list"),
-                        Amount = 5
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Детали для двигателя"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_detali_transmission",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_zelezo_list"),
-                        Amount = 6
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Детали для трансмиссии"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_detali_auto_kpp",
+                AmountPerDay = 1m,
+                Key = "metall_soplo",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
                     {
                         Material = GetMaterialByKey("metall_zelezo_list"),
                         Amount = 3
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_detaley"),
+                        Amount = 3
                     }
                 },
                 ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Детали для автоматической коробки переключения передач"
+                DisplayName = "Сопло"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
-                AmountPerDay = 1,
-                Key = "metall_detali_turbo_dvig",
+                AmountPerDay = 1m,
+                Key = "metall_camera_sgoraniya",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
                     {
                         Material = GetMaterialByKey("metall_zelezo_list"),
-                        Amount = 8
+                        Amount = 6
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_detaley"),
+                        Amount = 6
                     }
                 },
                 ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Детали для турбо-двигателя"
+                DisplayName = "Камера сгорания"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
-                AmountPerDay = 1,
-                Key = "metall_detali_gruz_kpp",
+                AmountPerDay = 1m,
+                Key = "metall_gazogenerator",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 10
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_detaley"),
+                        Amount = 10
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("metall"),
+                DisplayName = "Газогенератор"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "metall_compressor",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
                     {
                         Material = GetMaterialByKey("metall_zelezo_list"),
                         Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_detaley"),
+                        Amount = 4
                     }
                 },
                 ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Детали для грузовой коробки переключения передач"
+                DisplayName = "Компрессор"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
-                AmountPerDay = 1,
-                Key = "metall_detali_gruz_dvig",
+                AmountPerDay = 1m,
+                Key = "metall_korpus_legkiy_samolet",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
                     {
                         Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 30
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_samoletov"),
+                        Amount = 20
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 25
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_stecloplasticovie_komponenty"),
+                        Amount = 12
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 6
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("metall"),
+                DisplayName = "Корпус легкого самолета"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "metall_korpus_samolet_gruzovoy",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 62
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_samoletov"),
+                        Amount = 35
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 80
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_stecloplasticovie_komponenty"),
+                        Amount = 32
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 16
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("metall"),
+                DisplayName = "Корпус грузового самолета"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "metall_react_dvigatel_samolet",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 2
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_camera_sgoraniya"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_soplo"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_compressor"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("metall"),
+                DisplayName = "Реактивный двигатель самолета"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "metall_legkiy_samolet",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_korpus_legkiy_samolet"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_react_dvigatel_samolet"),
+                        Amount = 2
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_bortovoy_computer"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("metall"),
+                DisplayName = "Легкий самолет"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "metall_systema_kondizioner_samolet",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 12
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_stecloplasticovie_komponenty"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_vichislitelnaya_apparatura"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("metall"),
+                DisplayName = "Система кондиционирования воздуха для самолета"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "metall_gruz_samolet",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_korpus_samolet_gruzovoy"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_systema_kondizioner_samolet"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_react_dvigatel_samolet"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_bortovoy_computer"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_systema_navigazii"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("metall"),
+                DisplayName = "Грузовой самолет"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "metall_registr_apparat",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 6
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_vichislitelnaya_apparatura"),
+                        Amount = 2
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribory_controlya"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_izmeritelnie_pribori"),
                         Amount = 14
                     }
                 },
                 ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Детали для грузового двигателя"
+                DisplayName = "Регистрирующая аппаратура для летающих лабораторий"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
-                AmountPerDay = 1,
-                Key = "metall_detali_gruz_transmission",
+                AmountPerDay = 1m,
+                Key = "metall_vichislitel_complex",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
                     {
                         Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_vichislitelnaya_apparatura"),
+                        Amount = 16
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribory_controlya"),
+                        Amount = 10
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 10
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 7
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("metall"),
+                DisplayName = "Вычислительный комплекс для летающих лабораторий"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "metall_laboratoriya_samolet",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_gruz_samolet"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_registr_apparat"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_vichislitel_complex"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("metall"),
+                DisplayName = "Самолет - Летающая лаборатория"
+            });
+
+            //Материалы химии и производства ракет.
+            Data.Materials.Add(new Material
+            {
+                Key = "chemical_reagenty",
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Химические реагенты"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_reagenty_s_zashitnimy_svoystvami",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_reagenty"),
+                        Amount = 10000  // Значение взято по аналогии с металлургией
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Реагенты с защитными свойствами"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_plastic",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_reagenty"),
+                        Amount = 15000  // Значение взято по аналогии с металлургией
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Пластик"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_kremniy",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_reagenty"),
+                        Amount = 50000  // Значение взято по аналогии с металлургией
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Кремний"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_rezina",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_reagenty"),
+                        Amount = 15000  // Значение взято по аналогии с металлургией
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Резина"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_stecloplastic",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_reagenty"),
+                        Amount = 50000  // Значение взято по аналогии с металлургией
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Стеклопластик"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_ygleplastic",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_reagenty"),
+                        Amount = 100000  // Значение взято по аналогии с металлургией
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Углепластик"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_plytoniy_238",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_reagenty"),
+                        Amount = 200000  // Значение взято по аналогии с металлургией
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Плутоний-238"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_rastvor_dlya_pokritiya_detaley",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_reagenty_s_zashitnimy_svoystvami"),
+                        Amount = 3
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Раствор для покрытия деталей"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_rastvor_dlya_pokritiya_samoletov",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_reagenty_s_zashitnimy_svoystvami"),
+                        Amount = 6
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Раствор для покрытия самолетов"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_rastvor_dlya_pokritiya_kosmicheskih_apparatov",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_reagenty_s_zashitnimy_svoystvami"),
+                        Amount = 10
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Раствор для покрытия космических аппаратов"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_rezinovie_komponenty",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezina"),
+                        Amount = 6
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Резиновые компоненты"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_plasticovie_komponenty",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_plastic"),
+                        Amount = 6
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Пластиковые компоненты"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_stecloplasticovie_komponenty",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_stecloplastic"),
+                        Amount = 4
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Стеклопластиковые компоненты"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_ygleplasticovie_komponenty",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplastic"),
+                        Amount = 2
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Углепластиковые компоненты"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_korpus_raketa_nositelya",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 70
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_kosmicheskih_apparatov"),
+                        Amount = 18
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 26
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_stecloplasticovie_komponenty"),
+                        Amount = 13
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 5
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Корпус ракеты-носителя"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_raketniy_dvigatel",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 5
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_camera_sgoraniya"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_soplo"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_gazogenerator"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Ракетный двигатель"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_raketa_nositel",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_raketniy_dvigatel"),
+                        Amount = 3
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_korpus_raketa_nositelya"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribory_controlya"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Ракета-носитель"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_systema_kislorodoobespecheniya",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 12
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 16
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_stecloplasticovie_komponenty"),
+                        Amount = 9
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_vichislitelnaya_apparatura"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Система кислородообеспечения"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_pilot_kosmicheskiy_korabl",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_kosmicheskih_apparatov"),
+                        Amount = 40
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_systema_kislorodoobespecheniya"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 80
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 15
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_bortovoy_computer"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_systema_navigazii"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Пилотируемый космический корабль"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "chemical_modul_kosmicheskoy_stanzii",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_kosmicheskih_apparatov"),
+                        Amount = 15
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_systema_kislorodoobespecheniya"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 30
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
                         Amount = 20
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_vichislitelnaya_apparatura"),
+                        Amount = 2
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribory_controlya"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_izmeritelnie_pribori"),
+                        Amount = 5
                     }
                 },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Детали для грузовой трансмиссии"
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Модуль космической станции"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
-                AmountPerDay = 1,
-                Key = "metall_auto_kpp",
+                AmountPerDay = 1m,
+                Key = "chemical_oborudovaniye_dlya_experimentov_v_kosmose",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_korpus_kpp"),
-                        Amount = 1
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 10
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_detali_kpp"),
-                        Amount = 1
+                        Material = GetMaterialByKey("metall_zoloto_list"),
+                        Amount = 5
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 20
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_stecloplasticovie_komponenty"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_vichislitelnaya_apparatura"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribory_controlya"),
+                        Amount = 8
                     }
                 },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Коробка переключения передач"
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Оборудование для экспериментов в космосе"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
-                AmountPerDay = 1,
-                Key = "metall_auto_akpp",
+                AmountPerDay = 1m,
+                Key = "chemical_kosmicheskaya_orbitalnaya_stanziya",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_korpus_auto_kpp"),
+                        Material = GetMaterialByKey("chemical_oborudovaniye_dlya_experimentov_v_kosmose"),
                         Amount = 1
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_detali_auto_kpp"),
+                        Material = GetMaterialByKey("chemical_modul_kosmicheskoy_stanzii"),
+                        Amount = 3
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_bortovoy_computer"),
                         Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_systema_navigazii"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_solnechnaya_batareya"),
+                        Amount = 6
                     }
                 },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Автоматическая коробка переключения передач"
+                ProductionType = GetProductionTypeByKey("chemical"),
+                DisplayName = "Космическая орбитальная станция"
             });
 
-            Materials.Add(new Material
+            //Материалы электроники и производства спутников
+            Data.Materials.Add(new Material
             {
-                AmountPerDay = 1,
-                Key = "metall_auto_dvig",
+                Key = "electronic_bakelit",
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Бакелит"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_textolit",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_korpus_dvig"),
-                        Amount = 1
-                    },
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_detali_dvig"),
-                        Amount = 1
+                        Material = GetMaterialByKey("electronic_bakelit"),
+                        Amount = 10000  // Значение взято по аналогии с металлургией
                     }
                 },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Легковой ДВС"
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Текстолит"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
-                AmountPerDay = 1,
-                Key = "metall_auto_turbo_dvig",
+                AmountPerDay = 1m,
+                Key = "electronic_pechatnaya_plata",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_korpus_turbo_dvig"),
-                        Amount = 1
-                    },
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_detali_turbo_dvig"),
-                        Amount = 1
+                        Material = GetMaterialByKey("electronic_textolit"),
+                        Amount = 2
                     }
                 },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Легковой турбированный ДВС"
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Печатная плата"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
-                AmountPerDay = 1,
-                Key = "metall_car",
+                AmountPerDay = 1m,
+                Key = "electronic_komponenty",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_auto_kpp"),
+                        Material = GetMaterialByKey("metall_zelezo_list"),
                         Amount = 1
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_auto_dvig"),
+                        Material = GetMaterialByKey("metall_med_list"),
                         Amount = 1
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_detali_transmission"),
+                        Material = GetMaterialByKey("metall_zoloto_list"),
                         Amount = 1
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("neftgaz_auto_salon"),
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_plasticovie_komponenty"),
+                        Amount = 2
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Электронные компоненты"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_vichislitelnaya_apparatura",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_textolit"),
+                        Amount = 2
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_komponenty"),
+                        Amount = 14
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_plasticovie_komponenty"),
+                        Amount = 25
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 18
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Вычислительная аппаратура"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_bortovoy_computer",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_textolit"),
+                        Amount = 10
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_komponenty"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_plasticovie_komponenty"),
+                        Amount = 14
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 20
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_stecloplasticovie_komponenty"),
+                        Amount = 8
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Бортовой компьютер"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_korpus_vishki_svyasi",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 17
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_detaley"),
+                        Amount = 5
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 12
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Корпус вышки связи"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_korpus_spytnika_svyasi",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 30
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_kosmicheskih_apparatov"),
+                        Amount = 10
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_stecloplasticovie_komponenty"),
+                        Amount = 12
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 6
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Корпус спутника связи"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_korpus_issledovatelyskogo_sputnika",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 25
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_kosmicheskih_apparatov"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 5
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_stecloplasticovie_komponenty"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 15
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Корпус исследовательского спутника"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_pribori_svyasi",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_komponenty"),
+                        Amount = 10
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_plasticovie_komponenty"),
+                        Amount = 20
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_med_list"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zoloto_list"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Приборы связи"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_izmeritelnie_pribori",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_komponenty"),
+                        Amount = 18
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_plasticovie_komponenty"),
+                        Amount = 20
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_med_list"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zoloto_list"),
+                        Amount = 2
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Измерительные приборы"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_pribory_controlya",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_komponenty"),
+                        Amount = 12
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_vichislitelnaya_apparatura"),
                         Amount = 1
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("neftgaz_auto_steklo"),
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_plasticovie_komponenty"),
+                        Amount = 20
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_med_list"),
+                        Amount = 3
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zoloto_list"),
+                        Amount = 6
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Приборы контроля"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_vishka_svyasi",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribori_svyasi"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_korpus_vishki_svyasi"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Вышка связи"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_systema_navigazii",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribori_svyasi"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 5
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 10
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 5
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_vichislitelnaya_apparatura"),
+                        Amount = 1
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Система навигации"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_solnechnaya_batareya",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribory_controlya"),
+                        Amount = 2
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_izmeritelnie_pribori"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 7
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_kremniy"),
+                        Amount = 21
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Солнечная батарея"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_spytnik_svyasi",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_korpus_issledovatelyskogo_sputnika"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_vichislitelnaya_apparatura"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribory_controlya"),
+                        Amount = 3
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_systema_navigazii"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_solnechnaya_batareya"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rastvor_dlya_pokritiya_kosmicheskih_apparatov"),
+                        Amount = 15
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Спутник связи"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_oborudovaniye_distanzionnogo_zondirovaniya",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_vichislitelnaya_apparatura"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribory_controlya"),
+                        Amount = 10
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribori_svyasi"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 5
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_rezinovie_komponenty"),
+                        Amount = 10
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 5
+                    }
+                },
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Оборудование дистанционного зондирования"
+            });
+
+            Data.Materials.Add(new Material
+            {
+                AmountPerDay = 1m,
+                Key = "electronic_radioizotopniy_termoelectricheskiy_generator",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribory_controlya"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_izmeritelnie_pribori"),
+                        Amount = 1
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zelezo_list"),
+                        Amount = 15
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("metall_zoloto_list"),
                         Amount = 6
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("neftgaz_auto_koleso"),
-                        Amount = 5
+                        Material = GetMaterialByKey("chemical_plytoniy_238"),
+                        Amount = 8
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("chemical_ygleplasticovie_komponenty"),
+                        Amount = 12
                     }
                 },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Легковой автомобиль (МКПП и ДВС)"
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Радиоизотопный термоэлектрический генератор"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
-                AmountPerDay = 1,
-                Key = "metall_car_akpp",
+                AmountPerDay = 1m,
+                Key = "electronic_issledovatelyskiy_sputnik",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_auto_akpp"),
+                        Material = GetMaterialByKey("electronic_radioizotopniy_termoelectricheskiy_generator"),
                         Amount = 1
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_auto_dvig"),
+                        Material = GetMaterialByKey("electronic_oborudovaniye_distanzionnogo_zondirovaniya"),
                         Amount = 1
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("metall_detali_transmission"),
+                        Material = GetMaterialByKey("electronic_korpus_issledovatelyskogo_sputnika"),
                         Amount = 1
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("neftgaz_auto_salon"),
+                        Material = GetMaterialByKey("electronic_systema_navigazii"),
                         Amount = 1
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("neftgaz_auto_steklo"),
-                        Amount = 6
+                        Material = GetMaterialByKey("electronic_vichislitelnaya_apparatura"),
+                        Amount = 8
                     },
                     new MaterialOnStock
                     {
-                        Material = GetMaterialByKey("neftgaz_auto_koleso"),
-                        Amount = 5
+                        Material = GetMaterialByKey("electronic_pribory_controlya"),
+                        Amount = 4
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_pribori_svyasi"),
+                        Amount = 3
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = GetMaterialByKey("electronic_izmeritelnie_priborii"),
+                        Amount = 8
                     }
                 },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Легковой автомобиль (АКПП и ДВС)"
-            });
-
-            Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "metall_car_turbo",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_auto_akpp"),
-                        Amount = 1
-                    },
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_auto_turbo_dvig"),
-                        Amount = 1
-                    },
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("metall_detali_transmission"),
-                        Amount = 1
-                    },
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("neftgaz_auto_salon"),
-                        Amount = 1
-                    },
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("neftgaz_auto_steklo"),
-                        Amount = 6
-                    },
-                    new MaterialOnStock
-                    {
-                        Material = GetMaterialByKey("neftgaz_auto_koleso"),
-                        Amount = 5
-                    }
-                },
-                ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Легковой автомобиль (АКПП и турбо ДВС)"
+                ProductionType = GetProductionTypeByKey("electronic"),
+                DisplayName = "Исследовательский спутник"
             });
         }
 
         private static void InitSupply()
         {
-            Supply = new GameSupply
+            Data.Supply = new GameSupply
             {
                 Materials = new List<MaterialWithPrice>
                 {
@@ -984,13 +1945,14 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             };
         }
 
-        private static void InitDemand() => Demand = new GameDemand();
+        private static void InitDemand() => Data.Demand = new GameDemand();
 
         private static void InitFactoryDefinition()
         {
-            FactoryDefinitions = new List<FactoryDefinition>();
+            Data.FactoryDefinitions = new List<FactoryDefinition>();
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            //Металлургия и производство самолетов
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 10,
@@ -1004,12 +1966,12 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 5,
+                BaseWorkers = 15,
                 GenerationLevel = 2,
-                Name = "Производство металлических слитков",
+                Name = "Производство металлических листов",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
                 {
                     {1, new List<Material> {GetMaterialByKey("metall_zelezo_list")}},
@@ -1017,143 +1979,458 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 25,
-                GenerationLevel = 3,
-                Name = "Металло-прокатное производство",
+                BaseWorkers = 20,
+                GenerationLevel = 2,
+                Name = "Производство сложных металлических компонентов",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
                 {
-                    {1, new List<Material> {GetMaterialByKey("metall_kuzov_auto")}},
-                    {2, new List<Material> {GetMaterialByKey("metall_kuzov_gruz_auto")}}
-                }
-            });
-
-            FactoryDefinitions.Add(new FactoryDefinition
-            {
-                ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 25,
-                GenerationLevel = 3,
-                Name = "Литейное производство",
-                CanProductionMaterials = new Dictionary<int, List<Material>>
-                {
-                    {1,new List<Material>{GetMaterialByKey("metall_korpus_kpp"), GetMaterialByKey("metall_korpus_dvig")}},
-                    {2,new List<Material>{GetMaterialByKey("metall_korpus_auto_kpp"),GetMaterialByKey("metall_korpus_turbo_dvig")}},
-                    {3,new List<Material>{GetMaterialByKey("metall_korpus_gruz_kpp"),GetMaterialByKey("metall_korpus_gruz_dvig")}}
-                }
-            });
-
-            FactoryDefinitions.Add(new FactoryDefinition
-            {
-                ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 30,
-                GenerationLevel = 3,
-                Name = "Фрезерное производство",
-                CanProductionMaterials = new Dictionary<int, List<Material>>
-                {
-                    {
-                        1,
+                    {   1,
                         new List<Material>
                         {
-                            GetMaterialByKey("metall_detali_kpp"),
-                            GetMaterialByKey("metall_detali_dvig"),
-                            GetMaterialByKey("metall_detali_transmission")
+                            GetMaterialByKey("metall_camera_sgoraniya"),
+                            GetMaterialByKey("metall_soplo")
                         }
                     },
                     {
                         2,
                         new List<Material>
                         {
-                            GetMaterialByKey("metall_detali_auto_kpp"),
-                            GetMaterialByKey("metall_detali_turbo_dvig")
+                            GetMaterialByKey("metall_compressor"),
+                            GetMaterialByKey("metall_gazogenerator")
+                        }
+                    }
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("metall"),
+                BaseWorkers = 30,
+                GenerationLevel = 3,
+                Name = "Производство самолетных корпусов",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("metall_korpus_samolet_dvuhmotor")}},
+                    {2, new List<Material> {GetMaterialByKey("metall_korpus_samolet_gruzovoy")}}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("metall"),
+                BaseWorkers = 25,
+                GenerationLevel = 4,
+                Name = "Производство реактивных двигателей",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("metall_react_dvigatel_samolet")}}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("metall"),
+                BaseWorkers = 40,
+                GenerationLevel = 5,
+                Name = "Производство легких самолетов",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("metall_legkiy_samolet") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("metall"),
+                BaseWorkers = 30,
+                GenerationLevel = 6,
+                Name = "Производство систем кондиционирования воздуха для самолетов",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("metall_systema_kondizioner_samolet") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("metall"),
+                BaseWorkers = 60,
+                GenerationLevel = 7,
+                Name = "Производство грузовых самолетов",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("metall_gruz_samolet") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("metall"),
+                BaseWorkers = 40,
+                GenerationLevel = 8,
+                Name = "Производство регистрирующей аппаратуры",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("metall_registr_apparat") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("metall"),
+                BaseWorkers = 50,
+                GenerationLevel = 9,
+                Name = "Производство вычислительных комплексов",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("metall_vichislitel_complex") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("metall"),
+                BaseWorkers = 80,
+                GenerationLevel = 10,
+                Name = "Производство самолетов - Летающая лаборатория",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("metall_laboratoriya_samolet") }}
+                }
+            });
+
+            //Химия и производство ракет.
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("chemical"),
+                BaseWorkers = 15,
+                GenerationLevel = 1,
+                Name = "Производство базовых химических материалов",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {
+                        1,
+                        new List<Material>
+                        {
+                            GetMaterialByKey("chemical_reagenty_s_zashitnimy_svoystvami"),
+                            GetMaterialByKey("chemical_plastic"),
+                            GetMaterialByKey("chemical_rezina"),
+                            GetMaterialByKey("chemical_kremniy")
+                        }
+                    },
+                    {
+                        2,
+                        new List<Material>
+                        {
+                            GetMaterialByKey("chemical_stecloplastic")
                         }
                     },
                     {
                         3,
                         new List<Material>
                         {
-                            GetMaterialByKey("metall_detali_gruz_kpp"),
-                            GetMaterialByKey("metall_detali_gruz_dvig"),
-                            GetMaterialByKey("metall_detali_gruz_transmission")
+                            GetMaterialByKey("chemical_ygleplastic"),
+                            GetMaterialByKey("chemical_plytoniy_238")
                         }
                     }
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
-                ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 30,
-                GenerationLevel = 4,
-                Name = "Сборочное производство",
+                ProductionType = GetProductionTypeByKey("chemical"),
+                BaseWorkers = 20,
+                GenerationLevel = 2,
+                Name = "Производство защитных покрытий",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
                 {
                     {
                         1,
                         new List<Material>
                         {
-                            GetMaterialByKey("metall_auto_kpp"),
-                            GetMaterialByKey("metall_auto_akpp"),
-                            GetMaterialByKey("metall_auto_dvig"),
-                            GetMaterialByKey("metall_auto_turbo_dvig")
+                            GetMaterialByKey("chemical_rastvor_dlya_pokritiya_detaley")
                         }
-                    }
-                }
-            });
-
-            FactoryDefinitions.Add(new FactoryDefinition
-            {
-                ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 50,
-                GenerationLevel = 4,
-                Name = "Автомобильное производство",
-                CanProductionMaterials = new Dictionary<int, List<Material>>
-                {
-                    {1, new List<Material> {GetMaterialByKey("metall_car")}},
+                    },
                     {
                         2,
                         new List<Material>
                         {
-                            GetMaterialByKey("metall_car_akpp"), GetMaterialByKey("metall_car_turbo")
+                            GetMaterialByKey("chemical_rastvor_dlya_pokritiya_kosmicheskih_apparatov"),
+                            GetMaterialByKey("chemical_rastvor_dlya_pokritiya_samoletov")
                         }
                     }
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
-                ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 80,
-                GenerationLevel = 5,
-                Name = "Грузовое производство",
+                ProductionType = GetProductionTypeByKey("chemical"),
+                BaseWorkers = 25,
+                GenerationLevel = 2,
+                Name = "Производство сложных химических компонентов",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
                 {
-                    {1, new List<Material> {GetMaterialByKey("metall_gruz_auto")}}
+                    {
+                        1,
+                        new List<Material>
+                        {
+                            GetMaterialByKey("chemical_rezinovie_komponenty"),
+                            GetMaterialByKey("chemical_plasticovie_komponenty")
+                        }
+                    },
+                    {
+                        2,
+                        new List<Material>
+                        {
+                            GetMaterialByKey("chemical_stecloplasticovie_komponenty")
+                        }
+                    },
+                    {
+                        3,
+                        new List<Material>
+                        {
+                            GetMaterialByKey("chemical_ygleplasticovie_komponenty")
+                        }
+                    }
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
-                ProductionType = GetProductionTypeByKey("metall"),
+                ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 40,
-                GenerationLevel = 5,
-                Name = "Ж/д промышленность",
+                GenerationLevel = 3,
+                Name = "Производство корпусов ракет-носителей",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
                 {
-                    {1, new List<Material> {GetMaterialByKey("metall_poezd")}}
+                    {1, new List<Material> {GetMaterialByKey("chemical_korpus_raketa_nositelya") }}
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
-                ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 100,
-                GenerationLevel = 6,
-                Name = "Авиа промышленность",
+                ProductionType = GetProductionTypeByKey("chemical"),
+                BaseWorkers = 30,
+                GenerationLevel = 4,
+                Name = "Производство ракетных двигателей",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
                 {
-                    {1, new List<Material> {GetMaterialByKey("metall_samolet")}}
+                    {1, new List<Material> {GetMaterialByKey("chemical_raketniy_dvigatel") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("chemical"),
+                BaseWorkers = 60,
+                GenerationLevel = 5,
+                Name = "Производство ракет-носителей",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("chemical_raketa_nositel") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("chemical"),
+                BaseWorkers = 45,
+                GenerationLevel = 6,
+                Name = "Производство систем кислородообеспечения",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("chemical_systema_kislorodoobespecheniya") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("chemical"),
+                BaseWorkers = 60,
+                GenerationLevel = 7,
+                Name = "Производство пилотируемых космических кораблей",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("chemical_pilot_kosmicheskiy_korabl") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("chemical"),
+                BaseWorkers = 80,
+                GenerationLevel = 8,
+                Name = "Производство модулей космической станции",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("chemical_modul_kosmicheskoy_stanzii") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("chemical"),
+                BaseWorkers = 35,
+                GenerationLevel = 9,
+                Name = "Производство оборудования для экспериментов в космосе",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("chemical_oborudovaniye_dlya_experimentov_v_kosmose") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("chemical"),
+                BaseWorkers = 90,
+                GenerationLevel = 10,
+                Name = "Производство космических орбитальных станций",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("chemical_kosmicheskaya_orbitalnaya_stanziya") }}
+                }
+            });
+
+            //Электроника и производство спутников.
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("electronic"),
+                BaseWorkers = 10,
+                GenerationLevel = 1,
+                Name = "Производство текстолита",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("electronic_textolit") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("electronic"),
+                BaseWorkers = 20,
+                GenerationLevel = 2,
+                Name = "Производство печатных плат электронных компонентов",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("electronic_pechatnaya_plata") }},
+                    {2, new List<Material> {GetMaterialByKey("electronic_komponenty") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("electronic"),
+                BaseWorkers = 28,
+                GenerationLevel = 3,
+                Name = "Производство ЭВМ",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("electronic_vichislitelnaya_apparatura") }},
+                    {2, new List<Material> {GetMaterialByKey("electronic_bortovoy_computer") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("electronic"),
+                BaseWorkers = 40,
+                GenerationLevel = 3,
+                Name = "Производство корпусов электронных конструкций",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("electronic_korpus_vishki_svyasi") }},
+                    {2, new List<Material> {GetMaterialByKey("electronic_korpus_spytnika_svyasi") }},
+                    {3, new List<Material> {GetMaterialByKey("electronic_korpus_issledovatelyskogo_sputnika") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("electronic"),
+                BaseWorkers = 30,
+                GenerationLevel = 4,
+                Name = "Производство приборов",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("electronic_pribori_svyasi") }},
+                    {2, new List<Material> {GetMaterialByKey("electronic_izmeritelnie_pribori") }},
+                    {3, new List<Material> {GetMaterialByKey("electronic_pribory_controlya") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("electronic"),
+                BaseWorkers = 34,
+                GenerationLevel = 5,
+                Name = "Производство вышек связи",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("electronic_vishka_svyasi") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("electronic"),
+                BaseWorkers = 40,
+                GenerationLevel = 6,
+                Name = "Производство простого вспомогательного оборудования",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("electronic_systema_navigazii") }},
+                    {2, new List<Material> {GetMaterialByKey("electronic_solnechnaya_batareya") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("electronic"),
+                BaseWorkers = 55,
+                GenerationLevel = 7,
+                Name = "Производство спутников связи",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("electronic_spytnik_svyasi") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("electronic"),
+                BaseWorkers = 35,
+                GenerationLevel = 8,
+                Name = "Производство оборудования дистанционного зондирования",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("electronic_oborudovaniye_distanzionnogo_zondirovaniya") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("electronic"),
+                BaseWorkers = 45,
+                GenerationLevel = 9,
+                Name = "Производство радиоизотопного термоэлектрического генератора",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("electronic_radioizotopniy_termoelectricheskiy_generator") }}
+                }
+            });
+
+            Data.FactoryDefinitions.Add(new FactoryDefinition
+            {
+                ProductionType = GetProductionTypeByKey("electronic"),
+                BaseWorkers = 70,
+                GenerationLevel = 10,
+                Name = "Производство исследовательских спутников",
+                CanProductionMaterials = new Dictionary<int, List<Material>>
+                {
+                    {1, new List<Material> {GetMaterialByKey("electronic_issledovatelyskiy_sputnik") }}
                 }
             });
         }
