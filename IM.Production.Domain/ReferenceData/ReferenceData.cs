@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Epam.ImitationGames.Production.Domain.Production;
+using Epam.ImitationGames.Production.Domain.ReferenceData;
 
 namespace Epam.ImitationGames.Production.Domain.ReferenceData
 {
@@ -10,128 +11,17 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
     /// </summary>
     public static class ReferenceData
     {
-        /// <summary>
-        /// Области производства.
-        /// </summary>
-        public static List<ProductionType> ProductionTypes { get; private set; }
+        public static InitialData Data = new InitialData();
 
         /// <summary>
-        /// Общий список материалов в игре.
+        /// Инициализация данных.
         /// </summary>
-        public static List<Material> Materials { get; private set; }
-
-        /// <summary>
-        /// Какие материалы игра поставляет изначально.
-        /// </summary>
-        public static GameSupply Supply { get; private set; }
-
-        /// <summary>
-        /// Какие ресурсы игра покупает и по какой цене.
-        /// </summary>
-        public static GameDemand Demand { get; private set; }
-
-        /// <summary>
-        /// Определения фабрик, которые есть в игре.
-        /// </summary>
-        public static List<FactoryDefinition> FactoryDefinitions { get; private set; }
-
-        /// <summary>
-        /// Налог на продажу материалов.
-        /// </summary>
-        public static readonly List<TaxOnMaterial> MaterialTaxes = new List<TaxOnMaterial>();
-
-        /// <summary>
-        /// Налог на фабрики.
-        /// </summary>
-        public static readonly List<TaxOnFactory> FactoryTaxes = new List<TaxOnFactory>();
-
-        /// <summary>
-        /// Справочные данные по производительности фабрики, если количество рабочих больше чем нужно.
-        /// </summary>
-        /// <remarks>Key - насколько рабочих больше чем нужно; Value - на сколько измениться общая производительность фабрики.</remarks>
-        public static readonly List<KeyValuePair<decimal, decimal>> FactoryOverPerformance = new List<KeyValuePair<decimal, decimal>>
+        public static InitialData GetData()
         {
-            new KeyValuePair<decimal, decimal>(1.1m, 1.1m),
-            new KeyValuePair<decimal, decimal>(1.2m, 1.15m),
-            new KeyValuePair<decimal, decimal>(1.3m, 1.2m),
-            new KeyValuePair<decimal, decimal>(1.4m, 1.25m),
-            new KeyValuePair<decimal, decimal>(1.5m, 1.4m),
-            new KeyValuePair<decimal, decimal>(1.6m, 1.45m),
-            new KeyValuePair<decimal, decimal>(1.8m, 1.5m),
-            new KeyValuePair<decimal, decimal>(2m, 1.55m)
-        };
-
-        /// <summary>
-        /// Стоимость фабрики по умолчанию.
-        /// </summary>
-        /// <remarks>Key - уровень поколения фабрики, Value - стоимость фабрики.</remarks>
-        public static readonly List<KeyValuePair<int, decimal>> DefaultFactoryCost =
-            new List<KeyValuePair<int, decimal>>
-            {
-                new KeyValuePair<int, decimal>(1, 10000),
-                new KeyValuePair<int, decimal>(2, 25000),
-                new KeyValuePair<int, decimal>(3, 50000),
-                new KeyValuePair<int, decimal>(4, 75000),
-                new KeyValuePair<int, decimal>(5, 110000),
-                new KeyValuePair<int, decimal>(6, 150000),
-                new KeyValuePair<int, decimal>(7, 200000),
-                new KeyValuePair<int, decimal>(8, 300000),
-                new KeyValuePair<int, decimal>(9, 500000),
-                new KeyValuePair<int, decimal>(10, 1000000)
-            };
-
-        /// <summary>
-        /// Стоимость конкретного типа фабрики.
-        /// </summary>
-        /// <remarks>Key - ID определения фабрики, Value - стоимость фабрики.</remarks>
-        public static readonly List<KeyValuePair<Guid, decimal>> FactoryCost = new List<KeyValuePair<Guid, decimal>>();
-
-        /// <summary>
-        /// Стоимость исследования следующего поколения фабрики.
-        /// </summary>
-        /// <remarks>По умолчанию первое поколение уже исследовано. Key - уровень поколения, Value - стоимость исследования.</remarks>
-        public static readonly List<KeyValuePair<int, decimal>> GenerationFactoryRDCost = new List<KeyValuePair<int, decimal>>
-        {
-            new KeyValuePair<int, decimal>(2, 5000),
-            new KeyValuePair<int, decimal>(3, 15000),
-            new KeyValuePair<int, decimal>(4, 25000),
-            new KeyValuePair<int, decimal>(5, 40000),
-            new KeyValuePair<int, decimal>(6, 60000),
-            new KeyValuePair<int, decimal>(7, 80000),
-            new KeyValuePair<int, decimal>(8, 120000),
-            new KeyValuePair<int, decimal>(9, 200000),
-            new KeyValuePair<int, decimal>(10, 400000)
-        };
-
-        /// <summary>
-        /// Справочные данные по прокачке уровня на конкретной фабрике
-        /// </summary>
-        /// <remarks>По умолчанию первый уровень фабрики уже исследован. Key - уровень поколения, Value - процент от стоимости фабрики.</remarks>
-        /// <remarks>Т.е. указано - 5, 1.5. Это означает что что бы исследовать фабирку 5 уровня (находясь на 4), надо будет потратить 1.5 цены стоимости этой фабрики</remarks>
-        public static readonly List<KeyValuePair<int, decimal>> FactoryLevelUpRDCost =
-            new List<KeyValuePair<int, decimal>>
-            {
-                new KeyValuePair<int, decimal>(2, 0.33m),
-                new KeyValuePair<int, decimal>(3, 0.75m),
-                new KeyValuePair<int, decimal>(4, 1m),
-                new KeyValuePair<int, decimal>(5, 1.5m),
-            };
-
-        /// <summary>
-        /// Базовая зарплата одного рабочего на фабрике.
-        /// </summary>
-        public static decimal BaseWorkerSalay = 100m;
-
-        /// <summary>
-        /// Налог на фабрику по умолчанию.
-        /// </summary>
-        public static decimal DefaultFactoryTax = 0.1m;
-
-        /// <summary>
-        /// Налог на продажу единицы материала по умолчанию.
-        /// </summary>
-        public static decimal DefaultMaterialTax = 0.01m;
-
+            ReferenceData.InitReferences();
+            return Data;
+        }
+        
         /// <summary>
         /// Расчёт общей стоимости для исследования фабрик следующего поколения.
         /// </summary>
@@ -140,7 +30,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static decimal CalculateRDSummToNextGenerationLevel(Customer customer)
         {
             var currentGenerationLevel = customer.FactoryGenerationLevel;
-            var cost = GenerationFactoryRDCost.FirstOrDefault(c => c.Key == currentGenerationLevel + 1);
+            var cost = Data.GenerationFactoryRDCost.FirstOrDefault(c => c.Key == currentGenerationLevel + 1);
             return cost.Value;
         }
 
@@ -152,7 +42,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static decimal CalculateRDSummToNextFactoryLevelUp(Factory factory)
         {
             var currentFactoryLevel = factory.Level;
-            var cost = FactoryLevelUpRDCost.FirstOrDefault(c => c.Key == currentFactoryLevel + 1);
+            var cost = Data.FactoryLevelUpRDCost.FirstOrDefault(c => c.Key == currentFactoryLevel + 1);
             return CalculateFactoryCost(factory.FactoryDefinition) * cost.Value;
         }
 
@@ -164,12 +54,12 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static decimal CalculateFactoryCost(FactoryDefinition factoryDefinition)
         {
             decimal cost;
-            var factoryCost = FactoryCost.FirstOrDefault(f => f.Key == factoryDefinition.Id);
+            var factoryCost = Data.FactoryCost.FirstOrDefault(f => f.Key == factoryDefinition.Id);
             if (factoryCost.Key == Guid.Empty)
             {
                 // считаем что данные по уровням упорядочены уже в определении
-                cost = DefaultFactoryCost.First().Value;
-                foreach (var defaultCost in DefaultFactoryCost)
+                cost = Data.DefaultFactoryCost.First().Value;
+                foreach (var defaultCost in Data.DefaultFactoryCost)
                 {
                     if (defaultCost.Key >= factoryDefinition.GenerationLevel)
                     {
@@ -196,7 +86,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <returns>Сумма налога.</returns>
         public static decimal CalculateTaxOnFactory(Factory factory)
         {
-            var tax = FactoryTaxes.FirstOrDefault(f => f.FactoryDefinition.Id == factory.FactoryDefinition.Id)?.Percent ?? DefaultFactoryTax;
+            var tax = Data.FactoryTaxes.FirstOrDefault(f => f.FactoryDefinition.Id == factory.FactoryDefinition.Id)?.Percent ?? Data.DefaultFactoryTax;
             return tax;
         }
 
@@ -207,7 +97,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <returns>Сумма налога.</returns>
         public static decimal CalculateTaxOnMaterial(Material material)
         {
-            var tax = MaterialTaxes.FirstOrDefault(m => m.Material.Id == material.Id)?.Percent ?? DefaultMaterialTax;
+            var tax = Data.MaterialTaxes.FirstOrDefault(m => m.Material.Id == material.Id)?.Percent ?? Data.DefaultMaterialTax;
             return tax;
         }
 
@@ -216,7 +106,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             price = 0;
             sourceMaterials = new List<MaterialWithPrice>();
 
-            var supplyMaterial = Supply.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
+            var supplyMaterial = Data.Supply.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
             if (supplyMaterial != null)
             {
                 // если материал поставляет игра, то стоимость за единицу материала составляет цену, по которой игра его продаёт * запрашиваемое количество
@@ -260,7 +150,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <returns>Себестоимость его производства.</returns>
         public static decimal CalculateMaterialCostPrice(Material material)
         {
-            var supplyMaterial = Supply.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
+            var supplyMaterial = Data.Supply.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
             if (supplyMaterial != null)
             {
                 // если материал поставляет игра, то стоимость за единицу материала составляет цену, по которой игра его продаёт
@@ -280,13 +170,41 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             return costPerOne;
         }
 
-        /// <summary>
-        /// Производит расчёт цен на материалы, которые покупает игра.
-        /// </summary>
-        /// <param name="allFactories">Список всех фабрик в игре.</param>
-        public static void CalculateDemandPrices(IEnumerable<Factory> allFactories)
+        public static decimal CalculateFactoryExtraChargePercent(Factory factory, IEnumerable<Factory> factories)
         {
-            Demand = new GameDemand();
+            const decimal defaultExtraChargePercent = 0.1M;
+            const decimal advancedExtraChargePercent = 0.5M;
+
+            var maxGeneration = factories.Max(f => f.FactoryDefinition.GenerationLevel);
+            var developed = factory.FactoryDefinition.GenerationLevel > 1 && factory.FactoryDefinition.GenerationLevel == maxGeneration;
+
+            return developed ? advancedExtraChargePercent : defaultExtraChargePercent;
+        }
+
+        // TODO It might become redundant
+        public static void UpdateGameDemand(IEnumerable<Factory> factories)
+        {
+            foreach (var factory in factories)
+            {
+                var extraChargePercent = CalculateFactoryExtraChargePercent(factory, factories);
+
+                foreach (var material in factory.ProductionMaterials)
+                {
+                    var demand = Data.Demand.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
+
+                    if (demand == null)
+                    {
+                        var costPrice = CalculateMaterialCostPrice(material);                        
+                        var extraCharge = costPrice * extraChargePercent;
+
+                        Data.Demand.Materials.Add(new MaterialWithPrice
+                        {
+                            Material = material,
+                            SellPrice = costPrice + extraCharge
+                        });
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -297,7 +215,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static decimal CalculateWorkerSalary(Factory factory)
         {
             // расчитываем как 10% от от уровня фабрики * базовая зарплата
-            var salary = (1 + decimal.Divide(1, factory.FactoryDefinition.GenerationLevel)) * BaseWorkerSalay;
+            var salary = (1 + decimal.Divide(1, factory.FactoryDefinition.GenerationLevel)) * Data.BaseWorkerSalay;
             return salary;
         }
 
@@ -320,7 +238,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 {
                     // если же сотрудников больше, то зависимость уже не линейная
                     var lastFoundPerformance = 1m;
-                    foreach (var kv in FactoryOverPerformance)
+                    foreach (var kv in Data.FactoryOverPerformance)
                     {
                         if (performance >= kv.Key)
                         {
@@ -344,12 +262,12 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
 
         public static ProductionType GetProductionTypeByKey(string key)
         {
-            return ProductionTypes.First(x => x.Key.ToLower() == key.ToLower());
+            return Data.ProductionTypes.First(x => x.Key.ToLower() == key.ToLower());
         }
 
         public static Material GetMaterialByKey(string key)
         {
-            var result = Materials.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
+            var result = Data.Materials.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
             if (null == result)
             {
                 //throw new InvalidOperationException($"Отсутствует указанный ключ материала: {key}");
@@ -360,7 +278,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
 
         private static void InitProductionTypes()
         {
-            ProductionTypes = new List<ProductionType>
+            Data.ProductionTypes = new List<ProductionType>
             {
                 new ProductionType {Key = "metall", DisplayName = "Металлургическая промышленность"},
                 new ProductionType {Key = "electronic", DisplayName = "Электронная промышленность"},
@@ -371,16 +289,16 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         private static void InitMaterials()
         {
             //Материалы металлургии и производства самолетов
-            Materials = new List<Material>();
+            Data.Materials = new List<Material>();
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 Key = "metall_ruda",
                 ProductionType = GetProductionTypeByKey("metall"),
                 DisplayName = "Металлосодержащая руда",
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,      // произведем 1 единицу материала "металл железо"
                 Key = "metall_zelezo",
@@ -396,7 +314,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Железная руда",
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_med",
@@ -412,7 +330,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Медная руда",
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 0.01m,   // здесь играемся цифрами - мы произведем 0.01 материала "золотая руда"
                 Key = "metall_zoloto",
@@ -428,7 +346,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Золотая руда",
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_zelezo_list",
@@ -444,7 +362,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Стальной лист"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_med_list",
@@ -460,7 +378,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Медный лист"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_zoloto_list",
@@ -476,7 +394,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Золотой лист"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_soplo",
@@ -497,7 +415,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Сопло"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_camera_sgoraniya",
@@ -518,7 +436,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Камера сгорания"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_gazogenerator",
@@ -539,7 +457,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Газогенератор"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_compressor",
@@ -560,7 +478,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Компрессор"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_korpus_legkiy_samolet",
@@ -596,7 +514,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Корпус легкого самолета"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_korpus_samolet_gruzovoy",
@@ -632,7 +550,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Корпус грузового самолета"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_react_dvigatel_samolet",
@@ -663,7 +581,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Реактивный двигатель самолета"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_legkiy_samolet",
@@ -689,7 +607,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Легкий самолет"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_systema_kondizioner_samolet",
@@ -725,7 +643,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Система кондиционирования воздуха для самолета"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_gruz_samolet",
@@ -761,7 +679,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Грузовой самолет"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_registr_apparat",
@@ -802,7 +720,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Регистрирующая аппаратура для летающих лабораторий"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_vichislitel_complex",
@@ -838,7 +756,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Вычислительный комплекс для летающих лабораторий"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "metall_laboratoriya_samolet",
@@ -865,14 +783,14 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             });
 
             //Материалы химии и производства ракет.
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 Key = "chemical_reagenty",
                 ProductionType = GetProductionTypeByKey("chemical"),
                 DisplayName = "Химические реагенты"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_reagenty_s_zashitnimy_svoystvami",
@@ -888,7 +806,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Реагенты с защитными свойствами"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_plastic",
@@ -904,7 +822,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Пластик"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_kremniy",
@@ -920,7 +838,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Кремний"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_rezina",
@@ -936,7 +854,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Резина"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_stecloplastic",
@@ -952,7 +870,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Стеклопластик"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_ygleplastic",
@@ -968,7 +886,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Углепластик"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_plytoniy_238",
@@ -984,7 +902,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Плутоний-238"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_rastvor_dlya_pokritiya_detaley",
@@ -1000,7 +918,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Раствор для покрытия деталей"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_rastvor_dlya_pokritiya_samoletov",
@@ -1016,7 +934,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Раствор для покрытия самолетов"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_rastvor_dlya_pokritiya_kosmicheskih_apparatov",
@@ -1032,7 +950,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Раствор для покрытия космических аппаратов"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_rezinovie_komponenty",
@@ -1048,7 +966,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Резиновые компоненты"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_plasticovie_komponenty",
@@ -1064,7 +982,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Пластиковые компоненты"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_stecloplasticovie_komponenty",
@@ -1080,7 +998,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Стеклопластиковые компоненты"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_ygleplasticovie_komponenty",
@@ -1096,7 +1014,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Углепластиковые компоненты"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_korpus_raketa_nositelya",
@@ -1132,7 +1050,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Корпус ракеты-носителя"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_raketniy_dvigatel",
@@ -1163,7 +1081,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Ракетный двигатель"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_raketa_nositel",
@@ -1189,7 +1107,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Ракета-носитель"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_systema_kislorodoobespecheniya",
@@ -1225,7 +1143,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Система кислородообеспечения"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_pilot_kosmicheskiy_korabl",
@@ -1266,7 +1184,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Пилотируемый космический корабль"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_modul_kosmicheskoy_stanzii",
@@ -1312,7 +1230,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Модуль космической станции"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_oborudovaniye_dlya_experimentov_v_kosmose",
@@ -1358,7 +1276,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Оборудование для экспериментов в космосе"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "chemical_kosmicheskaya_orbitalnaya_stanziya",
@@ -1395,14 +1313,14 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             });
 
             //Материалы электроники и производства спутников
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 Key = "electronic_bakelit",
                 ProductionType = GetProductionTypeByKey("electronic"),
                 DisplayName = "Бакелит"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_textolit",
@@ -1418,7 +1336,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Текстолит"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_pechatnaya_plata",
@@ -1434,7 +1352,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Печатная плата"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_komponenty",
@@ -1470,7 +1388,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Электронные компоненты"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_vichislitelnaya_apparatura",
@@ -1501,7 +1419,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Вычислительная аппаратура"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_bortovoy_computer",
@@ -1537,7 +1455,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Бортовой компьютер"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_korpus_vishki_svyasi",
@@ -1563,7 +1481,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Корпус вышки связи"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_korpus_spytnika_svyasi",
@@ -1599,7 +1517,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Корпус спутника связи"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_korpus_issledovatelyskogo_sputnika",
@@ -1635,7 +1553,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Корпус исследовательского спутника"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_pribori_svyasi",
@@ -1671,7 +1589,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Приборы связи"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_izmeritelnie_pribori",
@@ -1707,7 +1625,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Измерительные приборы"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_pribory_controlya",
@@ -1748,7 +1666,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Приборы контроля"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_vishka_svyasi",
@@ -1769,7 +1687,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Вышка связи"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_systema_navigazii",
@@ -1805,7 +1723,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Система навигации"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_solnechnaya_batareya",
@@ -1836,7 +1754,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Солнечная батарея"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_spytnik_svyasi",
@@ -1877,7 +1795,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Спутник связи"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_oborudovaniye_distanzionnogo_zondirovaniya",
@@ -1918,7 +1836,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Оборудование дистанционного зондирования"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_radioizotopniy_termoelectricheskiy_generator",
@@ -1959,7 +1877,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 DisplayName = "Радиоизотопный термоэлектрический генератор"
             });
 
-            Materials.Add(new Material
+            Data.Materials.Add(new Material
             {
                 AmountPerDay = 1m,
                 Key = "electronic_issledovatelyskiy_sputnik",
@@ -2007,13 +1925,13 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                     }
                 },
                 ProductionType = GetProductionTypeByKey("electronic"),
-                DisplayName = "Радиоизотопный термоэлектрический генератор"
+                DisplayName = "Исследовательский спутник"
             });
         }
 
         private static void InitSupply()
         {
-            Supply = new GameSupply
+            Data.Supply = new GameSupply
             {
                 Materials = new List<MaterialWithPrice>
                 {
@@ -2027,12 +1945,14 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             };
         }
 
+        private static void InitDemand() => Data.Demand = new GameDemand();
+
         private static void InitFactoryDefinition()
         {
-            FactoryDefinitions = new List<FactoryDefinition>();
+            Data.FactoryDefinitions = new List<FactoryDefinition>();
 
             //Металлургия и производство самолетов
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 10,
@@ -2046,7 +1966,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 15,
@@ -2055,18 +1975,11 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 CanProductionMaterials = new Dictionary<int, List<Material>>
                 {
                     {1, new List<Material> {GetMaterialByKey("metall_zelezo_list")}},
-                    {
-                        2,
-                        new List<Material>
-                        {
-                            GetMaterialByKey("metall_med_list"),
-                            GetMaterialByKey("metall_zoloto_list")
-                        }
-                    }
+                    {2, new List<Material>{GetMaterialByKey("metall_med_list"), GetMaterialByKey("metall_zoloto_list")}}
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 20,
@@ -2092,7 +2005,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 30,
@@ -2105,7 +2018,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 25,
@@ -2117,7 +2030,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 40,
@@ -2129,7 +2042,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 30,
@@ -2141,7 +2054,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 60,
@@ -2153,7 +2066,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 40,
@@ -2165,7 +2078,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 50,
@@ -2177,7 +2090,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
                 BaseWorkers = 80,
@@ -2190,7 +2103,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             });
 
             //Химия и производство ракет.
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 15,
@@ -2226,7 +2139,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 20,
@@ -2252,7 +2165,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 25,
@@ -2285,7 +2198,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 40,
@@ -2297,7 +2210,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 30,
@@ -2309,7 +2222,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 60,
@@ -2321,7 +2234,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 45,
@@ -2333,7 +2246,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 60,
@@ -2345,7 +2258,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 80,
@@ -2357,7 +2270,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 35,
@@ -2369,7 +2282,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("chemical"),
                 BaseWorkers = 90,
@@ -2382,7 +2295,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             });
 
             //Электроника и производство спутников.
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("electronic"),
                 BaseWorkers = 10,
@@ -2394,7 +2307,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("electronic"),
                 BaseWorkers = 20,
@@ -2407,7 +2320,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("electronic"),
                 BaseWorkers = 28,
@@ -2420,7 +2333,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("electronic"),
                 BaseWorkers = 40,
@@ -2434,7 +2347,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("electronic"),
                 BaseWorkers = 30,
@@ -2448,7 +2361,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("electronic"),
                 BaseWorkers = 34,
@@ -2460,7 +2373,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("electronic"),
                 BaseWorkers = 40,
@@ -2473,7 +2386,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("electronic"),
                 BaseWorkers = 55,
@@ -2485,7 +2398,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("electronic"),
                 BaseWorkers = 35,
@@ -2497,7 +2410,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("electronic"),
                 BaseWorkers = 45,
@@ -2509,7 +2422,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 }
             });
 
-            FactoryDefinitions.Add(new FactoryDefinition
+            Data.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("electronic"),
                 BaseWorkers = 70,
@@ -2553,6 +2466,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             InitProductionTypes();
             InitMaterials();
             InitSupply();
+            InitDemand();
             InitFactoryDefinition();
         }
 

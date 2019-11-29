@@ -24,6 +24,15 @@ namespace IM.Production.Domain.Tests.Production
             Assert.AreEqual(1, factory.Level);
         }
 
+        [TestMethod]
+        public void Constructor_Default_InitializedProductionMaterials()
+        {
+            var factory = new Factory();
+
+            Assert.IsNotNull(factory.ProductionMaterials);
+            Assert.IsFalse(factory.ProductionMaterials.Any());
+        }
+
         [DataTestMethod]
         [DataRow(1, 2, true)]
         [DataRow(1, 1, true)]

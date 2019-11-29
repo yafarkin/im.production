@@ -8,6 +8,11 @@ namespace Epam.ImitationGames.Production.Domain.Production
     /// </summary>
     public class GameSupply : BaseEntity
     {
+        public GameSupply()
+        {
+            Materials = new List<MaterialWithPrice>();
+        }
+
         public List<MaterialWithPrice> Materials;
     }
 }
