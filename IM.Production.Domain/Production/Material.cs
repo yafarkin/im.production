@@ -8,6 +8,11 @@ namespace Epam.ImitationGames.Production.Domain.Production
     /// </summary>
     public class Material : VisibleEntity
     {
+        public Material()
+        {
+            InputMaterials = new List<MaterialOnStock>();
+        }
+
         public string Key { get; set; }
 
         /// <summary>
@@ -24,10 +29,5 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// Скорость производства материала.
         /// </summary>
         public decimal AmountPerDay;
-
-        public Material()
-        {
-            InputMaterials = new List<MaterialOnStock>();
-        }
     }
 }

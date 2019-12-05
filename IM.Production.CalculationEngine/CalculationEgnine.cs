@@ -68,48 +68,37 @@ namespace CalculationEngine
             }
 
             // п.5. Выполняем расчёт цен, по которым игра покупает материалы
-            ReferenceData.UpdateGameDemand(Game.Customers.SelectMany(c => c.Factories));
+            ReferenceData.UpdateGameDemand(game.Customers.SelectMany(c => c.Factories));
 
             // п.6. Осуществление производства
-            var maxFactoryLevel = 1;
-            var currentFactoryLevel = 1;
-            while (true)
-            {
-                foreach (var customer in Game.Customers)
-                {
-                    var maxCustomerLevel = customer.Factories.Max(f => f.FactoryDefinition.GenerationLevel);
-                    if (maxCustomerLevel > maxFactoryLevel)
-                    {
-                        maxFactoryLevel = maxCustomerLevel;
-                    }
+            // TODO It might be we don't need to process factories sequentually to generations, but it can be done in a random order
+            var maxGeneration = game.Customers.SelectMany(c => c.Factories).Select(f => f.FactoryDefinition.GenerationLevel).DefaultIfEmpty().Max();
 
-                    var factories = customer.Factories.Where(f => f.FactoryDefinition.GenerationLevel == currentFactoryLevel).ToList();
+            for (var generation = 1; generation <= maxGeneration; generation++)
+            {
+                foreach (var customer in game.Customers)
+                {
+                    var factories = customer.Factories.Where(f => f.FactoryDefinition.GenerationLevel == generation);
+
                     foreach (var factory in factories)
                     {
-                        // п. 6.1. Выполняем производство согласно настройкам фабрики и помещаем на склад.
-                        ProduceFactory(factory);
+                        ProduceFactory(factory, game);
 
-                        // п. 6.2. Осуществляем передачу материалов согласно контрактам этой фабрики (другим игрокам или игре), включая выплаты штрафов, страховым премий, получения страховок
                         var contracts = customer.Contracts.Where(c => c.SourceFactory.Id == factory.Id);
+
                         foreach (var contract in contracts)
                         {
                             ProcessContract(contract);
                         }
                     }
                 }
-
-                currentFactoryLevel++;
-                if (currentFactoryLevel > maxFactoryLevel)
-                {
-                    break;
-                }
             }
 
             // п.7. Осуществляем поставки по контрактам от игры на фабрику
             foreach (var customer in Game.Customers)
             {
-                var gameDemandContracts = customer.Contracts.Where(c => c.DestinationFactory == null);
-                foreach (var contract in gameDemandContracts)
+                var contracts = customer.Contracts.Where(c => c.DestinationFactory == null);
+                foreach (var contract in contracts)
                 {
                     ProcessContract(contract);
                 }
@@ -307,32 +296,37 @@ namespace CalculationEngine
             game.AddActivity(taxChange);
         }
 
-        protected void ProduceFactory(Factory factory)
+        protected void ProduceFactory(Factory factory, Game game)
         {
-            var time = new GameTime();
-
-            // 1. определяем уровень производительности фабрики
-            ReferenceData.CalculateFactoryPerformance(factory);
+            factory.Performance = ReferenceData.CalculateFactoryPerformance(factory);
 
             // 2. выполняем производство материалов и помещаем их на склад
 
             // 2.1. определяем, что вообще сможем произвести
-            var willProductionMaterials = factory.ProductionMaterials;
+            var productionMaterials = factory.ProductionMaterials;
             var usedMaterialsOnStock = new List<MaterialOnStock>();
+
             decimal performancePerMaterial = 0;
-            while (willProductionMaterials.Any())
+            var time = new GameTime();
+
+            // TODO Checking algorith to be regactored
+            while (productionMaterials.Any())
             {
-                performancePerMaterial = decimal.Divide(1, willProductionMaterials.Count);
-                foreach (var material in willProductionMaterials)
+                for (var i = 0; i < productionMaterials.Count; i++)
                 {
-                    var currentUsedMaterialsOnStock = new List<MaterialOnStock>();
                     // смотрим - есть ли все необходимые исходные материалы на складе
+                    var material = productionMaterials[i];
+                    var currentUsedMaterialsOnStock = new List<MaterialOnStock>();
                     var allMaterialsOnStock = true;
+
+                    performancePerMaterial = decimal.Divide(1, productionMaterials.Count);
+
                     foreach (var inputMaterial in material.InputMaterials)
                     {
-                        var inputAmount = inputMaterial.Amount * factory.Performance * performancePerMaterial;
-                        var materialOnStock = factory.Stock.FirstOrDefault(m => m.Id == inputMaterial.Id);
-                        if (null == materialOnStock || materialOnStock.Amount < inputAmount)
+                        var materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == inputMaterial.Material.Id);
+                        var requiredAmount = inputMaterial.Amount * factory.Performance * performancePerMaterial;
+
+                        if (materialOnStock == null || materialOnStock.Amount < requiredAmount)
                         {
                             allMaterialsOnStock = false;
                             break;
@@ -341,19 +335,20 @@ namespace CalculationEngine
                         currentUsedMaterialsOnStock.Add(new MaterialOnStock
                         {
                             Material = inputMaterial.Material,
-                            Amount = inputAmount
+                            Amount = requiredAmount
                         });
                     }
 
                     if (!allMaterialsOnStock)
                     {
                         // не хватает материалов. выполняем полный пересчёт, с пересчётом производительности в т.ч.
-                        willProductionMaterials.Remove(material);
+                        productionMaterials.Remove(material);
                         usedMaterialsOnStock.Clear();
 
                         var infoChanging = new InfoChanging(time, factory.Customer, $"Не хватает ресурсов для производства материала {material.DisplayName}");
-                        Game.AddActivity(infoChanging);
+                        game.AddActivity(infoChanging);
 
+                        i = -1;
                         continue;
                     }
 
@@ -368,7 +363,7 @@ namespace CalculationEngine
             }
 
             // 2.2. осуществляем производство материала и помещение его на склад
-            foreach (var material in willProductionMaterials)
+            foreach (var material in productionMaterials)
             {
                 var producedAmount = material.AmountPerDay * performancePerMaterial * factory.Performance;
                 var producedMaterial = new MaterialOnStock { Amount = producedAmount, Material = material };
@@ -377,31 +372,34 @@ namespace CalculationEngine
                 ReferenceData.AddMaterialToStock(factory.Stock, producedMaterial);
 
                 var infoChanging = new InfoChanging(time, factory.Customer, $"Произведен материал {material.DisplayName} в количестве {producedMaterial.Amount}");
-                Game.AddActivity(infoChanging);
+                game.AddActivity(infoChanging);
             }
 
             // 2.3. Списываем со склада исходные материалы, потраченные на производство этого
             foreach (var usedMaterial in usedMaterialsOnStock)
             {
                 var materialOnStock = factory.Stock.First(m => m.Material.Id == usedMaterial.Material.Id);
+
                 materialOnStock.Amount -= usedMaterial.Amount;
+
                 if (materialOnStock.Amount == 0)
                 {
                     factory.Stock.Remove(materialOnStock);
                 }
             }
 
-            // 3. списываем ФОТ.
+            // 3. списываем ФОТ. Cписываем деньги со счёта игрока
             var totalSalary = factory.Workers * ReferenceData.CalculateWorkerSalary(factory);
 
-            // списываем деньги со счёта игрока
             factory.Customer.Sum -= totalSalary;
+
             // добавляем активность по изменению суммы на счету игрока
             var customerChange = new CustomerChange(time, factory.Customer, $"Выплата зарплаты на фабрике {factory.DisplayName}, рабочих {factory.Workers}, общая сумма {totalSalary:C}")
             {
                 SumChange = -totalSalary
             };
-            Game.AddActivity(customerChange);
+
+            game.AddActivity(customerChange);
         }
 
         private void ProcessGameToCustomerContract(Contract contract, Game game)
