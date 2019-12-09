@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace IM.Production.WebApp
 {
+    /// <summary>
+    /// Логика обработки входящих запросов.
+    /// </summary>
     public class Startup
     {
         public void ConfigureServices(IServiceCollection services)

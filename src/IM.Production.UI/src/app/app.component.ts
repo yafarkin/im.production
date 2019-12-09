@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {teams} from '../app/teams';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'IM-Production-UI';
+  title = 'IM-Production-UI';  
+  teams = teams;
 }
+
