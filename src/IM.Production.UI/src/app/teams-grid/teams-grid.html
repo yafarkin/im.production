@@ -1,0 +1,21 @@
+<h1>Список команд</h1>
+<table border="1" width="100%" class="teams table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Тип продукции</th>
+            <th>Фабрики</th>
+            <th>Сумма на счету команды</th>
+            <th>Контракты</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr *ngFor="let team of teams">
+                    <td>{{team.name}}</td>
+                    <td>{{team.productionType}}</td>
+                    <td>{{team.factories}}</td>
+                    <td>{{team.sum}}</td>
+                    <td>{{team.contracts}}</td>
+            </tr>
+    </tbody>
+</table> 

@@ -1,15 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {MatTableModule} from '@angular/material';
-
 import { AppComponent } from './app.component';
-const material = [
-  MatTableModule
-];
+import { TeamsGrid } from './teams-grid/teams-grid';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent, TeamsGrid
   ],
   imports: [
     BrowserModule

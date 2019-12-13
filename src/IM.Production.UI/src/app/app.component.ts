@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
-import {teams} from '../app/teams';
 
 @Component({
   selector: 'app-root',
+  template: '<teams-grid></teams-grid>',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'IM-Production-UI';  
-  teams = teams;
 }
 
