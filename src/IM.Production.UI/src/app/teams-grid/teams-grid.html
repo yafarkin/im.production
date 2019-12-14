@@ -1,21 +1,32 @@
+<body>
 <h1>Список команд</h1>
-<table border="1" width="100%" class="teams table">
-    <thead>
-        <tr>
-            <th>Название</th>
-            <th>Тип продукции</th>
-            <th>Фабрики</th>
-            <th>Сумма на счету команды</th>
-            <th>Контракты</th>
-        </tr>
-    </thead>
-    <tbody>
-            <tr *ngFor="let team of teams">
-                    <td>{{team.name}}</td>
-                    <td>{{team.productionType}}</td>
-                    <td>{{team.factories}}</td>
-                    <td>{{team.sum}}</td>
-                    <td>{{team.contracts}}</td>
-            </tr>
-    </tbody>
-</table> 
+<mat-table [dataSource]="teams" class="mat-elevation-z8">
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef> <h3>Название</h3> </mat-header-cell>
+      <mat-cell *matCellDef="let team"> {{team.name}} </mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="productionType">
+      <mat-header-cell *matHeaderCellDef> <h3>Тип продукции</h3> </mat-header-cell>
+      <mat-cell *matCellDef="let team"> {{team.productionType}} </mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="factories">
+      <mat-header-cell *matHeaderCellDef> <h3>Фабрики</h3> </mat-header-cell>
+      <mat-cell *matCellDef="let team"> {{team.factories}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="sum">
+      <mat-header-cell *matHeaderCellDef> <h3>Сумма на счету команды</h3> </mat-header-cell>
+      <mat-cell *matCellDef="let team"> {{team.sum}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="contracts">
+        <mat-header-cell *matHeaderCellDef> <h3>Контракты</h3> </mat-header-cell>
+        <mat-cell *matCellDef="let team"> {{team.contracts}} </mat-cell>
+      </ng-container>
+  
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  </body>

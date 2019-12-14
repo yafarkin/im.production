@@ -10,10 +10,9 @@ import { TeamsService} from './teamsService';
   providers: [TeamsService]
 })
 
-
-
 export class TeamsGrid implements OnInit{
 
+  displayedColumns: string[] = ['name', 'productionType', 'factories', 'sum','contracts'];
   teams: Team[]; 
 
   constructor(private serv: TeamsService) {}
