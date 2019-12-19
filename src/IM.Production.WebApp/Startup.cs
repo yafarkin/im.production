@@ -1,8 +1,12 @@
+using CalculationEngine;
+using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Services;
+using IM.Production.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 
 namespace IM.Production.WebApp
 {
@@ -10,6 +14,9 @@ namespace IM.Production.WebApp
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
+            services.AddSingleton<Game>(new Game() { Customers = new List<Customer> { new Customer(), new Customer() } });
+            services.AddTransient<ITeamsService, TeamsService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -23,10 +30,7 @@ namespace IM.Production.WebApp
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapControllers();
             });
         }
     }
