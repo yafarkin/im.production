@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-root',
-  template: '<teams-grid></teams-grid>',
+  selector: 'app-root', 
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

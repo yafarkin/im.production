@@ -1,17 +1,18 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
-import { TeamsGrid } from './teams-grid/teams-grid';
-import {MatTableModule} from '@angular/material/table';
+import { TeamsComponent } from './teams.component';
+import { TeamsService } from './services/teams.service';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
-    AppComponent, TeamsGrid
+    AppComponent, TeamsComponent
   ],
   imports: [
     BrowserModule, MatTableModule
   ],
-  providers: [],
+  providers: [TeamsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,16 +1,15 @@
 import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
-import {Team} from './team';
-import { TeamsService} from './teamsService';
+import { Team } from './layout/team';
+import { TeamsService } from './services/teams.service';
 
 @Component({
-  selector: 'teams-grid',
-  templateUrl: './teams-grid.html',
-  styleUrls: ['./teams-grid.scss'],
-  providers: [TeamsService]
+  selector: 'teams-component',
+  templateUrl: './teams.component.html',
+  styleUrls: ['./teams.component.scss']
 })
 
-export class TeamsGrid implements OnInit{
+export class TeamsComponent implements OnInit{
 
   displayedColumns: string[] = ['name', 'productionType', 'factories', 'sum','contracts'];
   teams: Team[]; 
@@ -20,8 +19,7 @@ export class TeamsGrid implements OnInit{
   ngOnInit() {
     this.loadUsers();
   }
-   
-  //загрузка пользователей
+
   private loadUsers() {    
      this.teams = this.serv.getTeams();
   }
