@@ -6,13 +6,13 @@ import { TeamsService } from '../services/teams.service';
 import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
-  declarations: [
-    AppComponent, TeamsComponent
-  ],
-  imports: [
-    BrowserModule, MatTableModule
-  ],
-  providers: [TeamsService],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent, TeamsComponent
+    ],
+    imports: [
+        BrowserModule, MatTableModule
+    ],
+    providers: [TeamsService],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -4,26 +4,25 @@ import { Team } from '../models/team';
 import { TeamsService } from '../services/teams.service';
 
 @Component({
-  selector: 'app-teams',
-  templateUrl: './teams.component.html',
-  styleUrls: ['./teams.component.scss'],
-  providers: [TeamsService]
+    selector: 'app-teams',
+    templateUrl: './teams.component.html',
+    styleUrls: ['./teams.component.scss']
 })
 
 export class TeamsComponent implements OnInit {
 
-  displayedColumns: string[] = ['name', 'productionType', 'factories', 'sum', 'contracts'];
-  teams: Team[];
+    displayedColumns: string[] = ['name', 'productionType', 'factories', 'sum', 'contracts'];
+    teams: Team[];
 
-  constructor(private serv: TeamsService) { }
+    constructor(private serv: TeamsService) { }
 
-  ngOnInit() {
-    this.loadUsers();
-  }
+    ngOnInit() {
+        this.loadUsers();
+    }
 
-  private loadUsers() {
-    this.teams = this.serv.getTeams();
-  }
+    private loadUsers() {
+        this.teams = this.serv.getTeams();
+    }
 
 }
 
