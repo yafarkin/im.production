@@ -1,5 +1,4 @@
 ﻿using Epam.ImitationGames.Production.Domain.Base;
-using System;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {

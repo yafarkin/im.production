@@ -1,125 +1,133 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CalculationEngine;
+using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Bank;
 using Epam.ImitationGames.Production.Domain.Base;
-using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Production;
 using Epam.ImitationGames.Production.Domain.ReferenceData;
 using Epam.ImitationGames.Production.Domain.Static;
 
-namespace CalculationEngine
+namespace IM.Production.CalculationEngine
 {
-    public class CalculationEgnine
+    public class CalculationEngine
     {
+        protected static object _lockObj = new object();
+
         public Game Game { get; set; }
 
         public void Calculate(Game game)
         {
-            // 1. Осуществляем поставки по контрактам от игры на фабрику
-            // 2. Выплачиваем суммы за модернизацию предприятия
-            // 3. Выплачиваем суммы за исследования на следующее поколение мероприятий
-            // 4. Выплачиваем налоги на фабрики
-            // 5. Осуществляем расчёт цен, по которым игра закупает материалы
-            // 6. В цикле, по уровням производства (начиная с самого низшего):
-            // 6.1. Выполняем производство согласно настройкам фабрики и помещаем на склад.
-            // 6.2. Осуществляем передачу материалов согласно контракту (другим игрокам или игре), включая выплаты штрафов, страховым премий, получения страховок
-            // 7. Осуществляем поставки по контрактам от фабрике к игре
-            // 8. Осуществляем банковские операции
-            // 8.1. Получаем проценты на счёт от банка по вкладам
-            // 8.2. Выплачиваем проценты и тело кредита банку
-            // 9. В последний игровой день автоматически закрываем все кредиты и вклады в банках.
-            // 10. Прибавляем счётчик игровых дней.
-
-            UpdateCurrentGameProperties();
-
-            // п.1. Осуществляем поставки по контрактам от игры на фабрику
-            foreach (var customer in game.Customers)
+            lock (_lockObj)
             {
-                var contracts = customer.Contracts.Where(c => c.SourceFactory == null);
-                foreach (var contract in contracts)
-                {
-                    ProcessGameToCustomerContract(contract, game);
-                }
-            }
+                // 1. Осуществляем поставки по контрактам от игры на фабрику
+                // 2. Выплачиваем суммы за модернизацию предприятия
+                // 3. Выплачиваем суммы за исследования на следующее поколение мероприятий
+                // 4. Выплачиваем налоги на фабрики
+                // 5. Осуществляем расчёт цен, по которым игра закупает материалы
+                // 6. В цикле, по уровням производства (начиная с самого низшего):
+                // 6.1. Выполняем производство согласно настройкам фабрики и помещаем на склад.
+                // 6.2. Осуществляем передачу материалов согласно контракту (другим игрокам или игре), включая выплаты штрафов, страховым премий, получения страховок
+                // 7. Осуществляем поставки по контрактам от фабрике к игре
+                // 8. Осуществляем банковские операции
+                // 8.1. Получаем проценты на счёт от банка по вкладам
+                // 8.2. Выплачиваем проценты и тело кредита банку
+                // 9. В последний игровой день автоматически закрываем все кредиты и вклады в банках.
+                // 10. Прибавляем счётчик игровых дней.
 
-            // п. 2. Выплачиваем суммы за исследования на следующее поколение мероприятий
-            foreach (var customer in game.Customers)
-            {
-                ProcessCustomerRD(customer, game);
-            }
+                UpdateCurrentGameProperties();
 
-            // п. 3. Выплачиваем суммы за модернизацию предприятия и осуществляем его модернизацию
-            foreach (var customer in game.Customers)
-            {
-                foreach (var factory in customer.Factories)
-                {
-                    ProcessFactoryRD(factory, customer, game);
-                }
-            }
-
-            // п. 4. Выплачиваем налоги на фабрики
-            foreach (var customer in game.Customers)
-            {
-                foreach (var factory in customer.Factories)
-                {
-                    PaidTaxes(factory, customer, game);
-                }
-            }
-
-            // п.5. Выполняем расчёт цен, по которым игра покупает материалы
-            ReferenceData.UpdateGameDemand(game.Customers.SelectMany(c => c.Factories));
-
-            // п.6. Осуществление производства
-            // TODO It might be we don't need to process factories sequentually to generations, but it can be done in a random order
-            var maxGeneration = game.Customers.SelectMany(c => c.Factories).Select(f => f.FactoryDefinition.GenerationLevel).DefaultIfEmpty().Max();
-
-            for (var generation = 1; generation <= maxGeneration; generation++)
-            {
+                // п.1. Осуществляем поставки по контрактам от игры на фабрику
                 foreach (var customer in game.Customers)
                 {
-                    var factories = customer.Factories.Where(f => f.FactoryDefinition.GenerationLevel == generation);
-
-                    foreach (var factory in factories)
+                    var contracts = customer.Contracts.Where(c => c.SourceFactory == null);
+                    foreach (var contract in contracts)
                     {
-                        ProduceFactory(factory, game);
+                        ProcessGameToCustomerContract(contract, game);
+                    }
+                }
 
-                        var contracts = customer.Contracts.Where(c => c.SourceFactory.Id == factory.Id);
+                // п. 2. Выплачиваем суммы за исследования на следующее поколение мероприятий
+                foreach (var customer in game.Customers)
+                {
+                    ProcessCustomerRD(customer, game);
+                }
 
-                        foreach (var contract in contracts)
+                // п. 3. Выплачиваем суммы за модернизацию предприятия и осуществляем его модернизацию
+                foreach (var customer in game.Customers)
+                {
+                    foreach (var factory in customer.Factories)
+                    {
+                        ProcessFactoryRD(factory, customer, game);
+                    }
+                }
+
+                // п. 4. Выплачиваем налоги на фабрики
+                foreach (var customer in game.Customers)
+                {
+                    foreach (var factory in customer.Factories)
+                    {
+                        PaidTaxes(factory, customer, game);
+                    }
+                }
+
+                // п.5. Выполняем расчёт цен, по которым игра покупает материалы
+                ReferenceData.UpdateGameDemand(game.Customers.SelectMany(c => c.Factories));
+
+                // п.6. Осуществление производства
+                // TODO It might be we don't need to process factories sequentually to generations, but it can be done in a random order
+                var maxGeneration = game.Customers.SelectMany(c => c.Factories)
+                    .Select(f => f.FactoryDefinition.GenerationLevel).DefaultIfEmpty().Max();
+
+                for (var generation = 1; generation <= maxGeneration; generation++)
+                {
+                    foreach (var customer in game.Customers)
+                    {
+                        var factories =
+                            customer.Factories.Where(f => f.FactoryDefinition.GenerationLevel == generation);
+
+                        foreach (var factory in factories)
                         {
-                            ProcessContract(contract);
+                            ProduceFactory(factory, game);
+
+                            var contracts = customer.Contracts.Where(c => c.SourceFactory.Id == factory.Id);
+
+                            foreach (var contract in contracts)
+                            {
+                                ProcessContract(contract);
+                            }
                         }
                     }
                 }
-            }
 
-            // п.7. Осуществляем поставки по контрактам от игры на фабрику
-            foreach (var customer in Game.Customers)
-            {
-                var contracts = customer.Contracts.Where(c => c.DestinationFactory == null);
-                foreach (var contract in contracts)
+                // п.7. Осуществляем поставки по контрактам от игры на фабрику
+                foreach (var customer in Game.Customers)
                 {
-                    ProcessContract(contract);
+                    var contracts = customer.Contracts.Where(c => c.DestinationFactory == null);
+                    foreach (var contract in contracts)
+                    {
+                        ProcessContract(contract);
+                    }
                 }
-            }
 
-            // п. 8. Осуществляем банковские операции
-            // п. 8.1. Получаем проценты на счёт от банка по вкладам
-            // п. 8.2. Выплачиваем проценты и тело кредита банку
-            foreach (var customer in Game.Customers)
-            {
-                DepositProcessing(customer);
-            }
+                // п. 8. Осуществляем банковские операции
+                // п. 8.1. Получаем проценты на счёт от банка по вкладам
+                // п. 8.2. Выплачиваем проценты и тело кредита банку
+                foreach (var customer in Game.Customers)
+                {
+                    DepositProcessing(customer);
+                }
 
-            // п. 9. В последний игровой день автоматически закрываем все кредиты и вклады в банках.
-            if (Game.Time.Day == Game.TotalGameDays)
-            {
-            }
+                // п. 9. В последний игровой день автоматически закрываем все кредиты и вклады в банках.
+                if (Game.Time.Day == Game.TotalGameDays)
+                {
+                }
 
-            // п. 10. Прибавляем счётчик игровых дней.
-            Game.Time.Day++;
-            Game.Time.When = DateTime.UtcNow;
+                // п. 10. Прибавляем счётчик игровых дней.
+                Game.Time.Day++;
+                Game.Time.When = DateTime.UtcNow;
+            }
         }
 
         /// <summary>

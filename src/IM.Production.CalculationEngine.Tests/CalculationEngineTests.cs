@@ -12,13 +12,13 @@ namespace IM.Production.CalculationEngine.Tests
     [TestClass]
     public class CalculationEngineTests
     {
-        private CalculationEgnine _calculationEgnine;
+        private CalculationEngine _calculationEngine;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            _calculationEgnine = new CalculationEgnine();
-            _calculationEgnine.Game = new Game();
+            _calculationEngine = new CalculationEngine();
+            _calculationEngine.Game = new Game();
         }
 
         [TestMethod]
@@ -31,7 +31,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Contracts.Add(contract);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(sum, customer.Sum);
         }
@@ -48,7 +48,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Contracts.Add(contract);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             var materialOnStock = factory.Stock.First();
             Assert.AreSame(material, materialOnStock.Material);
@@ -69,7 +69,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Contracts.Add(contract);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(101, materialOnStock.Amount);
             Assert.AreEqual(9, customer.Sum);
@@ -82,7 +82,7 @@ namespace IM.Production.CalculationEngine.Tests
             var game = new Game();
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(5000, customer.SumToNextGenerationLevel);
         }
@@ -98,7 +98,7 @@ namespace IM.Production.CalculationEngine.Tests
             var game = new Game();
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(sum, customer.Sum);
             Assert.AreEqual(spent, customer.SpentSumToNextGenerationLevel);
@@ -111,7 +111,7 @@ namespace IM.Production.CalculationEngine.Tests
             var game = new Game();
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(2, customer.FactoryGenerationLevel);
             Assert.AreEqual(4000, customer.Sum);
@@ -128,7 +128,7 @@ namespace IM.Production.CalculationEngine.Tests
             var game = new Game();
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(9, customer.Sum);
             Assert.AreEqual(3, customer.SpentSumToNextGenerationLevel);
@@ -146,7 +146,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(330000, factory.NeedSumToNextLevelUp);
         }
@@ -164,7 +164,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(0.9M, customer.Sum);
             Assert.AreEqual(spentSum, factory.SpentSumToNextLevelUp);
@@ -182,7 +182,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(81, customer.Sum);
             Assert.AreEqual(12, factory.SpentSumToNextLevelUp);
@@ -200,7 +200,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(2, factory.Level);
             Assert.AreEqual(45, customer.Sum);
@@ -218,7 +218,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(90, customer.Sum);
         }
@@ -237,7 +237,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(1, factory.Performance);
         }
@@ -254,7 +254,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.IsFalse(factory.Stock.Any());
             Assert.IsFalse(factory.ProductionMaterials.Any());
@@ -287,7 +287,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             var produced = factory.Stock.First(m => m.Material.Id == material.Id);
             var firstInputOnStock = factory.Stock.First(m => m.Material.Id == firstInput.Id);
@@ -321,7 +321,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             var firstProduced = factory.Stock.First(m => m.Material.Id == firstMaterial.Id);
             var secondProduced = factory.Stock.Find(m => m.Material.Id == secondMaterial.Id);
@@ -355,7 +355,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             var produced = factory.Stock.First(m => m.Material.Id == material.Id);
             var inputOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == input.Id);
@@ -379,7 +379,7 @@ namespace IM.Production.CalculationEngine.Tests
             customer.Factories.Add(factory);
             game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate(game);
 
             Assert.AreEqual(800, customer.Sum);
         }

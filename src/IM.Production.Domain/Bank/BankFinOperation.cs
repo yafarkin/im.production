@@ -14,7 +14,7 @@ namespace Epam.ImitationGames.Production.Domain.Bank
         }
 
         /// <summary>
-        /// Сумма изменения на счету команды (положительная - выплата команде, отрицательная - снятие со счёта команды).
+        /// Сумма изменения на счету команды.
         /// </summary>
         public decimal Sum { get; set; }
 
@@ -26,7 +26,7 @@ namespace Epam.ImitationGames.Production.Domain.Bank
         /// <summary>
         /// Количество игровых дней, на которые выдан кредит.
         /// </summary>
-        public int Days { get; set; }
+        public uint Days { get; set; }
 
         /// <summary>
         /// Статус операции.

@@ -104,7 +104,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         };
 
         /// <summary>
-        /// Справочные данные по прокачке уровня на конкретной фабрике
+        /// Справочные данные по прокачке уровня на конкретной фабрике.
         /// </summary>
         /// <remarks>По умолчанию первый уровень фабрики уже исследован. Key - уровень поколения, Value - процент от стоимости фабрики.</remarks>
         /// <remarks>Т.е. указано - 5, 1.5. Это означает что что бы исследовать фабирку 5 уровня (находясь на 4), надо будет потратить 1.5 цены стоимости этой фабрики</remarks>
@@ -116,6 +116,24 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 new KeyValuePair<int, decimal>(4, 1m),
                 new KeyValuePair<int, decimal>(5, 1.5m),
             };
+
+        /// <summary>
+        /// Справочные данные, по которой игра покупает фабрику.
+        /// </summary>
+        public static readonly decimal FactorySellDiscount = 0.6m;
+
+        /// <summary>
+        /// Справочные данные надбавки к цене фабрики при продаже, в зависимости от уровня.
+        /// </summary>
+        /// <remarks>Key - уровень поколения фабрики, Value - процент надбавки при продаже.</remarks>
+        public static readonly List<KeyValuePair<int, decimal>> FactorySellCoeff = new List<KeyValuePair<int, decimal>>
+        {
+            new KeyValuePair<int, decimal>(1, 1),
+            new KeyValuePair<int, decimal>(2, 1.1m),
+            new KeyValuePair<int, decimal>(3, 1.15m),
+            new KeyValuePair<int, decimal>(4, 1.2m),
+            new KeyValuePair<int, decimal>(5, 1.3m)
+        };
 
         /// <summary>
         /// Базовая зарплата одного рабочего на фабрике.
@@ -153,15 +171,15 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         {
             var currentFactoryLevel = factory.Level;
             var cost = FactoryLevelUpRDCost.FirstOrDefault(c => c.Key == currentFactoryLevel + 1);
-            return CalculateFactoryCost(factory.FactoryDefinition) * cost.Value;
+            return CalculateFactoryCostForBuy(factory.FactoryDefinition) * cost.Value;
         }
 
         /// <summary>
-        /// Расчёт стоимости фабрики, на основе её описания.
+        /// Расчёт стоимости покупки фабрики, на основе её описания.
         /// </summary>
         /// <param name="factoryDefinition">Описание фабрики.</param>
-        /// <returns>Стоимость фабрики.</returns>
-        public static decimal CalculateFactoryCost(FactoryDefinition factoryDefinition)
+        /// <returns>Стоимость фабрики для покупки.</returns>
+        public static decimal CalculateFactoryCostForBuy(FactoryDefinition factoryDefinition)
         {
             decimal cost;
             var factoryCost = FactoryCost.FirstOrDefault(f => f.Key == factoryDefinition.Id);
@@ -186,6 +204,18 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 cost = factoryCost.Value;
             }
 
+            return cost;
+        }
+
+        /// <summary>
+        /// Расчёт стоимости продажи фабрики.
+        /// </summary>
+        /// <param name="factory">Фабрика.</param>
+        /// <returns>Стоимость фабрики для продажи.</returns>
+        public static decimal CalculateFactoryCostForSell(Factory factory)
+        {
+            var cost = CalculateFactoryCostForBuy(factory.FactoryDefinition) * FactorySellDiscount;
+            cost *= FactorySellCoeff.FirstOrDefault(c => c.Key == factory.Level).Value;
             return cost;
         }
 

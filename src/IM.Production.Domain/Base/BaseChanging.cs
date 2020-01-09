@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Epam.ImitationGames.Production.Domain.Base
+﻿namespace Epam.ImitationGames.Production.Domain.Base
 {
     /// <summary>
     /// Сущность, описывающая изменения с чем либо во времени.

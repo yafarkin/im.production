@@ -20,7 +20,7 @@ namespace Epam.ImitationGames.Production.Domain
         public Contract ClosedContract { get; set; }
 
         /// <summary>
-        /// Купленая фабрика.
+        /// Купленная фабрика.
         /// </summary>
         public Factory BoughtFactory { get; set; }
 
