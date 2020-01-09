@@ -74,25 +74,37 @@ namespace CalculationEngine
             {
                 sb.Append(array[i].ToString("X2"));
             }
+
             return sb.ToString();
+        }
+
+        public string GetMD5Hash(string str)
+        {
+            using (var md5 = MD5.Create())
+            {
+                var hashCode = GetHashString(md5.ComputeHash(Encoding.ASCII.GetBytes(str)));
+                return hashCode;
+            }
+        }
+
+        public string GetMD5Hash(byte[] array)
+        {
+            using (var md5 = MD5.Create())
+            {
+                var hashCode = GetHashString(md5.ComputeHash(array));
+                return hashCode;
+            }
         }
 
         public void AddActivity(BaseChanging changing)
         {
             // TODO To serialize a class it has to have the Serializable attribute, I will fix it later, once Business Logic is covered
-            //using (var md5 = MD5.Create())
-            //{
-            //    var thisHashCode = GetHashString(md5.ComputeHash(ObjectToByteArray(changing)));
-            //    var prevHashCode = Activity.LastOrDefault()?.HashCode ?? string.Empty;
+            //var thisHashCode = GetMD5Hash(ObjectToByteArray(changing)));
+            //var prevHashCode = Activity.LastOrDefault()?.HashCode ?? string.Empty;
 
-            //    var hashCode = GetHashString(md5.ComputeHash(Encoding.ASCII.GetBytes(thisHashCode + prevHashCode)));
+            //var hashCode = GetMD5Hash(thisHashCode + prevHashCode);
 
-            //    Activity.Add(new ActivityLog
-            //    {
-            //        Change = changing,
-            //        HashCode = hashCode
-            //    });
-            //}
+            //Activity.Add(new ActivityLog {Change = changing, HashCode = hashCode});
         }
     }
 }

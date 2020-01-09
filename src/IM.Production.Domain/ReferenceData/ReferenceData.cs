@@ -47,6 +47,11 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static readonly List<TaxOnFactory> FactoryTaxes = new List<TaxOnFactory>();
 
         /// <summary>
+        /// Начальная сумма на счету команды.
+        /// </summary>
+        public static decimal InitialCustomerBalance = 100000m;
+
+        /// <summary>
         /// Справочные данные по производительности фабрики, если количество рабочих больше чем нужно.
         /// </summary>
         /// <remarks>Key - насколько рабочих больше чем нужно; Value - на сколько измениться общая производительность фабрики.</remarks>
