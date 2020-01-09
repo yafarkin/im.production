@@ -99,6 +99,11 @@ namespace IM.Production.CalculationEngine
                 throw new ArgumentNullException("Не указана команда", nameof(contract.Customer));
             }
 
+            if ((null == contract.SourceFactory || null == contract.DestinationFactory) && (contract.TillCount.HasValue || contract.TillCount.HasValue))
+            {
+                throw new ArgumentException("При поставке товаров от игры или игре в контракте нельзя указать ограничений.");
+            }
+
             lock (_lockObj)
             {
                 var customerChange =
@@ -110,6 +115,30 @@ namespace IM.Production.CalculationEngine
 
                 contract.Customer.Contracts.Add(contract);
                 _engine.Game.AddActivity(contract);
+            }
+        }
+
+        /// <summary>
+        /// Закрытие контракта.
+        /// </summary>
+        /// <param name="contract">Контракт.</param>
+        public void CloseContract(Contract contract)
+        {
+            if (null == contract)
+            {
+                throw new ArgumentNullException(nameof(contract));
+            }
+
+            lock (_lockObj)
+            {
+                var customerChange =
+                    new CustomerChange(_engine.Game.Time, contract.Customer, "Закрытие контракта")
+                    {
+                        ClosedContract = contract
+                    };
+                _engine.Game.AddActivity(customerChange);
+
+                contract.Customer.Contracts.Remove(contract);
             }
         }
 

@@ -456,12 +456,46 @@ namespace IM.Production.CalculationEngine
         /// <param name="contract">Контракт.</param>
         protected void ProcessContract(Contract contract)
         {
+            if (null == contract.SourceFactory)
+            {
+                return;
+            }
+
+            if (contract.TillDate.HasValue && contract.TillDate < Game.TotalGameDays)
+            {
+                // закрываем контракт по истечению срока действия
+                var customerContractChange =
+                    new CustomerChange(Game.Time, contract.Customer, "Закрытие контракта по истечению срока действия")
+                    {
+                        ClosedContract = contract
+                    };
+                Game.AddActivity(customerContractChange);
+                contract.Customer.Contracts.Remove(contract);
+
+                return;
+            }
+
+            if (contract.TillCount.HasValue && contract.TillCount >= contract.TotalCountCompleted)
+            {
+                // закрываем контракт по достижению поставленного количества
+                var customerContractChange =
+                    new CustomerChange(Game.Time, contract.Customer, "Закрытие контракта по выполнению обязательств по поставленному количеству")
+                    {
+                        ClosedContract = contract
+                    };
+                Game.AddActivity(customerContractChange);
+                contract.Customer.Contracts.Remove(contract);
+
+                return;
+            }
+
             var time = new GameTime();
 
             // определяем, покупается материал (т.е. зачисляется на указанную фабрику) или продается игре (то тогда берем исходную фабрику)
             var factory = contract.DestinationFactory ?? contract.SourceFactory;
             var material = contract.MaterialWithPrice.Material;
-            var materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == material.Id) ?? new MaterialOnStock { Material = material };
+            var materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == material.Id) ??
+                                  new MaterialOnStock {Material = material};
 
             MaterialLogistic materialLogistic;
             CustomerChange customerChange;
@@ -469,161 +503,173 @@ namespace IM.Production.CalculationEngine
             int amount;
             decimal totalPrice;
 
-            if (contract.SourceFactory == null)
+            // идёт поставка игре или другой команде
+            var isGameDemand = null == contract.DestinationFactory;
+            var needAmount = 0;
+
+            var sellPrice = isGameDemand
+                ? ReferenceData.Demand.Materials.First(m => m.Material.Id == material.Id).SellPrice
+                : contract.MaterialWithPrice.SellPrice;
+
+            amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
+            if (contract.TillCount.HasValue && contract.TotalCountCompleted + amount > contract.TillCount)
             {
+                amount = contract.TillCount.Value - contract.TotalCountCompleted;
             }
-            else
+
+            contract.TotalCountCompleted += amount;
+
+            if (materialOnStock.Amount < amount)
             {
-                // идёт поставка игре или другой команде
-                var isGameDemand = null == contract.DestinationFactory;
-                var needAmount = 0;
+                needAmount = amount - Convert.ToInt32(materialOnStock.Amount);
+                amount = Convert.ToInt32(materialOnStock.Amount);
+            }
 
-                var sellPrice = isGameDemand ? ReferenceData.Demand.Materials.First(m => m.Material.Id == material.Id).SellPrice : contract.MaterialWithPrice.SellPrice;
+            // общая сумма
+            totalPrice = sellPrice * amount;
 
-                amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
+            // сумма налога
+            var tax = ReferenceData.CalculateTaxOnMaterial(material);
+            var taxSum = totalPrice * tax;
+            var taxChange = new TaxChange(time, contract.SourceFactory) {Sum = taxSum};
 
-                if (materialOnStock.Amount < amount)
-                {
-                    needAmount = amount - Convert.ToInt32(materialOnStock.Amount);
-                    amount = Convert.ToInt32(materialOnStock.Amount);
-                }
+            // чистая сумма
+            var netSum = totalPrice - taxSum;
 
-                // общая сумма
-                totalPrice = sellPrice * amount;
+            // списываем материал со склада
+            materialOnStock.Amount -= amount;
 
-                // сумма налога
-                var tax = ReferenceData.CalculateTaxOnMaterial(material);
-                var taxSum = totalPrice * tax;
-                var taxChange = new TaxChange(time, contract.SourceFactory) { Sum = taxSum };
+            // начисляем деньги на счёт игрока
+            contract.SourceFactory.Customer.Sum += netSum;
+            // добавляем активность по изменению суммы на счету игрока
+            customerChange = new CustomerChange(time, contract.SourceFactory.Customer,
+                $"Продажа товара ({(isGameDemand ? "игре" : $"команде {contract.DestinationFactory.Customer.DisplayName}")}) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice}, из них налог на сумму {taxSum}")
+            {
+                SumChange = netSum
+            };
+            Game.AddActivity(customerChange);
 
-                // чистая сумма
-                var netSum = totalPrice - taxSum;
+            // добавляем активность о снятом налоге
+            Game.AddActivity(taxChange);
 
-                // списываем материал со склада
-                materialOnStock.Amount -= amount;
+            if (!isGameDemand)
+            {
+                // начисляем материал на склад другой фабрики
+                ReferenceData.AddMaterialToStock(contract.DestinationFactory.Stock,
+                    new MaterialOnStock {Material = material, Amount = amount});
 
-                // начисляем деньги на счёт игрока
-                contract.SourceFactory.Customer.Sum += netSum;
+                // списываем деньги со счёта игрока другой фабрики
+                contract.DestinationFactory.Customer.Sum -= totalPrice;
+
                 // добавляем активность по изменению суммы на счету игрока
-                customerChange = new CustomerChange(time, contract.SourceFactory.Customer, $"Продажа товара ({(isGameDemand ? "игре" : $"команде {contract.DestinationFactory.Customer.DisplayName}")}) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice}, из них налог на сумму {taxSum}")
+                customerChange = new CustomerChange(time, contract.DestinationFactory.Customer,
+                    $"Оплата товара (команде {contract.SourceFactory.Customer.DisplayName}) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice}")
                 {
-                    SumChange = netSum
+                    SumChange = -totalPrice
                 };
                 Game.AddActivity(customerChange);
+            }
 
-                // добавляем активность о снятом налоге
-                Game.AddActivity(taxChange);
+            // добавляем активность по поставке материала
+            materialLogistic = new MaterialLogistic(time,
+                new MaterialWithPrice {Amount = amount, Material = material, SellPrice = sellPrice})
+            {
+                Tax = taxChange,
+                SourceFactory = contract.SourceFactory,
+                DestinationFactory = contract.DestinationFactory
+            };
+            Game.AddActivity(materialLogistic);
 
-                if (!isGameDemand)
+            if (!isGameDemand)
+            {
+                if (contract.SrcInsurancePremium > 0)
                 {
-                    // начисляем материал на склад другой фабрики
-                    ReferenceData.AddMaterialToStock(contract.DestinationFactory.Stock, new MaterialOnStock { Material = material, Amount = amount });
-
-                    // списываем деньги со счёта игрока другой фабрики
-                    contract.DestinationFactory.Customer.Sum -= totalPrice;
+                    // снимаем деньги за страховку, с исходной команды
+                    contract.SourceFactory.Customer.Sum -= contract.SrcInsurancePremium;
 
                     // добавляем активность по изменению суммы на счету игрока
-                    customerChange = new CustomerChange(time, contract.DestinationFactory.Customer, $"Оплата товара (команде {contract.SourceFactory.Customer.DisplayName}) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice}")
-                    {
-                        SumChange = -totalPrice
-                    };
-                    Game.AddActivity(customerChange);
-                }
-
-                // добавляем активность по поставке материала
-                materialLogistic = new MaterialLogistic(time,
-                    new MaterialWithPrice { Amount = amount, Material = material, SellPrice = sellPrice })
-                {
-                    Tax = taxChange,
-                    SourceFactory = contract.SourceFactory,
-                    DestinationFactory = contract.DestinationFactory
-                };
-                Game.AddActivity(materialLogistic);
-
-                if (!isGameDemand)
-                {
-                    if (contract.SrcInsurancePremium > 0)
-                    {
-                        // снимаем деньги за страховку, с исходной команды
-                        contract.SourceFactory.Customer.Sum -= contract.SrcInsurancePremium;
-
-                        // добавляем активность по изменению суммы на счету игрока
-                        customerChange = new CustomerChange(time, contract.SourceFactory.Customer, $"Оплата страховки в размере {contract.SrcInsurancePremium}")
+                    customerChange =
+                        new CustomerChange(time, contract.SourceFactory.Customer,
+                            $"Оплата страховки в размере {contract.SrcInsurancePremium}")
                         {
                             SumChange = -contract.SrcInsurancePremium
                         };
-                        Game.AddActivity(customerChange);
-                    }
+                    Game.AddActivity(customerChange);
+                }
+
+                if (contract.DestInsurancePremium > 0)
+                {
+                    // снимаем деньги за страховку, с команды получателя
+                    contract.DestinationFactory.Customer.Sum -= contract.DestInsurancePremium;
+
+                    // добавляем активность по изменению суммы на счету игрока
+                    customerChange =
+                        new CustomerChange(time, contract.DestinationFactory.Customer,
+                            $"Оплата страховки в размере {contract.DestInsurancePremium}")
+                        {
+                            SumChange = -contract.DestInsurancePremium
+                        };
+                    Game.AddActivity(customerChange);
+                }
+
+                if (needAmount > 0)
+                {
+                    // возникли условия не поставки товара, применяем штрафные санкции, если они есть
+                    var fine = contract.Fine;
+                    var srcInsuranceAmount = 0m;
+                    var destInsuranceAmount = 0m;
 
                     if (contract.DestInsurancePremium > 0)
                     {
-                        // снимаем деньги за страховку, с команды получателя
-                        contract.DestinationFactory.Customer.Sum -= contract.DestInsurancePremium;
+                        destInsuranceAmount = contract.DestInsuranceAmount;
+                    }
 
-                        // добавляем активность по изменению суммы на счету игрока
-                        customerChange = new CustomerChange(time, contract.DestinationFactory.Customer, $"Оплата страховки в размере {contract.DestInsurancePremium}")
+                    if (contract.SrcInsuranceAmount > 0)
+                    {
+                        srcInsuranceAmount = contract.SrcInsuranceAmount;
+                    }
+
+                    // производим изменения на счету команды получателя (за счёт команды поставщика)
+                    if (fine > 0)
+                    {
+                        var totalFine = fine * needAmount;
+
+                        contract.SourceFactory.Customer.Sum -= totalFine;
+                        customerChange = new CustomerChange(time, contract.SourceFactory.Customer,
+                            $"Оплата штрафа в размере {totalFine} ({fine} * {needAmount})") {SumChange = -totalFine};
+                        Game.AddActivity(customerChange);
+
+                        contract.DestinationFactory.Customer.Sum += totalFine;
+                        customerChange = new CustomerChange(time, contract.SourceFactory.Customer,
+                            $"Получение выплат по штрафу в размере {totalFine} ({fine} * {needAmount})")
                         {
-                            SumChange = -contract.DestInsurancePremium
+                            SumChange = totalFine
                         };
                         Game.AddActivity(customerChange);
                     }
 
-                    if (needAmount > 0)
+                    if (srcInsuranceAmount > 0)
                     {
-                        // возникли условия не поставки товара, применяем штрафные санкции, если они есть
-                        var fine = contract.Fine;
-                        var srcInsuranceAmount = 0m;
-                        var destInsuranceAmount = 0m;
-
-                        if (contract.DestInsurancePremium > 0)
-                        {
-                            destInsuranceAmount = contract.DestInsuranceAmount;
-                        }
-
-                        if (contract.SrcInsuranceAmount > 0)
-                        {
-                            srcInsuranceAmount = contract.SrcInsuranceAmount;
-                        }
-
-                        // производим изменения на счету команды получателя (за счёт команды поставщика)
-                        if (fine > 0)
-                        {
-                            var totalFine = fine * needAmount;
-
-                            contract.SourceFactory.Customer.Sum -= totalFine;
-                            customerChange = new CustomerChange(time, contract.SourceFactory.Customer, $"Оплата штрафа в размере {totalFine} ({fine} * {needAmount})")
-                            {
-                                SumChange = -totalFine
-                            };
-                            Game.AddActivity(customerChange);
-
-                            contract.DestinationFactory.Customer.Sum += totalFine;
-                            customerChange = new CustomerChange(time, contract.SourceFactory.Customer, $"Получение выплат по штрафу в размере {totalFine} ({fine} * {needAmount})")
-                            {
-                                SumChange = totalFine
-                            };
-                            Game.AddActivity(customerChange);
-                        }
-
-                        if (srcInsuranceAmount > 0)
-                        {
-                            contract.SourceFactory.Customer.Sum += srcInsuranceAmount;
-                            customerChange = new CustomerChange(time, contract.SourceFactory.Customer, $"Выплата страховки по непоставке товара, в сумме {srcInsuranceAmount}")
+                        contract.SourceFactory.Customer.Sum += srcInsuranceAmount;
+                        customerChange =
+                            new CustomerChange(time, contract.SourceFactory.Customer,
+                                $"Выплата страховки по непоставке товара, в сумме {srcInsuranceAmount}")
                             {
                                 SumChange = srcInsuranceAmount
                             };
-                            Game.AddActivity(customerChange);
-                        }
+                        Game.AddActivity(customerChange);
+                    }
 
-                        if (destInsuranceAmount > 0)
-                        {
-                            contract.DestinationFactory.Customer.Sum += destInsuranceAmount;
-                            customerChange = new CustomerChange(time, contract.DestinationFactory.Customer, $"Выплата страховки по непоставке товара, в сумме {destInsuranceAmount}")
+                    if (destInsuranceAmount > 0)
+                    {
+                        contract.DestinationFactory.Customer.Sum += destInsuranceAmount;
+                        customerChange =
+                            new CustomerChange(time, contract.DestinationFactory.Customer,
+                                $"Выплата страховки по непоставке товара, в сумме {destInsuranceAmount}")
                             {
                                 SumChange = srcInsuranceAmount
                             };
-                            Game.AddActivity(customerChange);
-                        }
+                        Game.AddActivity(customerChange);
                     }
                 }
             }

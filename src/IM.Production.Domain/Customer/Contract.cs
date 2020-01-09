@@ -33,6 +33,22 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public decimal DestInsuranceAmount { get; set; }
 
+
+        /// <summary>
+        /// Если указано, то контракт действует до указанной даты.
+        /// </summary>
+        public int? TillDate { get; set; }
+
+        /// <summary>
+        /// Если указано, то контракт действует до поставки определенного количества материала.
+        /// </summary>
+        public int? TillCount { get; set; }
+
+        /// <summary>
+        /// Количество материала, уже поставленное по контракту.
+        /// </summary>
+        public int TotalCountCompleted { get; set; }
+
         public Contract(GameTime time, MaterialWithPrice materialWithPrice, string description = null)
             : base(time, materialWithPrice, description)
         {

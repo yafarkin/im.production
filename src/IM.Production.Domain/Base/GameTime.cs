@@ -4,7 +4,7 @@ using System;
 namespace Epam.ImitationGames.Production.Domain.Base
 {
     /// <summary>
-    /// Игоровое время.
+    /// Игровое время.
     /// </summary>
     public class GameTime : BaseEntity
     {
