@@ -1217,6 +1217,26 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             }
         }
 
+        /// <summary>
+        /// Расчёт процентной ставки страхования для продавца.
+        /// </summary>
+        /// <param name="customer">Команда продавца.</param>
+        /// <returns>Процентная ставка.</returns>
+        public static decimal CalculateInsurancePercentForSeller(Customer customer)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Расчёт процентной ставки страхования для покупателя.
+        /// </summary>
+        /// <param name="customer">Команда покупателя.</param>
+        /// <returns>Процентная ставка.</returns>
+        public static decimal CalculateInsurancePercentForBuyer(Customer customer)
+        {
+            throw new NotImplementedException();
+        }
+
         private static void InitReferences()
         {
             InitProductionTypes();
