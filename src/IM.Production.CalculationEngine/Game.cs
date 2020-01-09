@@ -80,11 +80,7 @@ namespace CalculationEngine
 
         public string GetMD5Hash(string str)
         {
-            using (var md5 = MD5.Create())
-            {
-                var hashCode = GetHashString(md5.ComputeHash(Encoding.ASCII.GetBytes(str)));
-                return hashCode;
-            }
+            return GetMD5Hash(Encoding.ASCII.GetBytes(str));
         }
 
         public string GetMD5Hash(byte[] array)
