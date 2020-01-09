@@ -148,7 +148,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEngine.Calculate(game);
 
-            Assert.AreEqual(330000, factory.NeedSumToNextLevelUp);
+            Assert.AreEqual(3300, factory.NeedSumToNextLevelUp);
         }
 
         [DataTestMethod]
@@ -205,7 +205,7 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(2, factory.Level);
             Assert.AreEqual(45, customer.Sum);
             Assert.AreEqual(40, factory.SpentSumToNextLevelUp);
-            Assert.AreEqual(750000, factory.NeedSumToNextLevelUp);
+            Assert.AreEqual(7500, factory.NeedSumToNextLevelUp);
         }
 
         [TestMethod]

@@ -63,7 +63,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// <summary>
         /// Прогресс в процентах для исследования на следующий уровень.
         /// </summary>
-        public decimal RDProgress => NeedSumToNextLevelUp / SpentSumToNextLevelUp;
+        public decimal RDProgress => (SpentSumToNextLevelUp / NeedSumToNextLevelUp) * 100;
 
         public bool ReadyForNextLevel => SpentSumToNextLevelUp >= NeedSumToNextLevelUp;
 
