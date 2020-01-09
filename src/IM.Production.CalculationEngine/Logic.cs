@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CalculationEngine;
 using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Bank;
 using Epam.ImitationGames.Production.Domain.Production;
@@ -12,13 +13,13 @@ namespace IM.Production.CalculationEngine
     /// </summary>
     public class Logic
     {
-        protected CalculationEngine _engine;
+        protected Game _game;
 
         protected static object _lockObj = new object();
 
-        public Logic(CalculationEngine engine)
+        public Logic(Game game)
         {
-            _engine = engine ?? throw new ArgumentNullException(nameof(engine));
+            _game = game ?? throw new ArgumentNullException(nameof(game));
         }
 
         public Customer AddCustomer(string login, string password, string name, ProductionType productionType)
@@ -28,7 +29,7 @@ namespace IM.Production.CalculationEngine
                 var customer = new Customer
                 {
                     Login = login,
-                    PasswordHash = _engine.Game.GetMD5Hash(password),
+                    PasswordHash = _game.GetMD5Hash(password),
                     DisplayName = name,
                     ProductionType = productionType,
                     FactoryGenerationLevel = 1,
@@ -39,10 +40,10 @@ namespace IM.Production.CalculationEngine
                     Factories = new List<Factory>()
                 };
 
-                _engine.Game.Customers.Add(customer);
+                _game.Customers.Add(customer);
 
-                var customerChange = new CustomerChange(_engine.Game.Time, customer, "Добавление новой команды");
-                _engine.Game.AddActivity(customerChange);
+                var customerChange = new CustomerChange(_game.Time, customer, "Добавление новой команды");
+                _game.AddActivity(customerChange);
 
                 return customer;
             }
@@ -92,8 +93,8 @@ namespace IM.Production.CalculationEngine
 
                 customer.BankFinanceOperations.Add(finOperation);
                 customer.BankFinanceActions.Add(finAction);
-                _engine.Game.AddActivity(finOperation);
-                _engine.Game.AddActivity(finAction);
+                _game.AddActivity(finOperation);
+                _game.AddActivity(finAction);
 
                 customer.Sum += isCredit ? finOperation.Sum : -finOperation.Sum;
                 var customerChange = new CustomerChange(finOperation.Time, customer, finAction.Description)
@@ -101,7 +102,7 @@ namespace IM.Production.CalculationEngine
                     SumChange = finAction.Sum,
                     FinAction = finAction
                 };
-                _engine.Game.AddActivity(customerChange);
+                _game.AddActivity(customerChange);
             }
         }
 
@@ -134,14 +135,14 @@ namespace IM.Production.CalculationEngine
             lock (_lockObj)
             {
                 var customerChange =
-                    new CustomerChange(_engine.Game.Time, contract.Customer, "Добавление нового контракта")
+                    new CustomerChange(_game.Time, contract.Customer, "Добавление нового контракта")
                     {
                         NewContract = contract
                     };
-                _engine.Game.AddActivity(customerChange);
+                _game.AddActivity(customerChange);
 
                 contract.Customer.Contracts.Add(contract);
-                _engine.Game.AddActivity(contract);
+                _game.AddActivity(contract);
             }
         }
 
@@ -159,11 +160,11 @@ namespace IM.Production.CalculationEngine
             lock (_lockObj)
             {
                 var customerChange =
-                    new CustomerChange(_engine.Game.Time, contract.Customer, "Закрытие контракта")
+                    new CustomerChange(_game.Time, contract.Customer, "Закрытие контракта")
                     {
                         ClosedContract = contract
                     };
-                _engine.Game.AddActivity(customerChange);
+                _game.AddActivity(customerChange);
 
                 contract.Customer.Contracts.Remove(contract);
             }
@@ -206,24 +207,24 @@ namespace IM.Production.CalculationEngine
 
             lock (_lockObj)
             {
-                var customerChange = new CustomerChange(_engine.Game.Time, customer, $"Покупка фабрики у команды {otherCustomer.DisplayName}")
+                var customerChange = new CustomerChange(_game.Time, customer, $"Покупка фабрики у команды {otherCustomer.DisplayName}")
                 {
                     OtherCustomer = otherCustomer,
                     BoughtFactory = factory,
                     SumChange = -cost
                 };
-                _engine.Game.AddActivity(customerChange);
+                _game.AddActivity(customerChange);
 
                 customer.Sum -= cost;
                 customer.Factories.Add(factory);
 
-                customerChange = new CustomerChange(_engine.Game.Time, otherCustomer, $"Продажа фабрики команде {customer.DisplayName}")
+                customerChange = new CustomerChange(_game.Time, otherCustomer, $"Продажа фабрики команде {customer.DisplayName}")
                 {
                     OtherCustomer = customer,
                     SoldFactory = factory,
                     SumChange = cost
                 };
-                _engine.Game.AddActivity(customerChange);
+                _game.AddActivity(customerChange);
 
                 otherCustomer.Sum += cost;
                 otherCustomer.Factories.Remove(factory);
@@ -265,12 +266,12 @@ namespace IM.Production.CalculationEngine
                     ProductionMaterials = productionMaterials ?? new List<Material>()
                 };
 
-                var customerChange =  new CustomerChange(_engine.Game.Time, customer, "Покупка фабрики")
+                var customerChange =  new CustomerChange(_game.Time, customer, "Покупка фабрики")
                 {
                     SumChange = -buySumm,
                     BoughtFactory = factory
                 };
-                _engine.Game.AddActivity(customerChange);
+                _game.AddActivity(customerChange);
 
                 customer.Sum -= buySumm;
                 customer.Factories.Add(factory);
@@ -292,12 +293,12 @@ namespace IM.Production.CalculationEngine
             {
                 var sellSumm = ReferenceData.CalculateFactoryCostForSell(factory);
 
-                var customerChange = new CustomerChange(_engine.Game.Time, factory.Customer, "Продажа фабрики")
+                var customerChange = new CustomerChange(_game.Time, factory.Customer, "Продажа фабрики")
                 {
                     SumChange = +sellSumm,
                     SoldFactory = factory
                 };
-                _engine.Game.AddActivity(customerChange);
+                _game.AddActivity(customerChange);
 
                 factory.Customer.Sum += sellSumm;
                 factory.Customer.Factories.Remove(factory);
