@@ -18,7 +18,34 @@ namespace IM.Production.CalculationEngine
 
         public Logic(CalculationEngine engine)
         {
-            _engine = engine;
+            _engine = engine ?? throw new ArgumentNullException(nameof(engine));
+        }
+
+        public Customer AddCustomer(string login, string password, string name, ProductionType productionType)
+        {
+            lock (_lockObj)
+            {
+                var customer = new Customer
+                {
+                    Login = login,
+                    PasswordHash = _engine.Game.GetMD5Hash(password),
+                    DisplayName = name,
+                    ProductionType = productionType,
+                    FactoryGenerationLevel = 1,
+                    Sum = ReferenceData.InitialCustomerBalance,
+                    BankFinanceActions = new List<BankFinAction>(),
+                    BankFinanceOperations = new List<BankFinOperation>(),
+                    Contracts = new List<Contract>(),
+                    Factories = new List<Factory>()
+                };
+
+                _engine.Game.Customers.Add(customer);
+
+                var customerChange = new CustomerChange(_engine.Game.Time, customer, "Добавление новой команды");
+                _engine.Game.AddActivity(customerChange);
+
+                return customer;
+            }
         }
 
         /// <summary>
@@ -143,11 +170,74 @@ namespace IM.Production.CalculationEngine
         }
 
         /// <summary>
-        /// Покупка командой новой фабрики.
+        /// Покупка фабрики у другой команды.
+        /// </summary>
+        /// <param name="customer">Команда, которая покупает.</param>
+        /// <param name="factory">Фабрику, которая команда покупает.</param>
+        /// <param name="cost">Стоимость продажи фабрики.</param>
+        public void BuyFactoryFromOtherCustomer(Customer customer, Factory factory, decimal cost)
+        {
+            if (null == customer)
+            {
+                throw new ArgumentNullException(nameof(customer));
+            }
+
+            if (null == factory)
+            {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            if (cost <= 0)
+            {
+                throw new ArgumentException("Стоимость фабрики должна быть больше 0");
+            }
+
+            if (customer.Sum < cost)
+            {
+                throw new InvalidOperationException($"На счету команды ({customer.Sum:C} не хватает средств для покупки фабрики ({cost:C})");
+            }
+
+            var otherCustomer = factory.Customer;
+
+            if (otherCustomer.Id == customer.Id)
+            {
+                throw new InvalidOperationException("Нельзя продать фабрику самому себе");
+            }
+
+            lock (_lockObj)
+            {
+                var customerChange = new CustomerChange(_engine.Game.Time, customer, $"Покупка фабрики у команды {otherCustomer.DisplayName}")
+                {
+                    OtherCustomer = otherCustomer,
+                    BoughtFactory = factory,
+                    SumChange = -cost
+                };
+                _engine.Game.AddActivity(customerChange);
+
+                customer.Sum -= cost;
+                customer.Factories.Add(factory);
+
+                customerChange = new CustomerChange(_engine.Game.Time, otherCustomer, $"Продажа фабрики команде {customer.DisplayName}")
+                {
+                    OtherCustomer = customer,
+                    SoldFactory = factory,
+                    SumChange = cost
+                };
+                _engine.Game.AddActivity(customerChange);
+
+                otherCustomer.Sum += cost;
+                otherCustomer.Factories.Remove(factory);
+
+                factory.Customer = customer;
+            }
+        }
+
+        /// <summary>
+        /// Покупка командой новой фабрики (у игры).
         /// </summary>
         /// <param name="customer">Команда.</param>
         /// <param name="factoryDefinition">Описание фабрики, которую команда покупает.</param>
-        public void BuyFactory(Customer customer, FactoryDefinition factoryDefinition, int workers = 0, List<Material> productionMaterials = null)
+        public void BuyFactoryFromGame(Customer customer, FactoryDefinition factoryDefinition, int workers = 0, List<Material> productionMaterials = null)
         {
             if (null == customer)
             {
@@ -162,7 +252,7 @@ namespace IM.Production.CalculationEngine
             var buySumm = ReferenceData.CalculateFactoryCostForBuy(factoryDefinition);
             if (customer.Sum < buySumm)
             {
-                throw new InvalidOperationException($"На счету команды ({customer.Sum:C} не хватает средств для покупки фабрики ({buySumm})");
+                throw new InvalidOperationException($"На счету команды ({customer.Sum:C} не хватает средств для покупки фабрики ({buySumm:C})");
             }
 
             lock (_lockObj)
