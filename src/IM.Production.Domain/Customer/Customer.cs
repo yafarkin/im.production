@@ -14,6 +14,8 @@ namespace Epam.ImitationGames.Production.Domain
         {
             Factories = new List<Factory>();
             Contracts = new List<Contract>();
+            BankFinanceOperations = new List<BankFinOperation>();
+            BankFinanceActions = new List<BankFinAction>();
             FactoryGenerationLevel = 1;
         }
 

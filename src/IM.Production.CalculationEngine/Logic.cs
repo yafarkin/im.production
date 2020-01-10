@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CalculationEngine;
 using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Bank;
@@ -68,14 +69,12 @@ namespace IM.Production.CalculationEngine
                 throw new ArgumentNullException(nameof(finOperation));
             }
 
-            if (0 == finOperation.Days)
-            {
-                throw new ArgumentException("Количество дней должно быть больше 0", nameof(finOperation.Days));
-            }
+            finOperation.Days = isCredit ? ReferenceData.CreditDaysDefault : ReferenceData.DebitDaysDefault;
+            finOperation.Percent = isCredit ? ReferenceData.CreditPercentDefault : ReferenceData.DebitPercentDefault;
 
-            if (finOperation.Sum < 0)
+            if (finOperation.Sum <= 0)
             {
-                throw new ArgumentException("Сумма не может быть отрицательной", nameof(finOperation.Sum));
+                throw new ArgumentException("Сумма не может быть меньше 0", nameof(finOperation.Sum));
             }
 
             if (!isCredit && finOperation.Sum > customer.Sum)
@@ -170,6 +169,77 @@ namespace IM.Production.CalculationEngine
             }
         }
 
+        public void UpdateCustomerSettings(Customer customer, decimal sumOnRD)
+        {
+            if (null == customer)
+            {
+                throw new ArgumentNullException(nameof(customer));
+            }
+
+            if (sumOnRD < 0)
+            {
+                throw new ArgumentException("Сумма на иследования не может быть отрицательной", nameof(sumOnRD));
+            }
+
+            lock (_lockObj)
+            {
+                var customerChange = new CustomerChange(_game.Time, customer, "Изменение параметров команды")
+                {
+                    SumOnRDChange = sumOnRD - customer.SumOnRD
+                };
+                customer.SumOnRD = sumOnRD;
+                _game.AddActivity(customerChange);
+            }
+        }
+
+        public void UpdateFactorySettings(Factory factory, int? workers = null, decimal? sumOnRD = null, IEnumerable<Material> productionMaterials = null)
+        {
+            if (null == factory)
+            {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            if(null == workers && null == sumOnRD && null == productionMaterials)
+            {
+                return;
+            }
+
+            if (workers < 0)
+            {
+                throw new ArgumentException("Количество рабочих не может быть отрицательным", nameof(workers));
+            }
+
+            if (sumOnRD < 0)
+            {
+                throw new ArgumentException("Сумма на иследования не может быть отрицательной", nameof(sumOnRD));
+            }
+
+            lock(_lockObj)
+            {
+                var factoryChange = new FactoryChange(_game.Time, factory, "Изменение параметров фабрики");
+
+                if (workers != null)
+                {
+                    factoryChange.WorkersChange = workers.Value - factory.Workers;
+                    factory.Workers = workers.Value;
+                }
+
+                if (sumOnRD != null)
+                {
+                    factoryChange.SumOnRDChange = sumOnRD.Value - factoryChange.SumOnRDChange;
+                    factory.SumOnRD = sumOnRD.Value;
+                }
+
+                if (productionMaterials != null && productionMaterials.Any())
+                {
+                    factoryChange.Description += "; изменение списка производимых материалов";
+                    factory.ProductionMaterials = new List<Material>(productionMaterials);
+                }
+
+                _game.AddActivity(factoryChange);
+            }
+        }
+
         /// <summary>
         /// Покупка фабрики у другой команды.
         /// </summary>
@@ -205,6 +275,11 @@ namespace IM.Production.CalculationEngine
                 throw new InvalidOperationException("Нельзя продать фабрику самому себе");
             }
 
+            if (customer.ProductionType.Id != otherCustomer.ProductionType.Id)
+            {
+                throw new InvalidOperationException("Обе команды должны относится к одному и тому же типу производства");
+            }
+
             lock (_lockObj)
             {
                 var customerChange = new CustomerChange(_game.Time, customer, $"Покупка фабрики у команды {otherCustomer.DisplayName}")
@@ -238,7 +313,8 @@ namespace IM.Production.CalculationEngine
         /// </summary>
         /// <param name="customer">Команда.</param>
         /// <param name="factoryDefinition">Описание фабрики, которую команда покупает.</param>
-        public void BuyFactoryFromGame(Customer customer, FactoryDefinition factoryDefinition, int workers = 0, List<Material> productionMaterials = null)
+        /// <returns>Купленная фабрика.</returns>
+        public Factory BuyFactoryFromGame(Customer customer, FactoryDefinition factoryDefinition, int workers = 0, List<Material> productionMaterials = null)
         {
             if (null == customer)
             {
@@ -248,6 +324,11 @@ namespace IM.Production.CalculationEngine
             if (null == factoryDefinition)
             {
                 throw new ArgumentNullException(nameof(factoryDefinition));
+            }
+
+            if (factoryDefinition.ProductionType.Id != customer.ProductionType.Id)
+            {
+                throw new InvalidOperationException($"Команда с типом {customer.ProductionType.DisplayName} не может купить фабрику типа {factoryDefinition.ProductionType.DisplayName}");
             }
 
             var buySumm = ReferenceData.CalculateFactoryCostForBuy(factoryDefinition);
@@ -275,6 +356,8 @@ namespace IM.Production.CalculationEngine
 
                 customer.Sum -= buySumm;
                 customer.Factories.Add(factory);
+
+                return factory;
             }
         }
 

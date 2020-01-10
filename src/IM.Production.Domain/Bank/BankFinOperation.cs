@@ -7,10 +7,11 @@ namespace Epam.ImitationGames.Production.Domain.Bank
     /// </summary>
     public abstract class BankFinOperation : BaseBank
     {
-        protected BankFinOperation(GameTime time, Customer customer, string description = null)
+        protected BankFinOperation(GameTime time, Customer customer, decimal sum, string description = null)
             : base(time, customer, description)
         {
             Status = OperationStatus.Active;
+            Sum = sum;
         }
 
         /// <summary>

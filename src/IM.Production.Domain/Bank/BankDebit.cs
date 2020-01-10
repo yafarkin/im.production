@@ -10,8 +10,8 @@ namespace Epam.ImitationGames.Production.Domain.Bank
         public override string DisplayName =>
             $"Оформление вклада для {Customer.DisplayName}, сумма {Sum}, ставка {Percent}";
 
-        public BankDebit(GameTime time, Customer customer, string description = null)
-            : base(time, customer, description)
+        public BankDebit(GameTime time, Customer customer, decimal sum, string description = null)
+            : base(time, customer, sum, description)
         {
         }
     }

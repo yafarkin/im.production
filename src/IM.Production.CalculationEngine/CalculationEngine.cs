@@ -15,9 +15,14 @@ namespace IM.Production.CalculationEngine
     {
         protected static object _lockObj = new object();
 
-        public Game Game { get; set; }
+        protected Game _game { get; set; }
 
-        public void Calculate(Game game)
+        public CalculationEngine(Game game)
+        {
+            _game = game;
+        }
+
+        public void Calculate()
         {
             lock (_lockObj)
             {
@@ -39,57 +44,57 @@ namespace IM.Production.CalculationEngine
                 UpdateCurrentGameProperties();
 
                 // п.1. Осуществляем поставки по контрактам от игры на фабрику
-                foreach (var customer in game.Customers)
+                foreach (var customer in _game.Customers)
                 {
                     var contracts = customer.Contracts.Where(c => c.SourceFactory == null);
                     foreach (var contract in contracts)
                     {
-                        ProcessGameToCustomerContract(contract, game);
+                        ProcessGameToCustomerContract(contract);
                     }
                 }
 
                 // п. 2. Выплачиваем суммы за исследования на следующее поколение мероприятий
-                foreach (var customer in game.Customers)
+                foreach (var customer in _game.Customers)
                 {
-                    ProcessCustomerRD(customer, game);
+                    ProcessCustomerRD(customer);
                 }
 
                 // п. 3. Выплачиваем суммы за модернизацию предприятия и осуществляем его модернизацию
-                foreach (var customer in game.Customers)
+                foreach (var customer in _game.Customers)
                 {
                     foreach (var factory in customer.Factories)
                     {
-                        ProcessFactoryRD(factory, customer, game);
+                        ProcessFactoryRD(factory, customer);
                     }
                 }
 
                 // п. 4. Выплачиваем налоги на фабрики
-                foreach (var customer in game.Customers)
+                foreach (var customer in _game.Customers)
                 {
                     foreach (var factory in customer.Factories)
                     {
-                        PaidTaxes(factory, customer, game);
+                        PaidTaxes(factory, customer);
                     }
                 }
 
                 // п.5. Выполняем расчёт цен, по которым игра покупает материалы
-                ReferenceData.UpdateGameDemand(game.Customers.SelectMany(c => c.Factories));
+                ReferenceData.UpdateGameDemand(_game.Customers.SelectMany(c => c.Factories));
 
                 // п.6. Осуществление производства
                 // TODO It might be we don't need to process factories sequentually to generations, but it can be done in a random order
-                var maxGeneration = game.Customers.SelectMany(c => c.Factories)
+                var maxGeneration = _game.Customers.SelectMany(c => c.Factories)
                     .Select(f => f.FactoryDefinition.GenerationLevel).DefaultIfEmpty().Max();
 
                 for (var generation = 1; generation <= maxGeneration; generation++)
                 {
-                    foreach (var customer in game.Customers)
+                    foreach (var customer in _game.Customers)
                     {
                         var factories =
                             customer.Factories.Where(f => f.FactoryDefinition.GenerationLevel == generation);
 
                         foreach (var factory in factories)
                         {
-                            ProduceFactory(factory, game);
+                            ProduceFactory(factory);
 
                             var contracts = customer.Contracts.Where(c => c.SourceFactory.Id == factory.Id);
 
@@ -102,7 +107,7 @@ namespace IM.Production.CalculationEngine
                 }
 
                 // п.7. Осуществляем поставки по контрактам от игры на фабрику
-                foreach (var customer in Game.Customers)
+                foreach (var customer in _game.Customers)
                 {
                     var contracts = customer.Contracts.Where(c => c.DestinationFactory == null);
                     foreach (var contract in contracts)
@@ -114,19 +119,19 @@ namespace IM.Production.CalculationEngine
                 // п. 8. Осуществляем банковские операции
                 // п. 8.1. Получаем проценты на счёт от банка по вкладам
                 // п. 8.2. Выплачиваем проценты и тело кредита банку
-                foreach (var customer in Game.Customers)
+                foreach (var customer in _game.Customers)
                 {
                     DepositProcessing(customer);
                 }
 
                 // п. 9. В последний игровой день автоматически закрываем все кредиты и вклады в банках.
-                if (Game.Time.Day == Game.TotalGameDays)
+                if (_game.Time.Day == _game.TotalGameDays)
                 {
                 }
 
                 // п. 10. Прибавляем счётчик игровых дней.
-                Game.Time.Day++;
-                Game.Time.When = DateTime.UtcNow;
+                _game.Time.Day++;
+                _game.Time.When = DateTime.UtcNow;
             }
         }
 
@@ -135,7 +140,7 @@ namespace IM.Production.CalculationEngine
         /// </summary>
         protected void UpdateCurrentGameProperties()
         {
-            CurrentGameProps.GameDay = Game.Time.Day;
+            CurrentGameProps.GameDay = _game.Time.Day;
         }
 
         /// <summary>
@@ -163,7 +168,7 @@ namespace IM.Production.CalculationEngine
                     debit.Sum += debitAction.TotalSum;
 
                     // Выплачиваем деньги игроку, если срок вклада подошел к концу и закрываем вклад.
-                    if (debit.Time.Day + debit.Days == Game.Time.Day)
+                    if (debit.Time.Day + debit.Days == _game.Time.Day)
                     {
                         var closeDebitOperation = new BankCloseFinOperation(time, customer)
                         {
@@ -194,13 +199,13 @@ namespace IM.Production.CalculationEngine
                             {
                                 SumChange = closeDebitAction.TotalSum
                             };
-                        Game.AddActivity(customerChange);
+                        _game.AddActivity(customerChange);
                     }
                 }
             }
         }
 
-        protected void ProcessCustomerRD(Customer customer, Game game)
+        protected void ProcessCustomerRD(Customer customer)
         {
             if (customer.SumToNextGenerationLevel == 0)
             {
@@ -220,13 +225,13 @@ namespace IM.Production.CalculationEngine
             var time = new GameTime();
 
             var customerChange = new CustomerChange(time, customer, $"Оплата исследований следующего поколения фабрик, сумма {sumOnRD};") { SumChange = -sumOnRD };
-            game.AddActivity(customerChange);
+            _game.AddActivity(customerChange);
 
             customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress:P}")
             {
                 RDProgressChange = customerChange.RDProgressChange
             };
-            game.AddActivity(customerChange);
+            _game.AddActivity(customerChange);
 
             if (customer.ReadyForNextGenerationLevel)
             {
@@ -238,17 +243,17 @@ namespace IM.Production.CalculationEngine
                 {
                     FactoryGenerationLevelChange = customer.FactoryGenerationLevel
                 };
-                game.AddActivity(customerChange);
+                _game.AddActivity(customerChange);
 
                 customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress:P}")
                 {
                     RDProgressChange = customerChange.RDProgressChange
                 };
-                game.AddActivity(customerChange);
+                _game.AddActivity(customerChange);
             }
         }
 
-        protected void ProcessFactoryRD(Factory factory, Customer customer, Game game)
+        protected void ProcessFactoryRD(Factory factory, Customer customer)
         {
             if (factory.NeedSumToNextLevelUp == 0)
             {
@@ -272,8 +277,8 @@ namespace IM.Production.CalculationEngine
             };
             var factoryChange = new FactoryChange(time, factory) { RDProgressChange = factory.RDProgress };
 
-            game.AddActivity(customerChange);
-            game.AddActivity(factoryChange);
+            _game.AddActivity(customerChange);
+            _game.AddActivity(factoryChange);
 
             if (factory.ReadyForNextLevel)
             {
@@ -282,11 +287,11 @@ namespace IM.Production.CalculationEngine
                 factory.NeedSumToNextLevelUp = ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory);
 
                 factoryChange = new FactoryChange(time, factory) { LevelChange = factory.Level };
-                game.AddActivity(factoryChange);
+                _game.AddActivity(factoryChange);
             }
         }
 
-        protected void PaidTaxes(Factory factory, Customer customer, Game game)
+        protected void PaidTaxes(Factory factory, Customer customer)
         {
             var tax = ReferenceData.CalculateTaxOnFactory(factory);
             var taxSum = customer.Sum * tax;
@@ -300,11 +305,11 @@ namespace IM.Production.CalculationEngine
             };
             var taxChange = new TaxChange(time, factory) { Sum = taxSum };
 
-            game.AddActivity(customerChange);
-            game.AddActivity(taxChange);
+            _game.AddActivity(customerChange);
+            _game.AddActivity(taxChange);
         }
 
-        protected void ProduceFactory(Factory factory, Game game)
+        protected void ProduceFactory(Factory factory)
         {
             factory.Performance = ReferenceData.CalculateFactoryPerformance(factory);
 
@@ -354,7 +359,7 @@ namespace IM.Production.CalculationEngine
                         usedMaterialsOnStock.Clear();
 
                         var infoChanging = new InfoChanging(time, factory.Customer, $"Не хватает ресурсов для производства материала {material.DisplayName}");
-                        game.AddActivity(infoChanging);
+                        _game.AddActivity(infoChanging);
 
                         i = -1;
                         continue;
@@ -380,7 +385,7 @@ namespace IM.Production.CalculationEngine
                 ReferenceData.AddMaterialToStock(factory.Stock, producedMaterial);
 
                 var infoChanging = new InfoChanging(time, factory.Customer, $"Произведен материал {material.DisplayName} в количестве {producedMaterial.Amount}");
-                game.AddActivity(infoChanging);
+                _game.AddActivity(infoChanging);
             }
 
             // 2.3. Списываем со склада исходные материалы, потраченные на производство этого
@@ -407,10 +412,10 @@ namespace IM.Production.CalculationEngine
                 SumChange = -totalSalary
             };
 
-            game.AddActivity(customerChange);
+            _game.AddActivity(customerChange);
         }
 
-        private void ProcessGameToCustomerContract(Contract contract, Game game)
+        private void ProcessGameToCustomerContract(Contract contract)
         {
             var factory = contract.DestinationFactory;
             var material = contract.MaterialWithPrice.Material;
@@ -423,6 +428,7 @@ namespace IM.Production.CalculationEngine
             }
 
             var amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
+
             var totalPrice = ReferenceData.Supply.Materials.First(m => m.Material.Id == material.Id).SellPrice * amount;
 
             // начисляем материал на склад
@@ -446,8 +452,8 @@ namespace IM.Production.CalculationEngine
                 SumChange = totalPrice
             };
 
-            game.AddActivity(materialLogistic);
-            game.AddActivity(customerChange);
+            _game.AddActivity(materialLogistic);
+            _game.AddActivity(customerChange);
         }
 
         /// <summary>
@@ -456,20 +462,20 @@ namespace IM.Production.CalculationEngine
         /// <param name="contract">Контракт.</param>
         protected void ProcessContract(Contract contract)
         {
-            if (null == contract.SourceFactory)
+            if (null == contract.SourceFactory || null == contract.MaterialWithPrice)
             {
                 return;
             }
 
-            if (contract.TillDate.HasValue && contract.TillDate < Game.TotalGameDays)
+            if (contract.TillDate.HasValue && contract.TillDate < _game.TotalGameDays)
             {
                 // закрываем контракт по истечению срока действия
                 var customerContractChange =
-                    new CustomerChange(Game.Time, contract.Customer, "Закрытие контракта по истечению срока действия")
+                    new CustomerChange(_game.Time, contract.Customer, "Закрытие контракта по истечению срока действия")
                     {
                         ClosedContract = contract
                     };
-                Game.AddActivity(customerContractChange);
+                _game.AddActivity(customerContractChange);
                 contract.Customer.Contracts.Remove(contract);
 
                 return;
@@ -479,11 +485,11 @@ namespace IM.Production.CalculationEngine
             {
                 // закрываем контракт по достижению поставленного количества
                 var customerContractChange =
-                    new CustomerChange(Game.Time, contract.Customer, "Закрытие контракта по выполнению обязательств по поставленному количеству")
+                    new CustomerChange(_game.Time, contract.Customer, "Закрытие контракта по выполнению обязательств по поставленному количеству")
                     {
                         ClosedContract = contract
                     };
-                Game.AddActivity(customerContractChange);
+                _game.AddActivity(customerContractChange);
                 contract.Customer.Contracts.Remove(contract);
 
                 return;
@@ -547,10 +553,10 @@ namespace IM.Production.CalculationEngine
             {
                 SumChange = netSum
             };
-            Game.AddActivity(customerChange);
+            _game.AddActivity(customerChange);
 
             // добавляем активность о снятом налоге
-            Game.AddActivity(taxChange);
+            _game.AddActivity(taxChange);
 
             if (!isGameDemand)
             {
@@ -567,7 +573,7 @@ namespace IM.Production.CalculationEngine
                 {
                     SumChange = -totalPrice
                 };
-                Game.AddActivity(customerChange);
+                _game.AddActivity(customerChange);
             }
 
             // добавляем активность по поставке материала
@@ -578,7 +584,7 @@ namespace IM.Production.CalculationEngine
                 SourceFactory = contract.SourceFactory,
                 DestinationFactory = contract.DestinationFactory
             };
-            Game.AddActivity(materialLogistic);
+            _game.AddActivity(materialLogistic);
 
             if (!isGameDemand)
             {
@@ -594,7 +600,7 @@ namespace IM.Production.CalculationEngine
                         {
                             SumChange = -contract.SrcInsurancePremium
                         };
-                    Game.AddActivity(customerChange);
+                    _game.AddActivity(customerChange);
                 }
 
                 if (contract.DestInsurancePremium > 0)
@@ -609,7 +615,7 @@ namespace IM.Production.CalculationEngine
                         {
                             SumChange = -contract.DestInsurancePremium
                         };
-                    Game.AddActivity(customerChange);
+                    _game.AddActivity(customerChange);
                 }
 
                 if (needAmount > 0)
@@ -637,7 +643,7 @@ namespace IM.Production.CalculationEngine
                         contract.SourceFactory.Customer.Sum -= totalFine;
                         customerChange = new CustomerChange(time, contract.SourceFactory.Customer,
                             $"Оплата штрафа в размере {totalFine} ({fine} * {needAmount})") {SumChange = -totalFine};
-                        Game.AddActivity(customerChange);
+                        _game.AddActivity(customerChange);
 
                         contract.DestinationFactory.Customer.Sum += totalFine;
                         customerChange = new CustomerChange(time, contract.SourceFactory.Customer,
@@ -645,7 +651,7 @@ namespace IM.Production.CalculationEngine
                         {
                             SumChange = totalFine
                         };
-                        Game.AddActivity(customerChange);
+                        _game.AddActivity(customerChange);
                     }
 
                     if (srcInsuranceAmount > 0)
@@ -657,7 +663,7 @@ namespace IM.Production.CalculationEngine
                             {
                                 SumChange = srcInsuranceAmount
                             };
-                        Game.AddActivity(customerChange);
+                        _game.AddActivity(customerChange);
                     }
 
                     if (destInsuranceAmount > 0)
@@ -669,7 +675,7 @@ namespace IM.Production.CalculationEngine
                             {
                                 SumChange = srcInsuranceAmount
                             };
-                        Game.AddActivity(customerChange);
+                        _game.AddActivity(customerChange);
                     }
                 }
             }

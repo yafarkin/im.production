@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Epam.ImitationGames.Production.Domain.Production;
 
@@ -49,7 +48,27 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <summary>
         /// Начальная сумма на счету команды.
         /// </summary>
-        public static decimal InitialCustomerBalance = 100000m;
+        public static readonly decimal InitialCustomerBalance = 100000m;
+
+        /// <summary>
+        /// На какое количество дней открывается кредит.
+        /// </summary>
+        public static readonly uint CreditDaysDefault = 25;
+
+        /// <summary>
+        /// Под какой процент (в игровой день) выдается кредит.
+        /// </summary>
+        public static readonly decimal CreditPercentDefault = 0.1m;
+
+        /// <summary>
+        /// На какое количество дней открывается вклад.
+        /// </summary>
+        public static readonly uint DebitDaysDefault = 50;
+
+        /// <summary>
+        /// На какой процент (в игровой день) открывается вклад.
+        /// </summary>
+        public static readonly decimal DebitPercentDefault = 0.03m;
 
         /// <summary>
         /// Справочные данные по производительности фабрики, если количество рабочих больше чем нужно.
@@ -1225,6 +1244,24 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             {
                 material.Amount += materialToAdd.Amount;
             }
+        }
+
+        /// <summary>
+        /// Возвращает список доступных к покупке от игры фабрик.
+        /// </summary>
+        /// <param name="customer">Команда.</param>
+        /// <param name="onlyTopLevel">Только последнего уровня, иначе вообще всех доступных.</param>
+        /// <returns>Список доступных к покупке фабрик.</returns>
+        public static IList<FactoryDefinition> GetAvailFactoryDefenitions(Customer customer, bool onlyTopLevel = true)
+        {
+            var productionType = customer.ProductionType;
+            var factoryDefinitions = FactoryDefinitions.Where(f => f.ProductionType.Id == productionType.Id && f.GenerationLevel <= customer.FactoryGenerationLevel);
+            if (onlyTopLevel)
+            {
+                factoryDefinitions =  factoryDefinitions.Where(f => f.GenerationLevel == customer.FactoryGenerationLevel);
+            }
+
+            return factoryDefinitions.ToList();
         }
 
         /// <summary>

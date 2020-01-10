@@ -16,7 +16,7 @@ namespace Epam.ImitationGames.Production.Domain.Bank
         public override string DisplayName => $"Закрытие {(SourceOperation is BankDebit ? "вклада" : "кредита")}, сумма {Sum}";
 
         public BankCloseFinOperation(GameTime time, Customer customer, string description = null)
-            : base(time, customer, description)
+            : base(time, customer, 0, description)
         {
         }
     }
