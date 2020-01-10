@@ -77,6 +77,6 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// <summary>
         /// Отображаемое в интерфейсе описание.
         /// </summary>
-        public string DisplayName => $"Фабрика {FactoryDefinition.Name} (L {FactoryDefinition.GenerationLevel}, W {Workers}, P {Performance:P}";
+        public string DisplayName => $"Фабрика {FactoryDefinition.Name} (L {FactoryDefinition.GenerationLevel}, W {Workers}, P {Performance:P})";
     }
 }

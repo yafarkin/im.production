@@ -98,7 +98,7 @@ namespace IM.Production.CalculationEngine
                         {
                             ProduceFactory(factory);
 
-                            var contracts = customer.Contracts.Where(c => c.SourceFactory.Id == factory.Id);
+                            var contracts = customer.Contracts.Where(c => c.SourceFactory != null && c.SourceFactory.Id == factory.Id);
 
                             foreach (var contract in contracts)
                             {
@@ -223,6 +223,13 @@ namespace IM.Production.CalculationEngine
 
             var sumOnRD = customer.SumOnRD;
 
+            if (customer.Sum < sumOnRD)
+            {
+                var infoChange = new InfoChanging(_game.Time, customer, $"Исследование следующего поколения фабрик приостановлено, т.к. не хватает денег ({sumOnRD:C} > {customer.Sum:C}).");
+                _game.AddActivity(infoChange);
+                return;
+            }
+
             customer.Sum -= sumOnRD;
             customer.SpentSumToNextGenerationLevel += sumOnRD;
 
@@ -263,6 +270,13 @@ namespace IM.Production.CalculationEngine
             }
 
             var sumOnRD = factory.SumOnRD;
+
+            if (customer.Sum < sumOnRD)
+            {
+                var infoChange = new InfoChanging(_game.Time, customer, $"Исследование улучшения фабрики {factory.DisplayName} приостановлено, т.к. не хватает денег ({sumOnRD:C} > {customer.Sum:C}).");
+                _game.AddActivity(infoChange);
+                return;
+            }
 
             customer.Sum -= sumOnRD;
             factory.SpentSumToNextLevelUp += sumOnRD;
@@ -428,6 +442,13 @@ namespace IM.Production.CalculationEngine
             var amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
 
             var totalPrice = ReferenceData.Supply.Materials.First(m => m.Material.Id == material.Id).SellPrice * amount;
+            if (totalPrice > contract.Customer.Sum)
+            {
+                var infoChange = new InfoChanging(_game.Time, contract.Customer,
+                    $"Нет возможности закупить материалы у игры, т.к. не хватает денег ({totalPrice:C} > {contract.Customer.Sum:C}).");
+                _game.AddActivity(infoChange);
+                return;
+            }
 
             // начисляем материал на склад
             materialOnStock.Amount += amount;

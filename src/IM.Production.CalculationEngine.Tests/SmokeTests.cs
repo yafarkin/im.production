@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CalculationEngine;
+using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Bank;
 using Epam.ImitationGames.Production.Domain.Production;
 using Epam.ImitationGames.Production.Domain.ReferenceData;
@@ -339,6 +340,14 @@ namespace IM.Production.CalculationEngine.Tests
                 ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
                 DisplayName = "Электронный блок"
             });
+
+            ReferenceData.Supply.Materials = new List<MaterialWithPrice>
+            {
+                new MaterialWithPrice
+                {
+                    Material = ReferenceData.GetMaterialByKey("ruda"), SellPrice = 0.01m, Amount = 1
+                }
+            };
         }
 
         #endregion
@@ -411,7 +420,36 @@ namespace IM.Production.CalculationEngine.Tests
             Logic.UpdateFactorySettings(f1, null, null, new List<Material> {ReferenceData.GetMaterialByKey("metall_zelezo_ruda")});
             Logic.UpdateFactorySettings(f2, null, null, new List<Material> {ReferenceData.GetMaterialByKey("electronic_kremnii_ruda") });
 
-            RunCycles(10);
+            RunCycles();
+
+            // ничего не произвели, т.к. "забыли" заключить контракт на поставку материалов от игры
+            Assert.AreEqual(0, f1.Stock.Count);
+            Assert.AreEqual(0, f2.Stock.Count);
+            
+            // при этом очистится очередь производства, т.к. мы не можем эти материалы производить
+            Assert.AreEqual(0, f1.ProductionMaterials.Count);
+            Assert.AreEqual(0, f2.ProductionMaterials.Count);
+
+            // заключаем контракты
+            Logic.AddContract(
+                new Contract(Game.Time,
+                    new MaterialWithPrice {Amount = 110000, Material = ReferenceData.GetMaterialByKey("ruda")})
+                {
+                    Customer = c1, DestinationFactory = f1
+                });
+
+            Logic.AddContract(
+                new Contract(Game.Time,
+                    new MaterialWithPrice { Amount = 120000, Material = ReferenceData.GetMaterialByKey("ruda") })
+                {
+                    Customer = c2,
+                    DestinationFactory = f2,
+                });
+
+            Logic.UpdateFactorySettings(f1, null, null, new List<Material> { ReferenceData.GetMaterialByKey("metall_zelezo_ruda") });
+            Logic.UpdateFactorySettings(f2, null, null, new List<Material> { ReferenceData.GetMaterialByKey("electronic_kremnii_ruda") });
+
+            RunCycles(200);
         }
     }
 }
