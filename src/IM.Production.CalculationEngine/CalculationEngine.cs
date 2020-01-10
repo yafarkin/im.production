@@ -517,7 +517,7 @@ namespace IM.Production.CalculationEngine
             var time = new GameTime();
 
             // определяем, покупается материал (т.е. зачисляется на указанную фабрику) или продается игре (то тогда берем исходную фабрику)
-            var factory = contract.DestinationFactory ?? contract.SourceFactory;
+            var factory = contract.SourceFactory ?? contract.DestinationFactory;
             var material = contract.MaterialWithPrice.Material;
             var materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == material.Id) ??
                                   new MaterialOnStock {Material = material};
@@ -568,7 +568,7 @@ namespace IM.Production.CalculationEngine
             contract.SourceFactory.Customer.Sum += netSum;
             // добавляем активность по изменению суммы на счету игрока
             customerChange = new CustomerChange(time, contract.SourceFactory.Customer,
-                $"Продажа товара ({(isGameDemand ? "игре" : $"команде {contract.DestinationFactory.Customer.DisplayName}")}) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice}, из них налог на сумму {taxSum}")
+                $"Продажа товара ({(isGameDemand ? "игре" : $"команде {contract.DestinationFactory.Customer.DisplayName}")}) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice:C}, из них налог на сумму {taxSum:C}")
             {
                 SumChange = netSum
             };

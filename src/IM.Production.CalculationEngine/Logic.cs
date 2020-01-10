@@ -347,6 +347,11 @@ namespace IM.Production.CalculationEngine
                 throw new InvalidOperationException($"Команда с типом {customer.ProductionType.DisplayName} не может купить фабрику типа {factoryDefinition.ProductionType.DisplayName}");
             }
 
+            if (factoryDefinition.GenerationLevel > customer.FactoryGenerationLevel)
+            {
+                throw new InvalidOperationException($"Команда ещё не исследовала фабрики этого уровня ({factoryDefinition.GenerationLevel} > {customer.FactoryGenerationLevel})");
+            }
+
             var buySumm = ReferenceData.CalculateFactoryCostForBuy(factoryDefinition);
             if (customer.Sum < buySumm)
             {
