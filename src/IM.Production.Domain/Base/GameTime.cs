@@ -6,6 +6,7 @@ namespace Epam.ImitationGames.Production.Domain.Base
     /// <summary>
     /// Игровое время.
     /// </summary>
+    [Serializable]
     public class GameTime : BaseEntity
     {
         public GameTime()

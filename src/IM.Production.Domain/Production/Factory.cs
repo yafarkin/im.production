@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
@@ -6,6 +7,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
     /// <summary>
     /// Конкретная фабрика у команды.
     /// </summary>
+    [Serializable]
     public class Factory : BaseProduction, IVisibleEntity
     {
         public Factory()
@@ -75,6 +77,6 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// <summary>
         /// Отображаемое в интерфейсе описание.
         /// </summary>
-        public string DisplayName => $"Фабрика {FactoryDefinition.DisplayName} (уровень {FactoryDefinition.GenerationLevel}, рабочих {Workers}, производительность {Performance}";
+        public string DisplayName => $"Фабрика {FactoryDefinition.Name} (L {FactoryDefinition.GenerationLevel}, W {Workers}, P {Performance:P}";
     }
 }

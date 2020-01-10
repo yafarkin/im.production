@@ -5,6 +5,7 @@ namespace Epam.ImitationGames.Production.Domain.Base
     /// <summary>
     /// Базовая сущность для всего в игре.
     /// </summary>
+    [Serializable]
     public abstract class BaseEntity
     {
         protected BaseEntity()

@@ -343,7 +343,7 @@ namespace IM.Production.CalculationEngine
                 {
                     Customer = customer,
                     FactoryDefinition = factoryDefinition,
-                    Workers = workers,
+                    Workers = 0 == workers ? factoryDefinition.BaseWorkers : workers,
                     ProductionMaterials = productionMaterials ?? new List<Material>()
                 };
 

@@ -1,4 +1,5 @@
-﻿using Epam.ImitationGames.Production.Domain.Bank;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Bank;
 using Epam.ImitationGames.Production.Domain.Base;
 using Epam.ImitationGames.Production.Domain.Production;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ namespace Epam.ImitationGames.Production.Domain
     /// <summary>
     /// Команда (производитель).
     /// </summary>
+    [Serializable]
     public class Customer : VisibleEntity
     {
         public Customer()

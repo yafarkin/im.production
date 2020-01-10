@@ -224,12 +224,10 @@ namespace IM.Production.CalculationEngine
 
             var time = new GameTime();
 
-            var customerChange = new CustomerChange(time, customer, $"Оплата исследований следующего поколения фабрик, сумма {sumOnRD};") { SumChange = -sumOnRD };
-            _game.AddActivity(customerChange);
-
-            customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress:P}")
+            var customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress/100:P}, сумма {sumOnRD:C}")
             {
-                RDProgressChange = customerChange.RDProgressChange
+                RDProgressChange = customer.RDProgress,
+                SumChange = -sumOnRD
             };
             _game.AddActivity(customerChange);
 
@@ -239,14 +237,9 @@ namespace IM.Production.CalculationEngine
                 customer.SpentSumToNextGenerationLevel -= customer.SumToNextGenerationLevel;
                 customer.SumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
 
-                customerChange = new CustomerChange(time, customer, $"Исследован новый уровень поколения фабрик: {customer.FactoryGenerationLevel}")
+                customerChange = new CustomerChange(time, customer, $"Исследован новый уровень поколения фабрик: {customer.FactoryGenerationLevel}; Процент исследования следующего поколения фабрик: {customer.RDProgress/100:P}")
                 {
-                    FactoryGenerationLevelChange = customer.FactoryGenerationLevel
-                };
-                _game.AddActivity(customerChange);
-
-                customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress:P}")
-                {
+                    FactoryGenerationLevelChange = customer.FactoryGenerationLevel,
                     RDProgressChange = customerChange.RDProgressChange
                 };
                 _game.AddActivity(customerChange);
@@ -271,11 +264,12 @@ namespace IM.Production.CalculationEngine
             factory.SpentSumToNextLevelUp += sumOnRD;
 
             var time = new GameTime();
-            var customerChange = new CustomerChange(time, customer, $"Оплата исследований на фабрике {factory.DisplayName} ({factory.FactoryDefinition.ProductionType.DisplayName}), сумма {sumOnRD}")
+            var customerChange = new CustomerChange(time, customer,
+                $"Оплата исследований на {factory.DisplayName} ({factory.FactoryDefinition.ProductionType.DisplayName}), сумма {sumOnRD:C}")
             {
                 SumChange = -sumOnRD
             };
-            var factoryChange = new FactoryChange(time, factory) { RDProgressChange = factory.RDProgress };
+            var factoryChange = new FactoryChange(time, factory) {RDProgressChange = factory.RDProgress};
 
             _game.AddActivity(customerChange);
             _game.AddActivity(factoryChange);
@@ -286,24 +280,24 @@ namespace IM.Production.CalculationEngine
                 factory.SpentSumToNextLevelUp -= factory.NeedSumToNextLevelUp;
                 factory.NeedSumToNextLevelUp = ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory);
 
-                factoryChange = new FactoryChange(time, factory) { LevelChange = factory.Level };
+                factoryChange = new FactoryChange(time, factory) {LevelChange = factory.Level};
                 _game.AddActivity(factoryChange);
             }
         }
 
         protected void PaidTaxes(Factory factory, Customer customer)
         {
-            var tax = ReferenceData.CalculateTaxOnFactory(factory);
-            var taxSum = customer.Sum * tax;
+            var taxSum = ReferenceData.CalculateTaxOnFactory(factory);
 
             customer.Sum -= taxSum;
 
             var time = new GameTime();
-            var customerChange = new CustomerChange(time, customer, $"Оплата налога на фабрику {factory.DisplayName} ({factory.FactoryDefinition.ProductionType.DisplayName}), % налога {tax}, сумма налога {taxSum}")
+            var customerChange = new CustomerChange(time, customer,
+                $"Оплата налога на фабрику {factory.DisplayName} ({factory.FactoryDefinition.ProductionType.DisplayName}), сумма налога {taxSum:C}")
             {
                 SumChange = -taxSum
             };
-            var taxChange = new TaxChange(time, factory) { Sum = taxSum };
+            var taxChange = new TaxChange(time, factory) {Sum = taxSum};
 
             _game.AddActivity(customerChange);
             _game.AddActivity(taxChange);
@@ -447,7 +441,7 @@ namespace IM.Production.CalculationEngine
             };
 
             // добавляем активность по изменению суммы на счету игрока
-            var customerChange = new CustomerChange(time, contract.DestinationFactory.Customer, $"Оплата товара (игре) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice}")
+            var customerChange = new CustomerChange(time, contract.DestinationFactory.Customer, $"Оплата товара (игре) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice:C}")
             {
                 SumChange = totalPrice
             };
@@ -569,7 +563,7 @@ namespace IM.Production.CalculationEngine
 
                 // добавляем активность по изменению суммы на счету игрока
                 customerChange = new CustomerChange(time, contract.DestinationFactory.Customer,
-                    $"Оплата товара (команде {contract.SourceFactory.Customer.DisplayName}) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice}")
+                    $"Оплата товара (команде {contract.SourceFactory.Customer.DisplayName}) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice:C}")
                 {
                     SumChange = -totalPrice
                 };
@@ -596,7 +590,7 @@ namespace IM.Production.CalculationEngine
                     // добавляем активность по изменению суммы на счету игрока
                     customerChange =
                         new CustomerChange(time, contract.SourceFactory.Customer,
-                            $"Оплата страховки в размере {contract.SrcInsurancePremium}")
+                            $"Оплата страховки в размере {contract.SrcInsurancePremium:C}")
                         {
                             SumChange = -contract.SrcInsurancePremium
                         };
@@ -611,7 +605,7 @@ namespace IM.Production.CalculationEngine
                     // добавляем активность по изменению суммы на счету игрока
                     customerChange =
                         new CustomerChange(time, contract.DestinationFactory.Customer,
-                            $"Оплата страховки в размере {contract.DestInsurancePremium}")
+                            $"Оплата страховки в размере {contract.DestInsurancePremium:C}")
                         {
                             SumChange = -contract.DestInsurancePremium
                         };
@@ -642,12 +636,12 @@ namespace IM.Production.CalculationEngine
 
                         contract.SourceFactory.Customer.Sum -= totalFine;
                         customerChange = new CustomerChange(time, contract.SourceFactory.Customer,
-                            $"Оплата штрафа в размере {totalFine} ({fine} * {needAmount})") {SumChange = -totalFine};
+                            $"Оплата штрафа в размере {totalFine:C} ({fine} * {needAmount})") {SumChange = -totalFine};
                         _game.AddActivity(customerChange);
 
                         contract.DestinationFactory.Customer.Sum += totalFine;
                         customerChange = new CustomerChange(time, contract.SourceFactory.Customer,
-                            $"Получение выплат по штрафу в размере {totalFine} ({fine} * {needAmount})")
+                            $"Получение выплат по штрафу в размере {totalFine:C} ({fine} * {needAmount})")
                         {
                             SumChange = totalFine
                         };
@@ -659,7 +653,7 @@ namespace IM.Production.CalculationEngine
                         contract.SourceFactory.Customer.Sum += srcInsuranceAmount;
                         customerChange =
                             new CustomerChange(time, contract.SourceFactory.Customer,
-                                $"Выплата страховки по непоставке товара, в сумме {srcInsuranceAmount}")
+                                $"Выплата страховки по непоставке товара, в сумме {srcInsuranceAmount:C}")
                             {
                                 SumChange = srcInsuranceAmount
                             };
@@ -671,7 +665,7 @@ namespace IM.Production.CalculationEngine
                         contract.DestinationFactory.Customer.Sum += destInsuranceAmount;
                         customerChange =
                             new CustomerChange(time, contract.DestinationFactory.Customer,
-                                $"Выплата страховки по непоставке товара, в сумме {destInsuranceAmount}")
+                                $"Выплата страховки по непоставке товара, в сумме {destInsuranceAmount:C}")
                             {
                                 SumChange = srcInsuranceAmount
                             };

@@ -1,10 +1,12 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Налог на фабрику или продажу материала.
     /// </summary>
+    [Serializable]
     public class TaxChange : BaseChanging
     {
         /// <summary>

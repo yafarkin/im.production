@@ -1,10 +1,12 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Материал на складе.
     /// </summary>
+    [Serializable]
     public class MaterialOnStock : BaseEntity
     {
         /// <summary>

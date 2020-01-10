@@ -1,10 +1,12 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Тип производства.
     /// </summary>
+    [Serializable]
     public class ProductionType : BaseProduction, IVisibleEntity
     {
         public string Key { get; set; }

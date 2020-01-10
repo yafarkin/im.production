@@ -1,8 +1,11 @@
-﻿namespace Epam.ImitationGames.Production.Domain.Production
+﻿using System;
+
+namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Материал со стоимостью за единицу.
     /// </summary>
+    [Serializable]
     public class MaterialWithPrice : MaterialOnStock
     {
         /// <summary>

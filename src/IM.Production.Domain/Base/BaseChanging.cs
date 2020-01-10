@@ -1,8 +1,12 @@
-﻿namespace Epam.ImitationGames.Production.Domain.Base
+﻿using System;
+using System.Security.Cryptography;
+
+namespace Epam.ImitationGames.Production.Domain.Base
 {
     /// <summary>
     /// Сущность, описывающая изменения с чем либо во времени.
     /// </summary>
+    [Serializable]
     public class BaseChanging : BaseEntity
     {
         /// <summary>
@@ -27,5 +31,7 @@
             Customer = customer;
             Description = description;
         }
+
+        public override string ToString() => Description;
     }
 }

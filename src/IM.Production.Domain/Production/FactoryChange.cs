@@ -1,10 +1,12 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Описание изменения, произошедшего с фабрикой
     /// </summary>
+    [Serializable]
     public class FactoryChange : BaseChanging
     {
         /// <summary>

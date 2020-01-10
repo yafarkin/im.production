@@ -1,10 +1,12 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Bank
 {
     /// <summary>
     /// Операция оформления вклада.
     /// </summary>
+    [Serializable]
     public class BankDebit : BankFinOperation
     {
         public override string DisplayName =>

@@ -1,10 +1,12 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Bank
 {
     /// <summary>
     /// Какая либо банковская операция по запросу команды.
     /// </summary>
+    [Serializable]
     public abstract class BankFinOperation : BaseBank
     {
         protected BankFinOperation(GameTime time, Customer customer, decimal sum, string description = null)

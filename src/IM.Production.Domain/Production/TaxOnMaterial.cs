@@ -1,10 +1,12 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Налог на продажу конкретного материала.
     /// </summary>
+    [Serializable]
     public class TaxOnMaterial : BaseEntity
     {
         /// <summary>

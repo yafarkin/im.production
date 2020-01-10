@@ -165,7 +165,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <summary>
         /// Налог на фабрику по умолчанию.
         /// </summary>
-        public static decimal DefaultFactoryTax = 0.1m;
+        public static decimal DefaultFactoryTax = 0.01m;
 
         /// <summary>
         /// Налог на продажу единицы материала по умолчанию.
@@ -272,7 +272,9 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static decimal CalculateTaxOnFactory(Factory factory)
         {
             var tax = FactoryTaxes.FirstOrDefault(f => f.FactoryDefinition.Id == factory.FactoryDefinition.Id)?.Percent ?? DefaultFactoryTax;
-            return tax;
+            var factoryCost = CalculateFactoryCostForSell(factory);
+            var taxSumm = factoryCost * tax;
+            return taxSumm;
         }
 
         /// <summary>
@@ -400,7 +402,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <remarks>Рассчитывается, как 10% от поколения фабрики, умноженные на базовую зарплату.</remarks>
         public static decimal CalculateWorkerSalary(Factory factory)
         {
-            var decile = factory.FactoryDefinition.GenerationLevel * 0.1M;
+            var decile = 1 + (factory.FactoryDefinition.GenerationLevel - 1) * 0.1m;
             var salary = decile * BaseWorkerSalay;
 
             return salary;

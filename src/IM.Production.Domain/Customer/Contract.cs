@@ -1,4 +1,5 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 using Epam.ImitationGames.Production.Domain.Production;
 
 namespace Epam.ImitationGames.Production.Domain
@@ -6,6 +7,7 @@ namespace Epam.ImitationGames.Production.Domain
     /// <summary>
     /// Описание заключенного контракта.
     /// </summary>
+    [Serializable]
     public class Contract : MaterialLogistic
     {
         /// <summary>

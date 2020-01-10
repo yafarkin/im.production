@@ -1,10 +1,12 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Операция перемещения материала с одной фабрики на другую.
     /// </summary>
+    [Serializable]
     public class MaterialLogistic : BaseChanging
     {
         /// <summary>

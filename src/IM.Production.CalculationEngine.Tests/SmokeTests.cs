@@ -273,14 +273,16 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(ReferenceData.InitialCustomerBalance + 990000, c1.Sum);
             Assert.AreEqual(ReferenceData.InitialCustomerBalance - 10000, c2.Sum);
 
-            Logic.UpdateFactorySettings(f1, null, 1000);
-            Logic.UpdateFactorySettings(f2, null, 500);
+            Logic.UpdateFactorySettings(f1, null, 100);
+            Logic.UpdateFactorySettings(f2, null, 50);
 
-            Logic.UpdateCustomerSettings(c1, 20000);
-            Logic.UpdateCustomerSettings(c2, 10000);
+            Logic.UpdateCustomerSettings(c1, 200);
+            Logic.UpdateCustomerSettings(c2, 100);
 
             RunCycles();
 
+            Assert.AreEqual(ReferenceData.InitialCustomerBalance + 990000, c1.Sum);
+            Assert.AreEqual(ReferenceData.InitialCustomerBalance - 10000, c2.Sum);
         }
     }
 }

@@ -6,6 +6,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
     /// <summary>
     /// Запись о произведении материала на фабрике.
     /// </summary>
+    [Serializable]
     public class FactoryProduction : BaseEntity
     {
         /// <summary>

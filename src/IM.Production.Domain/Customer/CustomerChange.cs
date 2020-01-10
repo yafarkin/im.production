@@ -1,4 +1,5 @@
-﻿using Epam.ImitationGames.Production.Domain.Bank;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Bank;
 using Epam.ImitationGames.Production.Domain.Base;
 using Epam.ImitationGames.Production.Domain.Production;
 
@@ -7,6 +8,7 @@ namespace Epam.ImitationGames.Production.Domain
     /// <summary>
     /// Изменения в команде.
     /// </summary>
+    [Serializable]
     public class CustomerChange : BaseChanging
     {
         /// <summary>

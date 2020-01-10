@@ -94,13 +94,12 @@ namespace CalculationEngine
 
         public void AddActivity(BaseChanging changing)
         {
-            // TODO To serialize a class it has to have the Serializable attribute, I will fix it later, once Business Logic is covered
-            //var thisHashCode = GetMD5Hash(ObjectToByteArray(changing)));
-            //var prevHashCode = Activity.LastOrDefault()?.HashCode ?? string.Empty;
+            var thisHashCode = GetMD5Hash(ObjectToByteArray(changing));
+            var prevHashCode = Activity.LastOrDefault()?.HashCode ?? string.Empty;
 
-            //var hashCode = GetMD5Hash(thisHashCode + prevHashCode);
+            var hashCode = GetMD5Hash(thisHashCode + prevHashCode);
 
-            //Activity.Add(new ActivityLog {Change = changing, HashCode = hashCode});
+            Activity.Add(new ActivityLog {Change = changing, HashCode = hashCode});
         }
     }
 }
