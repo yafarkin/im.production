@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography;
 
 namespace Epam.ImitationGames.Production.Domain.Base
 {

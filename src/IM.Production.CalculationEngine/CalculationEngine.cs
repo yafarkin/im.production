@@ -24,6 +24,8 @@ namespace IM.Production.CalculationEngine
 
         public void Calculate()
         {
+            _game.AddActivity(new InfoChanging(_game.Time, null, "Начало игрового цикла"));
+
             lock (_lockObj)
             {
                 // 1. Осуществляем поставки по контрактам от игры на фабрику
@@ -133,6 +135,8 @@ namespace IM.Production.CalculationEngine
                 _game.Time.Day++;
                 _game.Time.When = DateTime.UtcNow;
             }
+
+            _game.AddActivity(new InfoChanging(_game.Time, null, "Завершение игрового цикла"));
         }
 
         /// <summary>
@@ -224,7 +228,7 @@ namespace IM.Production.CalculationEngine
 
             var time = new GameTime();
 
-            var customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress/100:P}, сумма {sumOnRD:C}")
+            var customerChange = new CustomerChange(time, customer, $"Процент исследования следующего поколения фабрик: {customer.RDProgress:P}, сумма {sumOnRD:C}")
             {
                 RDProgressChange = customer.RDProgress,
                 SumChange = -sumOnRD
@@ -237,7 +241,7 @@ namespace IM.Production.CalculationEngine
                 customer.SpentSumToNextGenerationLevel -= customer.SumToNextGenerationLevel;
                 customer.SumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
 
-                customerChange = new CustomerChange(time, customer, $"Исследован новый уровень поколения фабрик: {customer.FactoryGenerationLevel}; Процент исследования следующего поколения фабрик: {customer.RDProgress/100:P}")
+                customerChange = new CustomerChange(time, customer, $"Исследован новый уровень поколения фабрик: {customer.FactoryGenerationLevel}; Процент исследования следующего поколения фабрик: {customer.RDProgress:P}")
                 {
                     FactoryGenerationLevelChange = customer.FactoryGenerationLevel,
                     RDProgressChange = customerChange.RDProgressChange

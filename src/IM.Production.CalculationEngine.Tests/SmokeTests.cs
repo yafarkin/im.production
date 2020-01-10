@@ -165,9 +165,34 @@ namespace IM.Production.CalculationEngine.Tests
 
             ReferenceData.Materials.Add(new Material
             {
-                Key = "metall_ruda",
+                Key = "ruda",
                 ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
-                DisplayName = "Металлосодержащая руда"
+                DisplayName = "Руда",
+                AmountPerDay = 20000
+            });
+
+            ReferenceData.Materials.Add(new Material
+            {
+                Key = "metall_zelezo_ruda",
+                ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
+                DisplayName = "Металлосодержащая руда",
+                AmountPerDay = 20000,
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock {Material = ReferenceData.GetMaterialByKey("ruda"), Amount = 100000}
+                }
+            });
+
+            ReferenceData.Materials.Add(new Material
+            {
+                Key = "metall_med_ruda",
+                ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
+                DisplayName = "Медесодержащая руда",
+                AmountPerDay = 1000,
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock {Material = ReferenceData.GetMaterialByKey("ruda"), Amount = 100000}
+                }
             });
 
             ReferenceData.Materials.Add(new Material
@@ -178,7 +203,7 @@ namespace IM.Production.CalculationEngine.Tests
                 {
                     new MaterialOnStock
                     {
-                        Material = ReferenceData.GetMaterialByKey("metall_ruda"),
+                        Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda"),
                         Amount = 1000
                     }
                 },
@@ -205,7 +230,7 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.Materials.Add(new Material
             {
                 AmountPerDay = 2000m,
-                Key = "gvozd",
+                Key = "provoloka",
                 InputMaterials = new List<MaterialOnStock>
                 {
                     new MaterialOnStock
@@ -215,7 +240,104 @@ namespace IM.Production.CalculationEngine.Tests
                     }
                 },
                 ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
-                DisplayName = "Гвоздь"
+                DisplayName = "Железная проволока"
+            });
+
+            ReferenceData.Materials.Add(new Material
+            {
+                AmountPerDay = 1,
+                Key = "blok_upravlenia",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = ReferenceData.GetMaterialByKey("electro_blok"),
+                        Amount = 3
+                    }
+                },
+                ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
+                DisplayName = "Блок управления"
+            });
+
+            ReferenceData.Materials.Add(new Material
+            {
+                Key = "electronic_kremnii_ruda",
+                ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
+                DisplayName = "Кремнесодержащая руда",
+                AmountPerDay = 25000,
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock {Material = ReferenceData.GetMaterialByKey("ruda"), Amount = 100000}
+                }
+            });
+
+            ReferenceData.Materials.Add(new Material
+            {
+                AmountPerDay = 1000,
+                Key = "electronic_kremnii",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = ReferenceData.GetMaterialByKey("electronic_kremnii_ruda"),
+                        Amount = 8000
+                    }
+                },
+                ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
+                DisplayName = "Кремний"
+            });
+
+            ReferenceData.Materials.Add(new Material
+            {
+                AmountPerDay = 2,
+                Key = "plata",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = ReferenceData.GetMaterialByKey("electronic_kremnii"),
+                        Amount = 12000
+                    },
+                    new MaterialOnStock
+                    {
+                        Material = ReferenceData.GetMaterialByKey("provoloka"),
+                        Amount = 7000
+                    }
+                },
+                ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
+                DisplayName = "Печатная плата"
+            });
+
+            ReferenceData.Materials.Add(new Material
+            {
+                AmountPerDay = 1,
+                Key = "electro_blok",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = ReferenceData.GetMaterialByKey("plata"),
+                        Amount = 3
+                    }
+                },
+                ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
+                DisplayName = "Электронный блок"
+            });
+
+            ReferenceData.Materials.Add(new Material
+            {
+                AmountPerDay = 1,
+                Key = "computer",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = ReferenceData.GetMaterialByKey("electro_blok"),
+                        Amount = 10
+                    }
+                },
+                ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
+                DisplayName = "Электронный блок"
             });
         }
 
@@ -281,8 +403,15 @@ namespace IM.Production.CalculationEngine.Tests
 
             RunCycles();
 
-            Assert.AreEqual(ReferenceData.InitialCustomerBalance + 990000, c1.Sum);
-            Assert.AreEqual(ReferenceData.InitialCustomerBalance - 10000, c2.Sum);
+            // выплаты ушли на налоги и зарплаты
+            Assert.AreEqual(1088640, c1.Sum);
+            Assert.AreEqual(88790, c2.Sum);
+
+            // начинаем организовывать производство
+            Logic.UpdateFactorySettings(f1, null, null, new List<Material> {ReferenceData.GetMaterialByKey("metall_zelezo_ruda")});
+            Logic.UpdateFactorySettings(f2, null, null, new List<Material> {ReferenceData.GetMaterialByKey("electronic_kremnii_ruda") });
+
+            RunCycles(10);
         }
     }
 }

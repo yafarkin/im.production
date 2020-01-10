@@ -6,7 +6,7 @@ using Epam.ImitationGames.Production.Domain.Production;
 namespace Epam.ImitationGames.Production.Domain.ReferenceData
 {
     /// <summary>
-    /// Класс, хранящий справочные данные и расчитывающий разные показатели
+    /// Класс, хранящий справочные данные и рассчитывающий разные показатели
     /// </summary>
     public static class ReferenceData
     {

@@ -79,9 +79,9 @@ namespace Epam.ImitationGames.Production.Domain
         public bool ReadyForNextGenerationLevel => SpentSumToNextGenerationLevel > SumToNextGenerationLevel;
 
         /// <summary>
-        /// Общий прогресс иследования, для открытия фабрик следующего уровня.
+        /// Общий прогресс исследования, для открытия фабрик следующего уровня.
         /// </summary>
-        public decimal RDProgress => SumToNextGenerationLevel / SpentSumToNextGenerationLevel;
+        public decimal RDProgress => SpentSumToNextGenerationLevel / SumToNextGenerationLevel;
 
         /// <summary>
         /// Итоговая сумма на счету команды

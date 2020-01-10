@@ -192,7 +192,7 @@ namespace IM.Production.CalculationEngine
             }
         }
 
-        public void UpdateFactorySettings(Factory factory, int? workers = null, decimal? sumOnRD = null, IEnumerable<Material> productionMaterials = null)
+        public void UpdateFactorySettings(Factory factory, int? workers = null, decimal? sumOnRD = null, IList<Material> productionMaterials = null)
         {
             if (null == factory)
             {
@@ -211,7 +211,23 @@ namespace IM.Production.CalculationEngine
 
             if (sumOnRD < 0)
             {
-                throw new ArgumentException("Сумма на иследования не может быть отрицательной", nameof(sumOnRD));
+                throw new ArgumentException("Сумма на исследования не может быть отрицательной", nameof(sumOnRD));
+            }
+
+            if (productionMaterials != null && productionMaterials.Any())
+            {
+                var factoryCanProduce =  factory.FactoryDefinition.CanProductionMaterials
+                    .Where(x => x.Key <= factory.Level)
+                    .SelectMany(x => x.Value)
+                    .ToList();
+
+                foreach (var productionMaterial in productionMaterials)
+                {
+                    if (factoryCanProduce.All(x => x.Id != productionMaterial.Id))
+                    {
+                        throw new ArgumentException($"Указанный материал {productionMaterial.DisplayName} не может быть произведен на этой фабрике");
+                    }
+                }
             }
 
             lock(_lockObj)
