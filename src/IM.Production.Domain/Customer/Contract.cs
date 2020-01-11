@@ -61,9 +61,10 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public decimal TotalOnTaxes { get; set; }
 
-        public Contract(GameTime time, MaterialWithPrice materialWithPrice, string description = null)
+        public Contract(GameTime time, Customer customer, MaterialWithPrice materialWithPrice, string description = null)
             : base(time, materialWithPrice, description)
         {
+            Customer = customer;
         }
     }
 }

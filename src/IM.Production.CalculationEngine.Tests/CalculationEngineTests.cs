@@ -27,7 +27,7 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var sum = 0;
             var customer = new Customer();
-            var contract = new Contract(null, null) {SourceFactory = new Factory()};
+            var contract = new Contract(null, customer, null) {SourceFactory = new Factory()};
             customer.Contracts.Add(contract);
             _game.Customers.Add(customer);
 
@@ -44,7 +44,7 @@ namespace IM.Production.CalculationEngine.Tests
             var customer = new Customer();
             _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 10));
             var factory = new Factory {Customer = customer};
-            var contract = new Contract(null, new MaterialWithPrice { Material = material, Amount = amount }) { DestinationFactory = factory };
+            var contract = new Contract(null, customer, new MaterialWithPrice { Material = material, Amount = amount }) { DestinationFactory = factory };
             customer.Contracts.Add(contract);
             _game.Customers.Add(customer);
 
@@ -64,7 +64,7 @@ namespace IM.Production.CalculationEngine.Tests
             _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 10));
             var factory = new Factory {Customer = customer};
             var contract =
-                new Contract(null, new MaterialWithPrice {Amount = 100, Material = material})
+                new Contract(null, customer, new MaterialWithPrice {Amount = 100, Material = material})
                 {
                     DestinationFactory = factory
                 };
@@ -182,7 +182,8 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEngine.Calculate();
 
-            Assert.AreEqual(0.9M, customer.Sum);
+            // -5 - налог на саму фабрику
+            Assert.AreEqual(-5, customer.Sum);
             Assert.AreEqual(spentSum, factory.SpentSumToNextLevelUp);
         }
 
@@ -208,7 +209,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEngine.Calculate();
 
-            Assert.AreEqual(81, customer.Sum);
+            Assert.AreEqual(84, customer.Sum);
             Assert.AreEqual(12, factory.SpentSumToNextLevelUp);
             Assert.AreEqual(level, factory.Level);
             Assert.AreEqual(1000, factory.NeedSumToNextLevelUp);
@@ -235,7 +236,7 @@ namespace IM.Production.CalculationEngine.Tests
             _calculationEngine.Calculate();
 
             Assert.AreEqual(2, factory.Level);
-            Assert.AreEqual(45, customer.Sum);
+            Assert.AreEqual(38, customer.Sum);
             Assert.AreEqual(40, factory.SpentSumToNextLevelUp);
             Assert.AreEqual(7500, factory.NeedSumToNextLevelUp);
         }
@@ -253,7 +254,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEngine.Calculate();
 
-            Assert.AreEqual(90, customer.Sum);
+            Assert.AreEqual(94, customer.Sum);
         }
 
         [TestMethod]
@@ -275,7 +276,7 @@ namespace IM.Production.CalculationEngine.Tests
         }
 
         [TestMethod]
-        public void Calculate_FactoryWithNotProducibleMaterial_MaterialRemoved()
+        public void Calculate_FactoryWithNotProducibleMaterial_MaterialNotRemoved()
         {
             var input = new Material { AmountPerDay = 1 };
             var material = new Material { AmountPerDay = 1, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input } } };
@@ -288,7 +289,7 @@ namespace IM.Production.CalculationEngine.Tests
             _calculationEngine.Calculate();
 
             Assert.IsFalse(factory.Stock.Any());
-            Assert.IsFalse(factory.ProductionMaterials.Any());
+            Assert.IsTrue(factory.ProductionMaterials.Any());
         }
 
         [TestMethod]
@@ -331,7 +332,7 @@ namespace IM.Production.CalculationEngine.Tests
         }
 
         [TestMethod]
-        public void Calculate_FactoryWithDifferentMaterials_NotProducibleRemovedAndProducibleReleased()
+        public void Calculate_FactoryWithDifferentMaterials_NotProducibleNotRemovedAndProducibleReleased()
         {
             var input = new Material { AmountPerDay = 1 };
             var firstMaterial = new Material { AmountPerDay = 1, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input, Amount = 2 } } };
@@ -345,11 +346,11 @@ namespace IM.Production.CalculationEngine.Tests
                 FactoryDefinition = new FactoryDefinition { GenerationLevel = 1, BaseWorkers = 1, ProductionType = new ProductionType() },
                 Customer = customer
             };
-            (factory.ProductionMaterials as List<Material>).AddRange(new List<Material>
-            {
-                firstMaterial, secondMaterial, thirdMaterial, fourthMaterial
-            });
-            factory.Stock.Add(new MaterialOnStock { Material = input, Amount = 5 });
+
+            _game.AddActivity(new FactoryProductionMaterialChange(_game.Time, factory,
+                new List<Material> {firstMaterial, secondMaterial, thirdMaterial, fourthMaterial}));
+
+            factory.Stock.Add(new MaterialOnStock {Material = input, Amount = 5});
             customer.Factories.Add(factory);
             _game.Customers.Add(customer);
 
@@ -357,16 +358,20 @@ namespace IM.Production.CalculationEngine.Tests
 
             var firstProduced = factory.Stock.First(m => m.Material.Id == firstMaterial.Id);
             var secondProduced = factory.Stock.Find(m => m.Material.Id == secondMaterial.Id);
+            var thirdProduced = factory.Stock.Find(m => m.Material.Id == thirdMaterial.Id);
+            var fourthProduced = factory.Stock.Find(m => m.Material.Id == fourthMaterial.Id);
             var inputOnStock = factory.Stock.First(m => m.Material.Id == input.Id);
             Assert.IsTrue(factory.ProductionMaterials.Contains(firstMaterial));
             Assert.IsTrue(factory.ProductionMaterials.Contains(secondMaterial));
-            Assert.IsFalse(factory.ProductionMaterials.Contains(thirdMaterial));
-            Assert.IsFalse(factory.ProductionMaterials.Contains(fourthMaterial));
+            Assert.IsTrue(factory.ProductionMaterials.Contains(thirdMaterial));
+            Assert.IsTrue(factory.ProductionMaterials.Contains(fourthMaterial));
             Assert.AreEqual(3, factory.Stock.Count);
-            Assert.AreEqual(2, factory.ProductionMaterials.Count);
-            Assert.AreEqual(0.5M, firstProduced.Amount);
-            Assert.AreEqual(1M, secondProduced.Amount);
-            Assert.AreEqual(2.5M, inputOnStock.Amount);
+            Assert.AreEqual(4, factory.ProductionMaterials.Count);
+            Assert.AreEqual(0.5m, firstProduced.Amount);
+            Assert.AreEqual(1, secondProduced.Amount);
+            Assert.AreEqual(2.5m, inputOnStock.Amount);
+            Assert.IsNull(thirdProduced);
+            Assert.IsNull(fourthProduced);
         }
 
         [TestMethod]
@@ -416,7 +421,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEngine.Calculate();
 
-            Assert.AreEqual(800, customer.Sum);
+            Assert.AreEqual(1210, customer.Sum);
         }
     }
 }

@@ -233,7 +233,7 @@ namespace IM.Production.CalculationEngine
 
                 _game.AddActivity(new CustomerGenerationLevelChange(time, customer, newGenerationLevel,
                     customer.SpentSumToNextGenerationLevel - customer.SumToNextGenerationLevel,
-                    ReferenceData.CalculateRDSummToNextGenerationLevel(customer),
+                    ReferenceData.CalculateRDSummToNextGenerationLevel(customer, newGenerationLevel),
                     $"Исследован новый уровень поколения фабрик: {newGenerationLevel}"));
             }
         }
@@ -274,7 +274,7 @@ namespace IM.Production.CalculationEngine
 
                 _game.AddActivity(new FactoryLevelChange(time, factory, newLevel
                     , factory.SpentSumToNextLevelUp - factory.NeedSumToNextLevelUp,
-                    ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory),
+                    ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory, newLevel),
                     $"Фабрика {factory.DisplayName} достигла уровня {newLevel}"));
             }
         }
@@ -292,14 +292,13 @@ namespace IM.Production.CalculationEngine
             // 2. выполняем производство материалов и помещаем их на склад
 
             // 2.1. определяем, что вообще сможем произвести
-            var productionMaterials = factory.ProductionMaterials;
+            var productionMaterials = new List<Material>(factory.ProductionMaterials);
             var usedMaterialsOnStock = new List<MaterialOnStock>();
 
             decimal performancePerMaterial = 0;
             var time = new GameTime();
 
-            // TODO Checking algorith to be regactored
-            var materialCount = productionMaterials.Count;
+            // TODO Checking algoritm to be refactored
             while (productionMaterials.Any())
             {
                 for (var i = 0; i < productionMaterials.Count; i++)
@@ -309,7 +308,7 @@ namespace IM.Production.CalculationEngine
                     var currentUsedMaterialsOnStock = new List<MaterialOnStock>();
                     var allMaterialsOnStock = true;
 
-                    performancePerMaterial = decimal.Divide(1, materialCount);
+                    performancePerMaterial = decimal.Divide(1, productionMaterials.Count);
 
                     foreach (var inputMaterial in material.InputMaterials)
                     {
@@ -332,14 +331,13 @@ namespace IM.Production.CalculationEngine
                     if (!allMaterialsOnStock)
                     {
                         // не хватает материалов. выполняем полный пересчёт, с пересчётом производительности в т.ч.
-                        //productionMaterials.Remove(material);
-                        materialCount--;
+                        productionMaterials.Remove(material);
                         usedMaterialsOnStock.Clear();
 
                         var infoChanging = new InfoChanging(time, factory.Customer, $"Не хватает ресурсов для производства материала {material.DisplayName}");
                         _game.AddActivity(infoChanging);
 
-                        //i = -1;
+                        i = -1;
                         continue;
                     }
 

@@ -431,16 +431,16 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(1, f2_1.ProductionMaterials.Count);
 
             // заключаем контракты
-            Logic.AddContract(new Contract(Game.Time,
+            Logic.AddContract(new Contract(Game.Time, c1,
                 new MaterialWithPrice {Amount = 110000, Material = ReferenceData.GetMaterialByKey("ruda")})
             {
-                Customer = c1, DestinationFactory = f1_1
+                DestinationFactory = f1_1
             });
 
-            Logic.AddContract(new Contract(Game.Time,
+            Logic.AddContract(new Contract(Game.Time, c2,
                 new MaterialWithPrice {Amount = 120000, Material = ReferenceData.GetMaterialByKey("ruda")})
             {
-                Customer = c2, DestinationFactory = f2_1,
+                DestinationFactory = f2_1,
             });
 
             Logic.UpdateFactorySettings(f1_1, null, null, new List<Material> { ReferenceData.GetMaterialByKey("metall_zelezo_ruda") });
@@ -477,30 +477,28 @@ namespace IM.Production.CalculationEngine.Tests
             Logic.UpdateFactorySettings(f2_2, null, null, new List<Material> { ReferenceData.GetMaterialByKey("electronic_kremnii") });
 
             // организовываем контракты уже между своими фабриками
-            Logic.AddContract(new Contract(Game.Time,
+            Logic.AddContract(new Contract(Game.Time, c1,
                 new MaterialWithPrice {Amount = 20000, Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda")})
             {
-                Customer = c1, SourceFactory = f1_1, DestinationFactory = f1_2
+                SourceFactory = f1_1, DestinationFactory = f1_2
             });
 
-            Logic.AddContract(new Contract(Game.Time,
+            Logic.AddContract(new Contract(Game.Time, c2,
                 new MaterialWithPrice {Amount = 25000, Material = ReferenceData.GetMaterialByKey("electronic_kremnii_ruda")})
             {
-                Customer = c2, SourceFactory = f2_1, DestinationFactory = f2_2
+                SourceFactory = f2_1, DestinationFactory = f2_2
             });
 
             // и начинаем продавать излишки игре, что бы заработать денежек
-            Logic.AddContract(new Contract(Game.Time,
+            Logic.AddContract(new Contract(Game.Time, c1,
                 new MaterialWithPrice { Amount = 50000, Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda") })
             {
-                Customer = c1,
                 SourceFactory = f1_1
             });
 
-            Logic.AddContract(new Contract(Game.Time,
+            Logic.AddContract(new Contract(Game.Time, c2,
                 new MaterialWithPrice { Amount = 50000, Material = ReferenceData.GetMaterialByKey("electronic_kremnii_ruda") })
             {
-                Customer = c2,
                 SourceFactory = f2_1
             });
 
@@ -560,25 +558,22 @@ namespace IM.Production.CalculationEngine.Tests
             Logic.UpdateCustomerSettings(c2, 0);
 
             // команда №2 пока копит денег, а команда №1 запускает производство следующего уровня - начинает делать железные листы
-            Logic.AddContract(new Contract(Game.Time,
+            Logic.AddContract(new Contract(Game.Time, c1,
                 new MaterialWithPrice { Amount = 50, Material = ReferenceData.GetMaterialByKey("metall_zelezo") })
             {
-                Customer = c1,
                 SourceFactory = f1_2,
                 DestinationFactory = f1_3
             });
 
-            Logic.AddContract(new Contract(Game.Time,
+            Logic.AddContract(new Contract(Game.Time, c1,
                 new MaterialWithPrice { Amount = 10000, Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda") })
             {
-                Customer = c1,
                 SourceFactory = f1_2
             });
 
-            Logic.AddContract(new Contract(Game.Time,
+            Logic.AddContract(new Contract(Game.Time, c1,
                 new MaterialWithPrice { Amount = 10, Material = ReferenceData.GetMaterialByKey("metall_zelezo_list") })
             {
-                Customer = c1,
                 SourceFactory = f1_3
             });
 

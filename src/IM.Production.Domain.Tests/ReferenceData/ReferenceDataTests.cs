@@ -245,11 +245,10 @@ namespace IM.Production.Domain.Tests
         [TestMethod]
         public void CalculateFactoryExtraChargePercent_Developed_AdvancedPercentReturned()
         {
-            var factory = new Factory { FactoryDefinition = new FactoryDefinition { GenerationLevel = 3 } };
+            var factory = new Factory {FactoryDefinition = new FactoryDefinition {GenerationLevel = 3}};
             var factories = new List<Factory>
             {
-                new Factory{FactoryDefinition = new FactoryDefinition{GenerationLevel = 2}},
-                factory
+                new Factory {FactoryDefinition = new FactoryDefinition {GenerationLevel = 2}}, factory
             };
 
             var percent = ReferenceData.CalculateFactoryExtraChargePercent(factory, factories);
@@ -263,16 +262,15 @@ namespace IM.Production.Domain.Tests
             var material = ReferenceData.GetMaterialByKey("metall_ruda");
             var factory = new Factory
             {
-                FactoryDefinition = new FactoryDefinition(),
-                ProductionMaterials = new List<Material> { material }
+                FactoryDefinition = new FactoryDefinition(), ProductionMaterials = new List<Material> {material}
             };
-            var factories = new List<Factory> { factory };
+            var factories = new List<Factory> {factory};
 
             ReferenceData.UpdateGameDemand(factories);
 
             var demand = ReferenceData.Demand.Materials.First();
             Assert.AreSame(material, demand.Material);
-            Assert.AreEqual(0.022M, demand.SellPrice);
+            Assert.AreEqual(0.03M, demand.SellPrice);
         }
 
         [DataTestMethod]
@@ -294,12 +292,19 @@ namespace IM.Production.Domain.Tests
         [TestMethod]
         public void CalculateWorkerSalary_AnyFactory_WorkerSalaryReturned()
         {
-            var definition = new FactoryDefinition { GenerationLevel = 10 };
-            var factory = new Factory { FactoryDefinition = definition };
+            var definition10 = new FactoryDefinition {GenerationLevel = 10};
+            var factory10 = new Factory {FactoryDefinition = definition10};
 
-            var salary = ReferenceData.CalculateWorkerSalary(factory);
+            var salary = ReferenceData.CalculateWorkerSalary(factory10);
 
-            Assert.AreEqual(100, salary);
+            Assert.AreEqual(19, salary);
+
+            var definition1 = new FactoryDefinition {GenerationLevel = 1};
+            var factory1 = new Factory { FactoryDefinition = definition1 };
+
+            salary = ReferenceData.CalculateWorkerSalary(factory1);
+
+            Assert.AreEqual(ReferenceData.BaseWorkerSalay, salary);
         }
     }
 }

@@ -219,9 +219,9 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// </summary>
         /// <param name="customer">Команда.</param>
         /// <returns>Стоимость исследования фабрик следующего поколения.</returns>
-        public static decimal CalculateRDSummToNextGenerationLevel(Customer customer)
+        public static decimal CalculateRDSummToNextGenerationLevel(Customer customer, int level = 0)
         {
-            var currentGenerationLevel = customer.FactoryGenerationLevel;
+            var currentGenerationLevel = 0 == level ? customer.FactoryGenerationLevel : level;
             var cost = FindNearest(currentGenerationLevel + 1, GenerationFactoryRDCost);
             return cost;
         }
@@ -231,9 +231,9 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// </summary>
         /// <param name="factory">Фабрика.</param>
         /// <returns>Стоимость исследования следующего уровня производительности фабрики.</returns>
-        public static decimal CalculateRDSummToNextFactoryLevelUp(Factory factory)
+        public static decimal CalculateRDSummToNextFactoryLevelUp(Factory factory, int level = 0)
         {
-            var currentFactoryLevel = factory.Level;
+            var currentFactoryLevel = 0 == level ? factory.Level : level;
             var cost = FindNearest(currentFactoryLevel + 1, FactoryLevelUpRDCost);
             return CalculateFactoryCostForBuy(factory.FactoryDefinition) * cost;
         }
@@ -363,9 +363,9 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             const decimal advancedExtraChargePercent = 0.5M;
 
             var maxGeneration = factories.Max(f => f.FactoryDefinition.GenerationLevel);
-            var developed = factory.FactoryDefinition.GenerationLevel > 1 && factory.FactoryDefinition.GenerationLevel == maxGeneration;
+            var isMaxGeneration = factory.FactoryDefinition.GenerationLevel == maxGeneration;
 
-            return developed ? defaultExtraChargePercent : advancedExtraChargePercent;
+            return isMaxGeneration ? advancedExtraChargePercent : defaultExtraChargePercent;
         }
 
         // TODO It might become redundant
