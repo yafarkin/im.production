@@ -86,6 +86,10 @@ namespace Epam.ImitationGames.Production.Domain
         /// <summary>
         /// Итоговая сумма на счету команды
         /// </summary>
-        public decimal Sum { get; set; }
+        public decimal Sum { get; protected set; }
+
+        public void AddSum(decimal sum) => Sum += sum;
+
+        public void SetSum(decimal sum) => Sum = sum;
     }
 }

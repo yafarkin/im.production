@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Bank;
 using Epam.ImitationGames.Production.Domain.Base;
 using Epam.ImitationGames.Production.Domain.Production;
 
@@ -9,7 +8,7 @@ namespace Epam.ImitationGames.Production.Domain
     /// Изменения в команде.
     /// </summary>
     [Serializable]
-    public class CustomerChange : BaseChanging
+    public abstract class CustomerChange : BaseChanging
     {
         /// <summary>
         /// Заключенный контракт.
@@ -39,31 +38,35 @@ namespace Epam.ImitationGames.Production.Domain
         /// <summary>
         /// Изменение % исследования по RD.
         /// </summary>
-        public decimal RDProgressChange { get; set; }
+        public decimal? NewRDProgress { get; set; }
 
         /// <summary>
         /// Изменение суммы, выделяемой на RD.
         /// </summary>
-        public decimal SumOnRDChange { get; set; }
+        public decimal? NewSumOnRD { get; protected set; }
 
         /// <summary>
         /// Изменение уровня поколения фабрик.
         /// </summary>
-        public int FactoryGenerationLevelChange { get; set; }
+        public int? NewFactoryGenerationLevel { get; protected set; }
 
-        /// <summary>
-        /// Ссылка на банковскую операцию.
-        /// </summary>
-        public BankFinAction FinAction { get; set; }
-
-        /// <summary>
-        /// Изменения суммы на счёту команды.
-        /// </summary>
-        public decimal SumChange { get; set; }
-
-        public CustomerChange(GameTime time, Customer customer, string description = null)
+        protected CustomerChange(GameTime time, Customer customer, string description = null)
             : base(time, customer, description)
         {
+        }
+
+        public override void DoAction()
+        {
+            base.DoAction();
+            if (NewSumOnRD.HasValue)
+            {
+                Customer.SumOnRD = NewSumOnRD.Value;
+            }
+
+            if (NewFactoryGenerationLevel.HasValue)
+            {
+                Customer.FactoryGenerationLevel = NewFactoryGenerationLevel.Value;
+            }
         }
     }
 }

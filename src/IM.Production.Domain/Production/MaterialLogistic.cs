@@ -27,7 +27,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// <summary>
         /// Ссылка на списание налога за поставку материала.
         /// </summary>
-        public TaxChange Tax { get; set; }
+        public TaxFactoryChange Tax { get; set; }
 
         public MaterialLogistic(GameTime time, MaterialWithPrice materialWithPrice, string description = null)
             : base(time, null, description)

@@ -7,37 +7,58 @@ namespace Epam.ImitationGames.Production.Domain.Production
     /// Описание изменения, произошедшего с фабрикой
     /// </summary>
     [Serializable]
-    public class FactoryChange : BaseChanging
+    public abstract class FactoryChange : BaseChanging
     {
         /// <summary>
         /// Ссылка на фабрику.
         /// </summary>
-        public Factory Factory { get; set; }
+        public Factory Factory { get; protected set; }
 
         /// <summary>
         /// Изменение уровня.
         /// </summary>
-        public int LevelChange { get; set; }
+        public int? NewLevel { get; protected set; }
 
         /// <summary>
         /// Изменение количества рабочих.
         /// </summary>
-        public int WorkersChange { get; set; }
+        public int? NewWorkersCount { get; protected set; }
 
         /// <summary>
         /// Изменение % исследования по RD.
         /// </summary>
-        public decimal RDProgressChange { get; set; }
+        public decimal? NewRDProgress { get; set; }
 
         /// <summary>
         /// Изменение суммы, выделяемой на RD.
         /// </summary>
-        public decimal SumOnRDChange { get; set; }
+        public decimal? NewSumOnRD { get; protected set; }
 
-        public FactoryChange(GameTime time, Factory factory, string description = null)
+        protected FactoryChange(GameTime time, Factory factory, int? newLevel, int? newWorkersCount, decimal? newSumOnRD, string description = null)
             : base(time, factory.Customer, description)
         {
             Factory = factory;
+            NewLevel = newLevel;
+            NewWorkersCount = newWorkersCount;
+            NewSumOnRD = newSumOnRD;
+        }
+
+        public override void DoAction()
+        {
+            if (NewLevel.HasValue)
+            {
+                Factory.Level = NewLevel.Value;
+            }
+
+            if (NewWorkersCount.HasValue)
+            {
+                Factory.Workers = NewWorkersCount.Value;
+            }
+
+            if(NewSumOnRD.HasValue)
+            {
+                Factory.SumOnRD = NewSumOnRD.Value;
+            }
         }
     }
 }

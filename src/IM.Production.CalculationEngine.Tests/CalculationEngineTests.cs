@@ -26,7 +26,7 @@ namespace IM.Production.CalculationEngine.Tests
         public void Calculate_NoContractsWithGame_SumNotChanged()
         {
             var sum = 0;
-            var customer = new Customer {Sum = sum};
+            var customer = new Customer();
             var contract = new Contract(null, null) {SourceFactory = new Factory()};
             customer.Contracts.Add(contract);
             _game.Customers.Add(customer);
@@ -41,8 +41,9 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var material = ReferenceData.GetMaterialByKey(MaterialKeys.MetalRuda);
             var amount = 100;
-            var customer = new Customer { Sum = 10 };
-            var factory = new Factory { Customer = customer };
+            var customer = new Customer();
+            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 10));
+            var factory = new Factory {Customer = customer};
             var contract = new Contract(null, new MaterialWithPrice { Material = material, Amount = amount }) { DestinationFactory = factory };
             customer.Contracts.Add(contract);
             _game.Customers.Add(customer);
@@ -59,7 +60,8 @@ namespace IM.Production.CalculationEngine.Tests
         public void Calculate_ContractWithGameAndMaterialOnStock_MaterialAmountIncreased()
         {
             var material = ReferenceData.GetMaterialByKey(MaterialKeys.MetalRuda);
-            var customer = new Customer {Sum = 10};
+            var customer = new Customer();
+            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 10));
             var factory = new Factory {Customer = customer};
             var contract =
                 new Contract(null, new MaterialWithPrice {Amount = 100, Material = material})
@@ -95,8 +97,11 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var sum = 1;
             var spent = 1;
-            var customer = new Customer { SumOnRD = sumOnRD, Sum = sum, SpentSumToNextGenerationLevel = spent };
+            var customer = new Customer {SpentSumToNextGenerationLevel = spent};
             _game.Customers.Add(customer);
+
+            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, sum));
+            _game.AddActivity(new CustomerSumOnRDChange(_game.Time, customer, sumOnRD));
 
             _calculationEngine.Calculate();
 
@@ -107,8 +112,11 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_ReadyForNextGenerationLevel_GenerationLevelIncreasedAndSumsChanged()
         {
-            var customer = new Customer { Sum = 10000, SumOnRD = 6000, FactoryGenerationLevel = 1 };
+            var customer = new Customer();
             _game.Customers.Add(customer);
+
+            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 10000));
+            _game.AddActivity(new CustomerSumOnRDChange(_game.Time, customer, 6000));
 
             _calculationEngine.Calculate();
 
@@ -123,8 +131,11 @@ namespace IM.Production.CalculationEngine.Tests
         {
             const int generationLevel = 1;
             const int sumToNext = 5000;
-            var customer = new Customer { Sum = 10, SumOnRD = 1, SpentSumToNextGenerationLevel = 2, FactoryGenerationLevel = generationLevel, SumToNextGenerationLevel = sumToNext };
+            var customer = new Customer {SpentSumToNextGenerationLevel = 2, SumToNextGenerationLevel = sumToNext};
             _game.Customers.Add(customer);
+
+            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 10));
+            _game.AddActivity(new CustomerSumOnRDChange(_game.Time, customer, 1));
 
             _calculationEngine.Calculate();
 
@@ -155,10 +166,19 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var spentSum = 1;
             var description = ReferenceData.FactoryDefinitions.First();
-            var customer = new Customer { Sum = 1 };
-            var factory = new Factory { NeedSumToNextLevelUp = 1, SumOnRD = sumOnRD, SpentSumToNextLevelUp = spentSum, FactoryDefinition = description, Customer = customer };
+            var customer = new Customer();
+            var factory = new Factory
+            {
+                NeedSumToNextLevelUp = 1,
+                SpentSumToNextLevelUp = spentSum,
+                FactoryDefinition = description,
+                Customer = customer
+            };
             customer.Factories.Add(factory);
             _game.Customers.Add(customer);
+
+            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 1));
+            _game.AddActivity(new FactorySumOnRDChange(_game.Time, factory, sumOnRD));
 
             _calculationEngine.Calculate();
 
@@ -172,10 +192,19 @@ namespace IM.Production.CalculationEngine.Tests
             var definition = ReferenceData.FactoryDefinitions.First();
             const int level = 1;
             const int needSum = 1000;
-            var customer = new Customer { Sum = 100 };
-            var factory = new Factory { Level = level, NeedSumToNextLevelUp = needSum, SumOnRD = 10, SpentSumToNextLevelUp = 2, FactoryDefinition = definition, Customer = customer };
+            var customer = new Customer();
+            var factory = new Factory
+            {
+                NeedSumToNextLevelUp = needSum,
+                SpentSumToNextLevelUp = 2,
+                FactoryDefinition = definition,
+                Customer = customer
+            };
             customer.Factories.Add(factory);
             _game.Customers.Add(customer);
+
+            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 100));
+            _game.AddActivity(new FactorySumOnRDChange(_game.Time, factory, 10));
 
             _calculationEngine.Calculate();
 
@@ -189,10 +218,19 @@ namespace IM.Production.CalculationEngine.Tests
         public void Calculate_ReadyForNextLevel_LevelIncreasedAndSumsChanged()
         {
             var definition = ReferenceData.FactoryDefinitions.First();
-            var customer = new Customer { Sum = 100 };
-            var factory = new Factory { Level = 1, SumOnRD = 50, NeedSumToNextLevelUp = 10, SpentSumToNextLevelUp = 0, FactoryDefinition = definition, Customer = customer };
+            var customer = new Customer();
+            var factory = new Factory
+            {
+                NeedSumToNextLevelUp = 10,
+                SpentSumToNextLevelUp = 0,
+                FactoryDefinition = definition,
+                Customer = customer
+            };
             customer.Factories.Add(factory);
             _game.Customers.Add(customer);
+
+            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 100));
+            _game.AddActivity(new FactorySumOnRDChange(_game.Time, factory, 50));
 
             _calculationEngine.Calculate();
 
@@ -206,10 +244,12 @@ namespace IM.Production.CalculationEngine.Tests
         public void Calculate_FactoryWithoutSpecialTax_SumDecreasedByDefaultTax()
         {
             var description = ReferenceData.FactoryDefinitions.First();
-            var customer = new Customer { Sum = 100 };
-            var factory = new Factory { FactoryDefinition = description, Customer = customer };
+            var customer = new Customer();
+            var factory = new Factory {FactoryDefinition = description, Customer = customer};
             customer.Factories.Add(factory);
             _game.Customers.Add(customer);
+
+            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 100));
 
             _calculationEngine.Calculate();
 
@@ -305,7 +345,10 @@ namespace IM.Production.CalculationEngine.Tests
                 FactoryDefinition = new FactoryDefinition { GenerationLevel = 1, BaseWorkers = 1, ProductionType = new ProductionType() },
                 Customer = customer
             };
-            factory.ProductionMaterials.AddRange(new List<Material> { firstMaterial, secondMaterial, thirdMaterial, fourthMaterial });
+            (factory.ProductionMaterials as List<Material>).AddRange(new List<Material>
+            {
+                firstMaterial, secondMaterial, thirdMaterial, fourthMaterial
+            });
             factory.Stock.Add(new MaterialOnStock { Material = input, Amount = 5 });
             customer.Factories.Add(factory);
             _game.Customers.Add(customer);
@@ -356,15 +399,20 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_FactoryWithAnyMaterials_SumDecreasedOnSalary()
         {
-            var customer = new Customer { Sum = 2000 };
+            var customer = new Customer();
             var factory = new Factory
             {
-                Workers = 10,
                 Customer = customer,
-                FactoryDefinition = new FactoryDefinition { GenerationLevel = 10, ProductionType = new ProductionType(), BaseWorkers = 10 }
+                FactoryDefinition = new FactoryDefinition
+                {
+                    GenerationLevel = 10, ProductionType = new ProductionType(), BaseWorkers = 10
+                }
             };
             customer.Factories.Add(factory);
             _game.Customers.Add(customer);
+
+            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 2000));
+            _game.AddActivity(new FactoryWorkerCountChange(_game.Time, factory, 10));
 
             _calculationEngine.Calculate();
 

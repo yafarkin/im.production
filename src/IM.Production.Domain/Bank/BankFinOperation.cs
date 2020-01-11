@@ -35,5 +35,11 @@ namespace Epam.ImitationGames.Production.Domain.Bank
         /// Статус операции.
         /// </summary>
         public OperationStatus Status { get; set; }
+
+        public override void DoAction()
+        {
+            base.DoAction();
+            Customer.BankFinanceOperations.Add(this);
+        }
     }
 }

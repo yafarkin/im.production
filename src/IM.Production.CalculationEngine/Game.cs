@@ -99,6 +99,8 @@ namespace CalculationEngine
 
             var hashCode = GetMD5Hash(thisHashCode + prevHashCode);
 
+            changing.DoAction();
+
             Activity.Add(new ActivityLog {Change = changing, HashCode = hashCode});
         }
     }

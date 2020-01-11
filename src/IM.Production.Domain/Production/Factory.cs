@@ -35,7 +35,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// <summary>
         /// Производимые материалы на этой фабрике (из подмножества <see><cref>FactoryDefinition.CanProductionMaterials</cref> </see>).
         /// </summary>
-        public List<Material> ProductionMaterials { get; set; }
+        public IList<Material> ProductionMaterials { get; set; }
 
         /// <summary>
         /// Текущий уровень производительности.

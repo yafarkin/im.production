@@ -13,7 +13,6 @@ namespace Epam.ImitationGames.Production.Domain.Base
         /// </summary>
         public GameTime Time { get; set; }
 
-
         /// <summary>
         /// С какой командой связаны изменения.
         /// </summary>
@@ -29,6 +28,14 @@ namespace Epam.ImitationGames.Production.Domain.Base
             Time = time;
             Customer = customer;
             Description = description;
+        }
+
+        /// <summary>
+        /// Выполняет необходимые действия (если предусмотрено) в момент добавления в лог.
+        /// </summary>
+        public virtual void DoAction()
+        {
+
         }
 
         public override string ToString() => Description;
