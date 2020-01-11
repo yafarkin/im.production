@@ -344,10 +344,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             ReferenceData.Supply.Materials = new List<MaterialWithPrice>
             {
-                new MaterialWithPrice
-                {
-                    Material = ReferenceData.GetMaterialByKey("ruda"), SellPrice = 0.01m, Amount = 1
-                }
+                new MaterialWithPrice {Material = ReferenceData.GetMaterialByKey("ruda"), SellPrice = 0.002m}
             };
         }
 
@@ -415,8 +412,8 @@ namespace IM.Production.CalculationEngine.Tests
             RunCycles();
 
             // выплаты ушли на налоги и зарплаты
-            Assert.AreEqual(188240, c1.Sum);
-            Assert.AreEqual(88390, c2.Sum);
+            Assert.AreEqual(189194, c1.Sum);
+            Assert.AreEqual(89344, c2.Sum);
 
             // начинаем организовывать производство
             Logic.UpdateFactorySettings(f1_1, null, null, new List<Material> {ReferenceData.GetMaterialByKey("metall_zelezo_ruda")});
@@ -455,8 +452,8 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(2, c1.FactoryGenerationLevel);
             Assert.AreEqual(2, c2.FactoryGenerationLevel);
 
-            Assert.AreEqual(157880, c1.Sum);
-            Assert.AreEqual(58680, c2.Sum);
+            Assert.AreEqual(178128, c1.Sum);
+            Assert.AreEqual(79728, c2.Sum);
 
             Assert.AreEqual(2, f1_1.Stock.Count);
             Assert.AreEqual(220000, f1_1.Stock[0].Amount);
@@ -473,8 +470,8 @@ namespace IM.Production.CalculationEngine.Tests
             // закупаем фабрики
             var f1_2 = Logic.BuyFactoryFromGame(c1, ReferenceData.GetAvailFactoryDefenitions(c1).First());
             var f2_2 = Logic.BuyFactoryFromGame(c2, ReferenceData.GetAvailFactoryDefenitions(c2).First());
-            Assert.AreEqual(132880, c1.Sum);
-            Assert.AreEqual(33680, c2.Sum);
+            Assert.AreEqual(153128, c1.Sum);
+            Assert.AreEqual(54728, c2.Sum);
 
             Logic.UpdateFactorySettings(f1_2, null, null, new List<Material> { ReferenceData.GetMaterialByKey("metall_zelezo") });
             Logic.UpdateFactorySettings(f2_2, null, null, new List<Material> { ReferenceData.GetMaterialByKey("electronic_kremnii") });
@@ -513,9 +510,9 @@ namespace IM.Production.CalculationEngine.Tests
 
             RunCycles(10);
 
-            // деньги потихоньику начинаем зарабатывать, не смотря на то, что у нас есть новые фабрики
-            Assert.AreEqual(98959, c1.Sum);
-            Assert.AreEqual(2759, c2.Sum);
+            // деньги потихоньку начинаем зарабатывать, не смотря на то, что у нас есть новые фабрики
+            Assert.AreEqual(138105, c1.Sum);
+            Assert.AreEqual(38555, c2.Sum);
             Assert.AreEqual(3, c1.FactoryGenerationLevel);
             Assert.AreEqual(3, c2.FactoryGenerationLevel);
 
@@ -555,8 +552,8 @@ namespace IM.Production.CalculationEngine.Tests
                 // денег не хватило
             }
 
-            Assert.AreEqual(48959, c1.Sum);
-            Assert.AreEqual(2759, c2.Sum);
+            Assert.AreEqual(88105, c1.Sum);
+            Assert.AreEqual(38555, c2.Sum);
 
             // тормозим исследования, т.к. денег жестко не хватает
             Logic.UpdateCustomerSettings(c1, 0);

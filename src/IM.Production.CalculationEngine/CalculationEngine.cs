@@ -80,7 +80,7 @@ namespace IM.Production.CalculationEngine
                 }
 
                 // п.5. Выполняем расчёт цен, по которым игра покупает материалы
-                ReferenceData.UpdateGameDemand(_game.Customers.SelectMany(c => c.Factories));
+                ReferenceData.UpdateGameDemand(_game.Customers.SelectMany(c => c.Factories).ToList());
 
                 // п.6. Осуществление производства
                 // TODO It might be we don't need to process factories sequentually to generations, but it can be done in a random order
@@ -289,6 +289,8 @@ namespace IM.Production.CalculationEngine
             };
             var factoryChange = new FactoryChange(time, factory) {RDProgressChange = factory.RDProgress};
 
+            factory.TotalOnRD += sumOnRD;
+
             _game.AddActivity(customerChange);
             _game.AddActivity(factoryChange);
 
@@ -316,6 +318,8 @@ namespace IM.Production.CalculationEngine
                 SumChange = -taxSum
             };
             var taxChange = new TaxChange(time, factory) {Sum = taxSum};
+
+            factory.TotalOnTaxes += taxSum;
 
             _game.AddActivity(customerChange);
             _game.AddActivity(taxChange);
@@ -418,9 +422,10 @@ namespace IM.Production.CalculationEngine
             // 3. списываем ФОТ. Cписываем деньги со счёта игрока
             var totalSalary = factory.Workers * ReferenceData.CalculateWorkerSalary(factory);
 
-            factory.Customer.Sum -= totalSalary;
+            factory.TotalOnSalary += totalSalary;
 
             // добавляем активность по изменению суммы на счету игрока
+            factory.Customer.Sum -= totalSalary;
             var customerChange = new CustomerChange(time, factory.Customer, $"Выплата зарплаты на фабрике {factory.DisplayName}, рабочих {factory.Workers}, общая сумма {totalSalary:C}")
             {
                 SumChange = -totalSalary
@@ -457,6 +462,8 @@ namespace IM.Production.CalculationEngine
 
             // списываем деньги со счёта игрока
             contract.DestinationFactory.Customer.Sum -= totalPrice;
+            contract.TotalSumm -= totalPrice;
+            contract.TotalCountCompleted += amount;
 
             var time = new GameTime();
 
@@ -562,6 +569,9 @@ namespace IM.Production.CalculationEngine
 
             // чистая сумма
             var netSum = totalPrice - taxSum;
+
+            contract.TotalOnTaxes += taxSum;
+            contract.TotalSumm += totalPrice;
 
             // списываем материал со склада
             materialOnStock.Amount -= amount;

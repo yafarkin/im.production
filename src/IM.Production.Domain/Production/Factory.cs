@@ -70,6 +70,21 @@ namespace Epam.ImitationGames.Production.Domain.Production
         public bool ReadyForNextLevel => SpentSumToNextLevelUp >= NeedSumToNextLevelUp;
 
         /// <summary>
+        /// Всего потрачено на RD.
+        /// </summary>
+        public decimal TotalOnRD { get; set; }
+
+        /// <summary>
+        /// Всего потрачено на налоги.
+        /// </summary>
+        public decimal TotalOnTaxes { get; set; }
+
+        /// <summary>
+        /// Всего потрачено на зарплату.
+        /// </summary>
+        public decimal TotalOnSalary { get; set; }
+
+        /// <summary>
         /// Склад материалов на фабрике.
         /// </summary>
         public List<MaterialOnStock> Stock { get; set; }

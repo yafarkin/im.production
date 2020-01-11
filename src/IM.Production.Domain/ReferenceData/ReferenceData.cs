@@ -160,12 +160,12 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <summary>
         /// Базовая зарплата одного рабочего на фабрике.
         /// </summary>
-        public static decimal BaseWorkerSalay = 100m;
+        public static decimal BaseWorkerSalay = 10m;
 
         /// <summary>
         /// Налог на фабрику по умолчанию.
         /// </summary>
-        public static decimal DefaultFactoryTax = 0.01m;
+        public static decimal DefaultFactoryTax = 0.001m;
 
         /// <summary>
         /// Налог на продажу единицы материала по умолчанию.
@@ -365,12 +365,14 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             var maxGeneration = factories.Max(f => f.FactoryDefinition.GenerationLevel);
             var developed = factory.FactoryDefinition.GenerationLevel > 1 && factory.FactoryDefinition.GenerationLevel == maxGeneration;
 
-            return developed ? advancedExtraChargePercent : defaultExtraChargePercent;
+            return developed ? defaultExtraChargePercent : advancedExtraChargePercent;
         }
 
         // TODO It might become redundant
-        public static void UpdateGameDemand(IEnumerable<Factory> factories)
+        public static void UpdateGameDemand(IList<Factory> factories)
         {
+            Demand.Materials.Clear();
+
             foreach (var factory in factories)
             {
                 var extraChargePercent = CalculateFactoryExtraChargePercent(factory, factories);

@@ -51,6 +51,16 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public int TotalCountCompleted { get; set; }
 
+        /// <summary>
+        /// Общая сумма на закупку/продажу, прошедшую по контракту.
+        /// </summary>
+        public decimal TotalSumm { get; set; }
+
+        /// <summary>
+        /// Общая сумма уплаченных налогов по контракту.
+        /// </summary>
+        public decimal TotalOnTaxes { get; set; }
+
         public Contract(GameTime time, MaterialWithPrice materialWithPrice, string description = null)
             : base(time, materialWithPrice, description)
         {
