@@ -335,6 +335,7 @@ namespace IM.Production.CalculationEngine
             var time = new GameTime();
 
             // TODO Checking algorith to be regactored
+            var materialCount = productionMaterials.Count;
             while (productionMaterials.Any())
             {
                 for (var i = 0; i < productionMaterials.Count; i++)
@@ -344,7 +345,7 @@ namespace IM.Production.CalculationEngine
                     var currentUsedMaterialsOnStock = new List<MaterialOnStock>();
                     var allMaterialsOnStock = true;
 
-                    performancePerMaterial = decimal.Divide(1, productionMaterials.Count);
+                    performancePerMaterial = decimal.Divide(1, materialCount);
 
                     foreach (var inputMaterial in material.InputMaterials)
                     {
@@ -367,13 +368,14 @@ namespace IM.Production.CalculationEngine
                     if (!allMaterialsOnStock)
                     {
                         // не хватает материалов. выполняем полный пересчёт, с пересчётом производительности в т.ч.
-                        productionMaterials.Remove(material);
+                        //productionMaterials.Remove(material);
+                        materialCount--;
                         usedMaterialsOnStock.Clear();
 
                         var infoChanging = new InfoChanging(time, factory.Customer, $"Не хватает ресурсов для производства материала {material.DisplayName}");
                         _game.AddActivity(infoChanging);
 
-                        i = -1;
+                        //i = -1;
                         continue;
                     }
 
