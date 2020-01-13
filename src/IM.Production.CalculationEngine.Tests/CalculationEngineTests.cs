@@ -20,6 +20,7 @@ namespace IM.Production.CalculationEngine.Tests
         {
             _game = new Game();
             _calculationEngine = new CalculationEngine(_game);
+            ReferenceData.InitReferences();
         }
 
         [TestMethod]

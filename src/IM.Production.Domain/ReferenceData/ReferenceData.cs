@@ -1288,7 +1288,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             throw new NotImplementedException();
         }
 
-        private static void InitReferences()
+        public static void InitReferences()
         {
             InitProductionTypes();
             InitMaterials();
