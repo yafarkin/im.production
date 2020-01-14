@@ -39,7 +39,7 @@ namespace Epam.ImitationGames.Production.Domain.Bank
         public override void DoAction()
         {
             base.DoAction();
-            Customer.BankFinanceOperations.Add(this);
+            Customer.AddBankFinOperation(this);
         }
     }
 }

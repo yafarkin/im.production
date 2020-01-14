@@ -14,67 +14,76 @@ namespace Epam.ImitationGames.Production.Domain
     {
         public Customer()
         {
-            Factories = new List<Factory>();
-            Contracts = new List<Contract>();
-            BankFinanceOperations = new List<BankFinOperation>();
-            BankFinanceActions = new List<BankFinAction>();
+            _factories = new List<Factory>();
+            _contracts = new List<Contract>();
+            _bankFinanceOperations = new List<BankFinOperation>();
             FactoryGenerationLevel = 1;
         }
 
         /// <summary>
         /// Логин.
         /// </summary>
-        public string Login { get; set; }
+        public string Login { get; protected set; }
 
         /// <summary>
         /// Хэш пароля.
         /// </summary>
-        public string PasswordHash { get; set; }
+        public string PasswordHash { get; protected set; }
 
         /// <summary>
         /// Область производства.
         /// </summary>
-        public ProductionType ProductionType { get; set; }
+        public ProductionType ProductionType { get; protected set; }
 
         /// <summary>
         /// Список фабрик.
         /// </summary>
-        public List<Factory> Factories { get; set; }
+        protected List<Factory> _factories { get; set; }
 
         /// <summary>
-        /// Заключенные контракты.
+        /// Публичный список фабрик.
         /// </summary>
-        public List<Contract> Contracts { get; set; }
+        public IEnumerable<Factory> Factories => _factories;
+
+        /// <summary>
+        /// Контракты.
+        /// </summary>
+        protected List<Contract> _contracts { get; set; }
+
+        /// <summary>
+        /// Публичный список контрактов.
+        /// </summary>
+        public IEnumerable<Contract> Contracts => _contracts;
 
         /// <summary>
         /// Все банковские операции.
         /// </summary>
-        public List<BankFinOperation> BankFinanceOperations { get; set; }
+        protected List<BankFinOperation> _bankFinanceOperations { get; set; }
 
         /// <summary>
-        /// Все банковские действия с операционным счетом команды.
+        /// Публичный список всех банковских операций.
         /// </summary>
-        public List<BankFinAction> BankFinanceActions { get; set; }
+        public IEnumerable<BankFinOperation> BankFinanceOperations => _bankFinanceOperations;
 
         /// <summary>
         /// Доступный уровень фабрик для данной команды.
         /// </summary>
-        public int FactoryGenerationLevel { get; set; }
+        public int FactoryGenerationLevel { get; protected set; }
 
         /// <summary>
         /// Сумма, выделяемая на RD, для исследования фабрик следующего уровня.
         /// </summary>
-        public decimal SumOnRD { get; set; }
+        public decimal SumOnRD { get; protected set; }
 
         /// <summary>
         /// Требуемая сумма для открытия фабрик следующего уровня.
         /// </summary>
-        public decimal SumToNextGenerationLevel { get; set; }
+        public decimal SumToNextGenerationLevel { get; protected set; }
 
         /// <summary>
         /// Уже потраченная сумма на исследования фабрик следующего уровня.
         /// </summary>
-        public decimal SpentSumToNextGenerationLevel { get; set; }
+        public decimal SpentSumToNextGenerationLevel { get; protected set; }
 
         public bool ReadyForNextGenerationLevel => SpentSumToNextGenerationLevel > SumToNextGenerationLevel;
 
@@ -88,8 +97,43 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public decimal Sum { get; protected set; }
 
-        public void AddSum(decimal sum) => Sum += sum;
+        internal void AddSum(decimal sum) => Sum += sum;
 
-        public void SetSum(decimal sum) => Sum = sum;
+        internal void SetSum(decimal sum) => Sum = sum;
+
+        internal void SetFactoryGenerationLevel(int level) => FactoryGenerationLevel = level;
+
+        internal void SetSumOnRD(decimal sum) => SumOnRD = sum;
+
+        internal void AddSpentSumOnRD(decimal sum) => SpentSumToNextGenerationLevel += sum;
+
+        internal void SetSumInfoForRD(decimal spentSum, decimal sumToNextLevel)
+        {
+            SpentSumToNextGenerationLevel = spentSum;
+            SumToNextGenerationLevel = sumToNextLevel;
+        }
+
+        internal void AddBankFinOperation(BankFinOperation operation) => _bankFinanceOperations.Add(operation);
+
+        internal void AddFactory(Factory factory) => _factories.Add(factory);
+
+        internal void DelFactory(Factory factory) => _factories.Remove(factory);
+
+        internal void AddContract(Contract contract) => _contracts.Add(contract);
+
+        internal void DelContract(Contract contract) => _contracts.Remove(contract);
+
+        public static Customer CreateCustomer(string login, string password, string displayName,  ProductionType productionType)
+        {
+            var customer = new Customer
+            {
+                Login = login,
+                PasswordHash = Game.GetMD5Hash(password),
+                DisplayName = displayName,
+                ProductionType = productionType,
+            };
+
+            return customer;
+        }
     }
 }

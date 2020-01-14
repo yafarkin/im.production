@@ -19,8 +19,7 @@ namespace Epam.ImitationGames.Production.Domain
 
         public override void DoAction()
         {
-            Customer.SpentSumToNextGenerationLevel = SpentSumToNextGenerationLevel;
-            Customer.SumToNextGenerationLevel = SumToNextGenerationLevel;
+            Customer.SetSumInfoForRD(SpentSumToNextGenerationLevel, SumToNextGenerationLevel);
             NewRDProgress = Customer.RDProgress;
 
             base.DoAction();

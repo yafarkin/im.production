@@ -45,7 +45,6 @@ namespace Epam.ImitationGames.Production.Domain.Bank
         public override void DoAction()
         {
             base.DoAction();
-            Customer.BankFinanceActions.Add(this);
             Customer.AddSum(TotalSum);
         }
     }

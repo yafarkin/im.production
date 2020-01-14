@@ -15,7 +15,7 @@ namespace Epam.ImitationGames.Production.Domain
         public override void DoAction()
         {
             base.DoAction();
-            Customer.Contracts.Remove(ClosedContract);
+            Customer.DelContract(ClosedContract);
         }
     }
 }

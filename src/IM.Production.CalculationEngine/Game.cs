@@ -67,7 +67,7 @@ namespace CalculationEngine
             }
         }
 
-        protected string GetHashString(byte[] array)
+        protected static string GetHashString(byte[] array)
         {
             var sb = new StringBuilder();
             for (var i = 0; i < array.Length; i++)
@@ -78,12 +78,12 @@ namespace CalculationEngine
             return sb.ToString();
         }
 
-        public string GetMD5Hash(string str)
+        public static string GetMD5Hash(string str)
         {
             return GetMD5Hash(Encoding.ASCII.GetBytes(str));
         }
 
-        public string GetMD5Hash(byte[] array)
+        public static string GetMD5Hash(byte[] array)
         {
             using (var md5 = MD5.Create())
             {

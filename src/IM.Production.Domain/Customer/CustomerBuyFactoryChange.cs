@@ -21,7 +21,7 @@ namespace Epam.ImitationGames.Production.Domain
         {
             base.DoAction();
             BoughtFactory.Customer = Customer;
-            Customer.Factories.Add(BoughtFactory);
+            Customer.AddFactory(BoughtFactory);
             Customer.AddSum(-SumChange);
         }
     }

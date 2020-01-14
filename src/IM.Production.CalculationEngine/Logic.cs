@@ -28,14 +28,7 @@ namespace IM.Production.CalculationEngine
         {
             lock (_lockObj)
             {
-                var customer = new Customer
-                {
-                    Login = login,
-                    PasswordHash = _game.GetMD5Hash(password),
-                    DisplayName = name,
-                    ProductionType = productionType,
-                };
-
+                var customer = Customer.CreateCustomer(login, password, name, productionType);
                 _game.Customers.Add(customer);
 
                 _game.AddActivity(new InfoChanging(_game.Time, customer, "Добавление новой команды"));

@@ -14,7 +14,7 @@ namespace Epam.ImitationGames.Production.Domain
         public override void DoAction()
         {
             base.DoAction();
-            Customer.SpentSumToNextGenerationLevel += -SumChange;
+            Customer.AddSpentSumOnRD(-SumChange);
         }
     }
 }

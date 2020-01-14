@@ -20,7 +20,7 @@ namespace Epam.ImitationGames.Production.Domain
         public override void DoAction()
         {
             base.DoAction();
-            Customer.Factories.Remove(SoldFactory);
+            Customer.DelFactory(SoldFactory);
             Customer.AddSum(SumChange);
         }
     }

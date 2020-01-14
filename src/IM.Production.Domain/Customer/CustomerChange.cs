@@ -60,12 +60,12 @@ namespace Epam.ImitationGames.Production.Domain
             base.DoAction();
             if (NewSumOnRD.HasValue)
             {
-                Customer.SumOnRD = NewSumOnRD.Value;
+                Customer.SetSumOnRD(NewSumOnRD.Value);
             }
 
             if (NewFactoryGenerationLevel.HasValue)
             {
-                Customer.FactoryGenerationLevel = NewFactoryGenerationLevel.Value;
+                Customer.SetFactoryGenerationLevel(NewFactoryGenerationLevel.Value);
             }
         }
     }

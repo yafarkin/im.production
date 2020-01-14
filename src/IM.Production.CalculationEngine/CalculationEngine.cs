@@ -161,12 +161,10 @@ namespace IM.Production.CalculationEngine
                     // Создаем операцию начисления процента по вкладу.
                     var debitAction = new BankFinAction(time, customer, 0, "Начисление процентов по вкладу")
                     {
-                        FinOperation = debit,
-                        PercentSum = debit.Sum / 100 * debit.Percent,
-                        Fine = 0
+                        FinOperation = debit, PercentSum = (debit.Sum / 100) * debit.Percent, Fine = 0
                     };
 
-                    customer.BankFinanceActions.Add(debitAction);
+                    _game.AddActivity(debitAction);
 
                     debit.Sum += debitAction.TotalSum;
 
@@ -181,18 +179,14 @@ namespace IM.Production.CalculationEngine
                             Days = debit.Days
                         };
 
-                        customer.BankFinanceOperations.Add(closeDebitOperation);
+                        _game.AddActivity(closeDebitOperation);
 
                         debit.Status = OperationStatus.Close;
 
                         var closeDebitAction = new BankFinAction(time, customer, closeDebitOperation.Sum)
                         {
-                            FinOperation = debit,
-                            PercentSum = 0,
-                            Fine = 0
+                            FinOperation = debit, PercentSum = 0, Fine = 0
                         };
-
-                        customer.BankFinanceActions.Add(closeDebitAction);
 
                         _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, closeDebitAction.TotalSum,
                             $"Закрытие вклада, начисление {closeDebitAction.TotalSum}"));
@@ -205,6 +199,7 @@ namespace IM.Production.CalculationEngine
         {
             if (customer.SumToNextGenerationLevel == 0)
             {
+                _game.AddActivity(new CustomerSumOnRDChange());
                 customer.SumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
             }
 
@@ -229,7 +224,7 @@ namespace IM.Production.CalculationEngine
 
             if (customer.ReadyForNextGenerationLevel)
             {
-                var newGenerationLevel = customer.FactoryGenerationLevel += 1;
+                var newGenerationLevel = customer.FactoryGenerationLevel + 1;
 
                 _game.AddActivity(new CustomerGenerationLevelChange(time, customer, newGenerationLevel,
                     customer.SpentSumToNextGenerationLevel - customer.SumToNextGenerationLevel,
