@@ -290,11 +290,7 @@ namespace IM.Production.CalculationEngine
 
             lock (_lockObj)
             {
-                var factory = new Factory
-                {
-                    FactoryDefinition = factoryDefinition,
-                    ProductionMaterials = productionMaterials ?? new List<Material>()
-                };
+                var factory = Factory.CreateFactory(customer, factoryDefinition);
 
                 _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, buySumm, null, "Покупка фабрики у игры"));
                 _game.AddActivity(new FactoryWorkerCountChange(_game.Time, factory, 0 == workers ? factoryDefinition.BaseWorkers : workers));

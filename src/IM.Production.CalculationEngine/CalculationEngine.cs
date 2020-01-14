@@ -236,7 +236,7 @@ namespace IM.Production.CalculationEngine
         {
             if (factory.NeedSumToNextLevelUp == 0)
             {
-                factory.NeedSumToNextLevelUp = ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory);
+                _game.AddActivity(new FactoryRDSpentChange(_game.Time, factory, 0, ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory)));
             }
 
             if (factory.SumOnRD <= 0)
@@ -253,14 +253,10 @@ namespace IM.Production.CalculationEngine
                 return;
             }
 
-            factory.SpentSumToNextLevelUp += sumOnRD;
-
             var time = new GameTime();
-
+            _game.AddActivity(new FactoryRDSpentChange(_game.Time, factory, factory.SpentSumToNextLevelUp + sumOnRD, null));
             _game.AddActivity(new FinanceFactoryChange(time, factory, -sumOnRD, 0, 0,
                 $"Оплата исследований на {factory.DisplayName} ({factory.FactoryDefinition.ProductionType.DisplayName}), сумма {sumOnRD:C}"));
-
-            _game.AddActivity(new FactoryRDProgressChange(time, factory, factory.RDProgress));
 
             if (factory.ReadyForNextLevel)
             {
@@ -281,7 +277,7 @@ namespace IM.Production.CalculationEngine
 
         protected void ProduceFactory(Factory factory)
         {
-            factory.Performance = ReferenceData.CalculateFactoryPerformance(factory);
+            _game.AddActivity(new FactoryPerformanceChange(_game.Time, factory, ReferenceData.CalculateFactoryPerformance(factory)));
 
             // 2. выполняем производство материалов и помещаем их на склад
 
@@ -292,7 +288,7 @@ namespace IM.Production.CalculationEngine
             decimal performancePerMaterial = 0;
             var time = new GameTime();
 
-            // TODO Checking algoritm to be refactored
+            // TODO Checking algorithm to be refactored
             while (productionMaterials.Any())
             {
                 for (var i = 0; i < productionMaterials.Count; i++)

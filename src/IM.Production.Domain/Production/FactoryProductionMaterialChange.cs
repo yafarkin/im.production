@@ -18,7 +18,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         public override void DoAction()
         {
             base.DoAction();
-            Factory.ProductionMaterials = Materials;
+            Factory.SetProductionMaterials(Materials);
         }
     }
 }
