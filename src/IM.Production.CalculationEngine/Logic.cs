@@ -24,15 +24,15 @@ namespace IM.Production.CalculationEngine
             _game = game ?? throw new ArgumentNullException(nameof(game));
         }
 
-        public Customer AddCustomer(string login, string password, string name, ProductionType productionType)
+        public Customer AddCustomer(string login, string password, string name, ProductionType productionType, decimal? initialBalance = null)
         {
             lock (_lockObj)
             {
-                var customer = Customer.CreateCustomer(login, password, name, productionType);
+                var customer = Customer.CreateCustomer(login, Game.GetMD5Hash(password), name, productionType);
                 _game.Customers.Add(customer);
 
                 _game.AddActivity(new InfoChanging(_game.Time, customer, "Добавление новой команды"));
-                _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, ReferenceData.InitialCustomerBalance,  "Установка начальной суммы на счёте"));
+                _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, initialBalance ?? ReferenceData.InitialCustomerBalance,  "Установка начальной суммы на счёте"));
                 
                 return customer;
             }

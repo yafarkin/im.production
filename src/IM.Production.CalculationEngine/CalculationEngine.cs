@@ -199,8 +199,7 @@ namespace IM.Production.CalculationEngine
         {
             if (customer.SumToNextGenerationLevel == 0)
             {
-                _game.AddActivity(new CustomerSumOnRDChange());
-                customer.SumToNextGenerationLevel = ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
+                _game.AddActivity(new CustomerRDSpentChange(_game.Time, customer, null, ReferenceData.CalculateRDSummToNextGenerationLevel(customer)));
             }
 
             if (customer.SumOnRD <= 0)

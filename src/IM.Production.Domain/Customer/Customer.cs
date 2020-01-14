@@ -123,12 +123,12 @@ namespace Epam.ImitationGames.Production.Domain
 
         internal void DelContract(Contract contract) => _contracts.Remove(contract);
 
-        public static Customer CreateCustomer(string login, string password, string displayName,  ProductionType productionType)
+        public static Customer CreateCustomer(string login, string passwordHash, string displayName,  ProductionType productionType)
         {
             var customer = new Customer
             {
                 Login = login,
-                PasswordHash = Game.GetMD5Hash(password),
+                PasswordHash = passwordHash,
                 DisplayName = displayName,
                 ProductionType = productionType,
             };
