@@ -70,7 +70,7 @@ namespace IM.Production.CalculationEngine.Tests
                     DestinationFactory = factory
                 };
             var materialOnStock = new MaterialOnStock {Amount = 1, Material = material};
-            factory.Stock.Add(materialOnStock);
+            _game.AddActivity(new FactoryAddMaterialToStockChange(_game.Time, factory, materialOnStock));
             _game.AddActivity(new CustomerNewContractChange(_game.Time, contract));
             _game.Customers.Add(customer);
 
@@ -267,19 +267,19 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_FactoryWithNotProducibleMaterial_MaterialNotRemoved()
         {
-            var input = new Material { AmountPerDay = 1 };
+            var input = new Material {AmountPerDay = 1};
             var material = new Material
             {
                 AmountPerDay = 1,
                 InputMaterials = new List<MaterialOnStock> {new MaterialOnStock {Material = input}}
             };
             var customer = new Customer();
-            var factory = Factory.CreateFactory(customer,
-                new FactoryDefinition {GenerationLevel = 1, ProductionType = new ProductionType()});
+            var factory = Factory.CreateFactory(customer, new FactoryDefinition {GenerationLevel = 1, ProductionType = new ProductionType()});
 
-            factory.ProductionMaterials.Add(material);
             _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
             _game.Customers.Add(customer);
+
+            _game.AddActivity(new FactoryProductionMaterialChange(_game.Time, factory, new List<Material> { material }));
 
             _calculationEngine.Calculate();
 
@@ -290,8 +290,8 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_FactoryWithProducibleMaterial_MaterialProducedAndMovedToStockAndInputMaterialDecreased()
         {
-            var firstInput = new Material { AmountPerDay = 1 };
-            var secondInput = new Material { AmountPerDay = 1 };
+            var firstInput = new Material {AmountPerDay = 1};
+            var secondInput = new Material {AmountPerDay = 1};
             var material = new Material
             {
                 AmountPerDay = 1,
@@ -304,9 +304,10 @@ namespace IM.Production.CalculationEngine.Tests
             var factory = Factory.CreateFactory(customer,
                 new FactoryDefinition {GenerationLevel = 1, ProductionType = new ProductionType(), BaseWorkers = 1});
 
-            factory.ProductionMaterials.Add(material);
-            factory.Stock.Add(new MaterialOnStock {Material = firstInput, Amount = 3});
-            factory.Stock.Add(new MaterialOnStock {Material = secondInput, Amount = 5});
+            _game.AddActivity(new FactoryProductionMaterialChange(_game.Time, factory, new List<Material>{material}));
+            _game.AddActivity(new FactoryAddMaterialToStockChange(_game.Time, factory, new MaterialOnStock {Material = firstInput, Amount = 3}));
+            _game.AddActivity(new FactoryAddMaterialToStockChange(_game.Time, factory, new MaterialOnStock {Material = secondInput, Amount = 5}));
+
             _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
             _game.Customers.Add(customer);
 
@@ -328,19 +329,41 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_FactoryWithDifferentMaterials_NotProducibleNotRemovedAndProducibleReleased()
         {
-            var input = new Material { AmountPerDay = 1 };
-            var firstMaterial = new Material { AmountPerDay = 1, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input, Amount = 2 } } };
-            var secondMaterial = new Material { AmountPerDay = 2, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input, Amount = 3 } } };
-            var thirdMaterial = new Material { AmountPerDay = 3, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input, Amount = 100 } } };
-            var fourthMaterial = new Material { AmountPerDay = 4, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input, Amount = 100 } } };
+            var input = new Material { AmountPerDay = 1, DisplayName = "входной материал"};
+            var firstMaterial = new Material
+            {
+                AmountPerDay = 1,
+                DisplayName = "выходной материал 1",
+                InputMaterials = new List<MaterialOnStock> {new MaterialOnStock {Material = input, Amount = 2}}
+            };
+            var secondMaterial = new Material
+            {
+                AmountPerDay = 2,
+                DisplayName = "выходной материал 2",
+                InputMaterials = new List<MaterialOnStock> {new MaterialOnStock {Material = input, Amount = 3}}
+            };
+            var thirdMaterial = new Material
+            {
+                AmountPerDay = 3,
+                DisplayName = "выходной материал 3",
+                InputMaterials = new List<MaterialOnStock> {new MaterialOnStock {Material = input, Amount = 100}}
+            };
+            var fourthMaterial = new Material
+            {
+                AmountPerDay = 4,
+                DisplayName = "выходной материал 4",
+                InputMaterials = new List<MaterialOnStock> {new MaterialOnStock {Material = input, Amount = 100}}
+            };
+
             var customer = new Customer();
-            var factory = Factory.CreateFactory(customer,
-                new FactoryDefinition {GenerationLevel = 1, BaseWorkers = 1, ProductionType = new ProductionType()});
+            var factory = Factory.CreateFactory(customer,  new FactoryDefinition {GenerationLevel = 1, BaseWorkers = 1, ProductionType = new ProductionType()});
 
             _game.AddActivity(new FactoryProductionMaterialChange(_game.Time, factory,
                 new List<Material> {firstMaterial, secondMaterial, thirdMaterial, fourthMaterial}));
 
-            factory.Stock.Add(new MaterialOnStock {Material = input, Amount = 5});
+            _game.AddActivity(new FactoryAddMaterialToStockChange(_game.Time, factory,
+                new MaterialOnStock {Material = input, Amount = 5}));
+
             _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
             _game.Customers.Add(customer);
 
@@ -348,10 +371,11 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEngine.Calculate();
 
-            var firstProduced = factory.Stock.First(m => m.Material.Id == firstMaterial.Id);
-            var secondProduced = factory.Stock.First(m => m.Material.Id == secondMaterial.Id);
-            var thirdProduced = factory.Stock.First(m => m.Material.Id == thirdMaterial.Id);
-            var fourthProduced = factory.Stock.First(m => m.Material.Id == fourthMaterial.Id);
+            var firstProduced = factory.Stock.FirstOrDefault(m => m.Material.Id == firstMaterial.Id);
+            var secondProduced = factory.Stock.FirstOrDefault(m => m.Material.Id == secondMaterial.Id);
+            var thirdProduced = factory.Stock.FirstOrDefault(m => m.Material.Id == thirdMaterial.Id);
+            var fourthProduced = factory.Stock.FirstOrDefault(m => m.Material.Id == fourthMaterial.Id);
+            
             var inputOnStock = factory.Stock.First(m => m.Material.Id == input.Id);
             Assert.IsTrue(factory.ProductionMaterials.Contains(firstMaterial));
             Assert.IsTrue(factory.ProductionMaterials.Contains(secondMaterial));
@@ -374,8 +398,8 @@ namespace IM.Production.CalculationEngine.Tests
             var customer = new Customer();
             var factory = Factory.CreateFactory(customer,
                 new FactoryDefinition {ProductionType = new ProductionType(), BaseWorkers = 1, GenerationLevel = 1});
-            factory.ProductionMaterials.Add(material);
-            factory.Stock.Add(new MaterialOnStock { Material = input, Amount = 1 });
+            _game.AddActivity(new FactoryProductionMaterialChange(_game.Time, factory, new List<Material>{material}));
+            _game.AddActivity(new FactoryAddMaterialToStockChange(_game.Time, factory, new MaterialOnStock { Material = input, Amount = 1 }));
             _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
             _game.Customers.Add(customer);
 

@@ -348,7 +348,7 @@ namespace IM.Production.CalculationEngine
                 var producedMaterial = new MaterialOnStock { Amount = producedAmount, Material = material };
 
                 // добавляем произведенный материал на склад
-                ReferenceData.AddMaterialToStock(factory.Stock, producedMaterial);
+                _game.AddActivity(new FactoryAddMaterialToStockChange(time, factory, producedMaterial));
 
                 var infoChanging = new InfoChanging(time, factory.Customer, $"Произведен материал {material.DisplayName} в количестве {producedMaterial.Amount}");
                 _game.AddActivity(infoChanging);
@@ -358,14 +358,10 @@ namespace IM.Production.CalculationEngine
             foreach (var usedMaterial in usedMaterialsOnStock)
             {
                 var materialOnStock = factory.Stock.First(m => m.Material.Id == usedMaterial.Material.Id);
-
                 materialOnStock.Amount -= usedMaterial.Amount;
-
-                if (materialOnStock.Amount == 0)
-                {
-                    factory.Stock.Remove(materialOnStock);
-                }
             }
+
+            _game.AddActivity(new FactoryRemoveEmptyMaterialsFromStockChange(time, factory));
 
             // 3. списываем ФОТ. Cписываем деньги со счёта игрока
             var totalSalary = factory.Workers * ReferenceData.CalculateWorkerSalary(factory);
@@ -375,14 +371,16 @@ namespace IM.Production.CalculationEngine
 
         private void ProcessGameToCustomerContract(Contract contract)
         {
+            var time = new GameTime();
+
             var factory = contract.DestinationFactory;
             var material = contract.MaterialWithPrice.Material;
             var materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == material.Id);
 
             if (materialOnStock == null)
             {
-                materialOnStock = new MaterialOnStock { Material = material };
-                factory.Stock.Add(materialOnStock);
+                materialOnStock = new MaterialOnStock {Material = material};
+                _game.AddActivity(new FactoryAddMaterialToStockChange(time, factory, materialOnStock));
             }
 
             var amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
@@ -398,8 +396,6 @@ namespace IM.Production.CalculationEngine
 
             // начисляем материал на склад
             materialOnStock.Amount += amount;
-
-            var time = new GameTime();
 
             // списываем деньги со счёта игрока и обновляем счётчики контракта
             _game.AddActivity(new FinanceContractChange(time, contract, -totalPrice, 0, amount,
@@ -502,8 +498,8 @@ namespace IM.Production.CalculationEngine
             if (!isGameDemand)
             {
                 // начисляем материал на склад другой фабрики
-                ReferenceData.AddMaterialToStock(contract.DestinationFactory.Stock,
-                    new MaterialOnStock {Material = material, Amount = amount});
+                _game.AddActivity(new FactoryAddMaterialToStockChange(_game.Time, contract.DestinationFactory,
+                    new MaterialOnStock {Material = material, Amount = amount}));
 
                 // списываем деньги со счёта игрока другой фабрики
                 _game.AddActivity(new FinanceCustomerChange(time, contract.DestinationFactory.Customer, -totalPrice, $"Оплата товара (команде {contract.SourceFactory.Customer.DisplayName}) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice:C}"));

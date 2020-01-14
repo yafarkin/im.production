@@ -67,7 +67,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// <summary>
         /// Прогресс в процентах для исследования на следующий уровень.
         /// </summary>
-        public decimal RDProgress => SpentSumToNextLevelUp / NeedSumToNextLevelUp;
+        public decimal RDProgress => NeedSumToNextLevelUp != 0 ? SpentSumToNextLevelUp / NeedSumToNextLevelUp : 0;
 
         public bool ReadyForNextLevel => SpentSumToNextLevelUp >= NeedSumToNextLevelUp;
 
@@ -89,7 +89,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// <summary>
         /// Склад материалов на фабрике.
         /// </summary>
-        protected IList<MaterialOnStock> _stock { get; set; }
+        internal IList<MaterialOnStock> _stock { get; set; }
 
         public IEnumerable<MaterialOnStock> Stock => _stock;
 
