@@ -554,7 +554,7 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(87016, c1.Sum);
             Assert.AreEqual(37466, c2.Sum);
 
-            // тормозим исследования, т.к. денег жестко не хватает
+            // тормозим исследования, т.к. денег не хватает
             Logic.UpdateCustomerSettings(c1, 0);
             Logic.UpdateCustomerSettings(c2, 0);
 
@@ -580,8 +580,10 @@ namespace IM.Production.CalculationEngine.Tests
 
             Logic.UpdateFactorySettings(f1_3, null, null, new List<Material> { ReferenceData.GetMaterialByKey("metall_zelezo_list") });
 
-            RunCycles(15);
+            RunCycles(20);
 
+            Assert.AreEqual(87016, c1.Sum);
+            Assert.AreEqual(37466, c2.Sum);
         }
     }
 }

@@ -481,6 +481,10 @@ namespace IM.Production.CalculationEngine
             // общая сумма
             totalPrice = sellPrice * amount;
 
+            var selfPrice = ReferenceData.CalculateMaterialCostPrice(material);
+            var selfPriceTotal = selfPrice * amount;
+            var income = totalPrice - selfPriceTotal;
+
             // сумма налога
             var tax = ReferenceData.CalculateTaxOnMaterial(material);
             var taxSum = totalPrice * tax;
@@ -494,7 +498,7 @@ namespace IM.Production.CalculationEngine
 
             // начисляем деньги на счёт игрока
             _game.AddActivity(new FinanceContractChange(time, contract, netSum, -taxSum, amount,
-                $"Продажа товара ({(isGameDemand ? "игре" : $"команде {contract.DestinationFactory.Customer.DisplayName}")}) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice:C}, из них налог на сумму {taxSum:C}"));
+                $"Продажа товара ({(isGameDemand ? "игре" : $"команде {contract.DestinationFactory.Customer.DisplayName}")}) {contract.MaterialWithPrice.Material.DisplayName}, в количестве {amount}, на сумму {totalPrice:C}, из них налог на сумму {taxSum:C} (себестоимость {selfPriceTotal:C}, прибыль {(totalPrice-selfPriceTotal-taxSum):C}"));
 
             // добавляем активность о снятом налоге
             _game.AddActivity(taxChange);
