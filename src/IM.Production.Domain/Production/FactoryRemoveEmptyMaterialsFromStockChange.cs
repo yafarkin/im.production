@@ -8,13 +8,13 @@ namespace Epam.ImitationGames.Production.Domain.Production
     public class FactoryRemoveEmptyMaterialsFromStockChange : FactoryChange
     {
         public FactoryRemoveEmptyMaterialsFromStockChange(GameTime time, Factory factory, string description = null)
-            : base(time, factory, null, null, null, description)
+            : base(time, factory, description)
         {
         }
 
         public override void DoAction()
         {
-            var materialsToRemove = Factory.Stock.Where(m => m.Amount == 0).ToList();
+            var materialsToRemove = Factory._stock.Where(m => m.Amount == 0).ToList();
             foreach (var m in materialsToRemove)
             {
                 Factory._stock.Remove(m);

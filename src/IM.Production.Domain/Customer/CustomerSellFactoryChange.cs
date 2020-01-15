@@ -7,6 +7,19 @@ namespace Epam.ImitationGames.Production.Domain
     [Serializable]
     public class CustomerSellFactoryChange : CustomerChange, IFinanceChanging
     {
+        /// <summary>
+        /// Проданная фабрика.
+        /// </summary>
+        public Factory SoldFactory { get; set; }
+
+        /// <summary>
+        /// Команда, которой фабрика была продана (если фабрика покупается/продаётся игре - то не задаётся).
+        /// </summary>
+        public Customer OtherCustomer { get; protected set; }
+
+        /// <summary>
+        /// Сумма, за которую фабрика была продана.
+        /// </summary>
         public decimal SumChange { get; protected set; }
 
         public CustomerSellFactoryChange(GameTime time, Factory soldFactory, decimal cost, Customer otherCustomer = null, string description = null)
@@ -20,8 +33,8 @@ namespace Epam.ImitationGames.Production.Domain
         public override void DoAction()
         {
             base.DoAction();
-            Customer.DelFactory(SoldFactory);
-            Customer.AddSum(SumChange);
+            Customer._factories.Remove(SoldFactory);
+            Customer.Sum += SumChange;
         }
     }
 }

@@ -87,7 +87,7 @@ namespace IM.Production.CalculationEngine
         /// Добавляет указанный контракт в список действующих контрактов.
         /// </summary>
         /// <param name="contract">Объект контракта.</param>
-        public void AddContract(Contract contract)
+        public Contract AddContract(Contract contract)
         {
             if (null == contract)
             {
@@ -112,6 +112,7 @@ namespace IM.Production.CalculationEngine
             lock (_lockObj)
             {
                 _game.AddActivity(new CustomerNewContractChange(_game.Time, contract, "Добавление нового контракта"));
+                return contract;
             }
         }
 

@@ -9,7 +9,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         public decimal Performance { get; protected set; }
 
         public FactoryPerformanceChange(GameTime time, Factory factory, decimal performance, string description = null)
-            : base(time, factory, null, null, null, description)
+            : base(time, factory, description)
         {
             Performance = performance;
         }

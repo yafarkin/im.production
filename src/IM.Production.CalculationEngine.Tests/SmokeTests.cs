@@ -39,7 +39,7 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
-                BaseWorkers = 10,
+                BaseWorkers = 3,
                 GenerationLevel = 1,
                 Name = "Добыча металлической руды",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -52,7 +52,7 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
-                BaseWorkers = 8,
+                BaseWorkers = 3,
                 GenerationLevel = 2,
                 Name = "Производство железной руды",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -64,7 +64,7 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
-                BaseWorkers = 5,
+                BaseWorkers = 2,
                 GenerationLevel = 3,
                 Name = "Производство металлических листов",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -76,7 +76,7 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
-                BaseWorkers = 3,
+                BaseWorkers = 1,
                 GenerationLevel = 4,
                 Name = "Производство проволоки",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -88,7 +88,7 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
-                BaseWorkers = 3,
+                BaseWorkers = 1,
                 GenerationLevel = 5,
                 Name = "Производство блоков управления",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -102,7 +102,7 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
-                BaseWorkers = 10,
+                BaseWorkers = 3,
                 GenerationLevel = 1,
                 Name = "Добыча кремниевой породы",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -114,7 +114,7 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
-                BaseWorkers = 3,
+                BaseWorkers = 1,
                 GenerationLevel = 2,
                 Name = "Производство кремния",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -126,7 +126,7 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
-                BaseWorkers = 12,
+                BaseWorkers = 4,
                 GenerationLevel = 3,
                 Name = "Производство печатной платы",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -138,7 +138,7 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
-                BaseWorkers = 4,
+                BaseWorkers = 2,
                 GenerationLevel = 4,
                 Name = "Производство электронных блоков",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -150,7 +150,7 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
-                BaseWorkers = 4,
+                BaseWorkers = 2,
                 GenerationLevel = 5,
                 Name = "Производство компьютеров",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -158,7 +158,6 @@ namespace IM.Production.CalculationEngine.Tests
                     {1, new List<Material> {ReferenceData.GetMaterialByKey("computer")}}
                 }
             });
-
         }
 
         private void InitMaterials()
@@ -359,6 +358,60 @@ namespace IM.Production.CalculationEngine.Tests
         }
 
         [TestMethod]
+        public void OneCustomerTest()
+        {
+            // одна команда
+            // 1. открывают 1 фабрику, перерабатывают, сразу всё продают
+            // 2. ставят исследования уровня фабрики
+            // 3. после завершения исследования, убирают исследования на фабрику, производительность фабрики растёт
+            // 4. начинают исследования поколения №2
+            // 5. после исследования поколения №2, покупают фабрику №2, заключают контракт на поставку с фабрики №1 и начинают производство №2, продавая излишки игре
+
+            var c = Logic.AddCustomer("c", "1", "команда 1", ReferenceData.GetProductionTypeByKey("metall"));
+            Assert.AreEqual(ReferenceData.InitialCustomerBalance, c.Sum);
+
+            var f1 = Logic.BuyFactoryFromGame(c, ReferenceData.GetAvailFactoryDefenitions(c).First());
+            Logic.UpdateFactorySettings(f1, null, 33);
+
+            Logic.UpdateFactorySettings(f1, null, null,
+                new List<Material> {ReferenceData.GetMaterialByKey("metall_zelezo_ruda")});
+
+            // руда -> команде
+            var co1 = Logic.AddContract(new Contract(Game.Time, c,
+                new MaterialWithPrice {Amount = 100000, Material = ReferenceData.GetMaterialByKey("ruda")})
+            {
+                DestinationFactory = f1
+            });
+
+            // железная руда -> игре
+            var co2 = Logic.AddContract(new Contract(Game.Time, c,
+                new MaterialWithPrice { Amount = 999999, Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda") })
+            {
+                SourceFactory = f1
+            });
+
+            Assert.AreEqual(99000, c.Sum);
+
+            RunCycles(10);
+
+            Assert.AreEqual(99155.35m, c.Sum);
+
+            // теперь фабрика второго уровня, производит в два раза больше
+            Assert.AreEqual(2, f1.Performance);
+            Logic.UpdateFactorySettings(f1, null, 0);
+
+            Logic.CloseContract(co1);
+            co1 = Logic.AddContract(new Contract(Game.Time, c,
+                new MaterialWithPrice {Amount = 200000, Material = ReferenceData.GetMaterialByKey("ruda")})
+            {
+                DestinationFactory = f1
+            });
+
+            RunCycles(10);
+        }
+
+        [TestMethod]
+        [Ignore]
         public void GameFlowSmokeTest()
         {
             // дымовой тест, проверяющий все основные функции игры

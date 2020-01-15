@@ -9,7 +9,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         public MaterialOnStock MaterialOnStock { get; protected set; }
 
         public FactoryAddMaterialToStockChange(GameTime time, Factory factory, MaterialOnStock materialOnStock, string description = null)
-            : base(time, factory, null, null, null, description)
+            : base(time, factory, description)
         {
             MaterialOnStock = materialOnStock;
         }

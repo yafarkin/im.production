@@ -38,7 +38,7 @@ namespace Epam.ImitationGames.Production.Domain
         /// <summary>
         /// Список фабрик.
         /// </summary>
-        protected List<Factory> _factories { get; set; }
+        internal List<Factory> _factories { get; set; }
 
         /// <summary>
         /// Публичный список фабрик.
@@ -48,7 +48,7 @@ namespace Epam.ImitationGames.Production.Domain
         /// <summary>
         /// Контракты.
         /// </summary>
-        protected List<Contract> _contracts { get; set; }
+        internal List<Contract> _contracts { get; set; }
 
         /// <summary>
         /// Публичный список контрактов.
@@ -58,7 +58,7 @@ namespace Epam.ImitationGames.Production.Domain
         /// <summary>
         /// Все банковские операции.
         /// </summary>
-        protected List<BankFinOperation> _bankFinanceOperations { get; set; }
+        internal List<BankFinOperation> _bankFinanceOperations { get; set; }
 
         /// <summary>
         /// Публичный список всех банковских операций.
@@ -68,22 +68,22 @@ namespace Epam.ImitationGames.Production.Domain
         /// <summary>
         /// Доступный уровень фабрик для данной команды.
         /// </summary>
-        public int FactoryGenerationLevel { get; protected set; }
+        public int FactoryGenerationLevel { get; internal set; }
 
         /// <summary>
         /// Сумма, выделяемая на RD, для исследования фабрик следующего уровня.
         /// </summary>
-        public decimal SumOnRD { get; protected set; }
+        public decimal SumOnRD { get; internal set; }
 
         /// <summary>
         /// Требуемая сумма для открытия фабрик следующего уровня.
         /// </summary>
-        public decimal SumToNextGenerationLevel { get; protected set; }
+        public decimal SumToNextGenerationLevel { get; internal set; }
 
         /// <summary>
         /// Уже потраченная сумма на исследования фабрик следующего уровня.
         /// </summary>
-        public decimal SpentSumToNextGenerationLevel { get; protected set; }
+        public decimal SpentSumToNextGenerationLevel { get; internal set; }
 
         public bool ReadyForNextGenerationLevel => SpentSumToNextGenerationLevel > SumToNextGenerationLevel;
 
@@ -95,33 +95,7 @@ namespace Epam.ImitationGames.Production.Domain
         /// <summary>
         /// Итоговая сумма на счету команды
         /// </summary>
-        public decimal Sum { get; protected set; }
-
-        internal void AddSum(decimal sum) => Sum += sum;
-
-        internal void SetSum(decimal sum) => Sum = sum;
-
-        internal void SetFactoryGenerationLevel(int level) => FactoryGenerationLevel = level;
-
-        internal void SetSumOnRD(decimal sum) => SumOnRD = sum;
-
-        internal void AddSpentSumOnRD(decimal sum) => SpentSumToNextGenerationLevel += sum;
-
-        internal void SetSumInfoForRD(decimal spentSum, decimal sumToNextLevel)
-        {
-            SpentSumToNextGenerationLevel = spentSum;
-            SumToNextGenerationLevel = sumToNextLevel;
-        }
-
-        internal void AddBankFinOperation(BankFinOperation operation) => _bankFinanceOperations.Add(operation);
-
-        internal void AddFactory(Factory factory) => _factories.Add(factory);
-
-        internal void DelFactory(Factory factory) => _factories.Remove(factory);
-
-        internal void AddContract(Contract contract) => _contracts.Add(contract);
-
-        internal void DelContract(Contract contract) => _contracts.Remove(contract);
+        public decimal Sum { get; internal set; }
 
         public static Customer CreateCustomer(string login, string passwordHash, string displayName, ProductionType productionType)
         {

@@ -9,6 +9,11 @@ namespace Epam.ImitationGames.Production.Domain
         public decimal? SpentSumToNextGenerationLevel { get; protected set; }
         public decimal? SumToNextGenerationLevel { get; protected set; }
 
+        /// <summary>
+        /// Изменение % исследования по RD.
+        /// </summary>
+        public decimal? NewRDProgress { get; set; }
+
         public CustomerRDSpentChange(GameTime time, Customer customer, decimal? spentSumToNextGenerationLevel, decimal? sumToNextGenerationLevel, string description = null)
             : base(time, customer, description)
         {
@@ -19,7 +24,17 @@ namespace Epam.ImitationGames.Production.Domain
         public override void DoAction()
         {
             base.DoAction();
-            Customer.SetSumInfoForRD(SpentSumToNextGenerationLevel ?? Customer.SpentSumToNextGenerationLevel, SumToNextGenerationLevel ?? Customer.SumToNextGenerationLevel);
+            if (SpentSumToNextGenerationLevel.HasValue)
+            {
+                Customer.SpentSumToNextGenerationLevel = SpentSumToNextGenerationLevel.Value;
+            }
+
+            if (SumToNextGenerationLevel.HasValue)
+            {
+                Customer.SumToNextGenerationLevel = SumToNextGenerationLevel.Value;
+            }
+
+            NewRDProgress = Customer.RDProgress;
         }
     }
 }

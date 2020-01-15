@@ -92,16 +92,16 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <remarks>Key - уровень поколения фабрики, Value - стоимость фабрики.</remarks>
         public static readonly IDictionary<int, decimal> DefaultFactoryCost = new Dictionary<int, decimal>
         {
-            {1, 10000},
-            {2, 25000},
-            {3, 50000},
-            {4, 75000},
-            {5, 110000},
-            {6, 150000},
-            {7, 200000},
-            {8, 300000},
-            {9, 500000},
-            {10, 1000000}
+            {1, 1000},
+            {2, 2500},
+            {3, 5000},
+            {4, 7500},
+            {5, 11000},
+            {6, 15000},
+            {7, 20000},
+            {8, 30000},
+            {9, 50000},
+            {10, 100000}
         };
 
         /// <summary>
@@ -116,15 +116,15 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <remarks>По умолчанию первое поколение уже исследовано. Key - уровень поколения, Value - стоимость исследования.</remarks>
         public static readonly IDictionary<int, decimal> GenerationFactoryRDCost = new Dictionary<int, decimal>
         {
-            {2, 5000},
-            {3, 15000},
-            {4, 25000},
-            {5, 40000},
-            {6, 60000},
-            {7, 80000},
-            {8, 120000},
-            {9, 200000},
-            {10, 400000}
+            {2, 500},
+            {3, 1500},
+            {4, 2500},
+            {5, 4000},
+            {6, 6000},
+            {7, 8000},
+            {8, 12000},
+            {9, 20000},
+            {10, 40000}
         };
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <summary>
         /// Справочные данные, по которой игра покупает фабрику.
         /// </summary>
-        public static readonly decimal FactorySellDiscount = 0.6m;
+        public static readonly decimal FactorySellDiscount = 0.75m;
 
         /// <summary>
         /// Справочные данные надбавки к цене фабрики при продаже, в зависимости от уровня.
@@ -148,19 +148,19 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <remarks>Key - уровень поколения фабрики, Value - процент надбавки при продаже.</remarks>
         public static readonly IDictionary<int, decimal> FactorySellCoeff = new Dictionary<int, decimal>
         {
-            {1, 1},
-            {2, 2m},
-            {3, 2.5m},
-            {4, 3.5m},
-            {5, 4.5m},
-            {6, 6m},
-            {7, 8m}
+            {1, 0},
+            {2, 20},
+            {3, 25},
+            {4, 30},
+            {5, 40},
+            {6, 50},
+            {7, 100}
         };
 
         /// <summary>
         /// Базовая зарплата одного рабочего на фабрике.
         /// </summary>
-        public static decimal BaseWorkerSalay = 10m;
+        public static decimal BaseWorkerSalay = 6m;
 
         /// <summary>
         /// Налог на фабрику по умолчанию.
@@ -259,8 +259,10 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <returns>Стоимость фабрики для продажи.</returns>
         public static decimal CalculateFactoryCostForSell(Factory factory)
         {
-            var cost = CalculateFactoryCostForBuy(factory.FactoryDefinition) * FactorySellDiscount;
-            cost *= FindNearest(factory.Level, FactorySellCoeff);
+            var buyCost = CalculateFactoryCostForBuy(factory.FactoryDefinition);
+            var baseCost = buyCost * FactorySellDiscount;
+            var byLevelCost = baseCost * (FindNearest(factory.Level, FactorySellCoeff) / 100);
+            var cost = baseCost + byLevelCost;
             return cost;
         }
 
@@ -1059,7 +1061,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 10,
+                BaseWorkers = 3,
                 GenerationLevel = 1,
                 Name = "Добыча металлической руды",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1086,7 +1088,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 25,
+                BaseWorkers = 5,
                 GenerationLevel = 3,
                 Name = "Металло-прокатное производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1099,7 +1101,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 25,
+                BaseWorkers = 7,
                 GenerationLevel = 3,
                 Name = "Литейное производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1113,7 +1115,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 30,
+                BaseWorkers = 10,
                 GenerationLevel = 3,
                 Name = "Фрезерное производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1150,7 +1152,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 30,
+                BaseWorkers = 10,
                 GenerationLevel = 4,
                 Name = "Сборочное производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1171,7 +1173,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 50,
+                BaseWorkers = 18,
                 GenerationLevel = 4,
                 Name = "Автомобильное производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1190,7 +1192,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 80,
+                BaseWorkers = 25,
                 GenerationLevel = 5,
                 Name = "Грузовое производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1202,7 +1204,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 40,
+                BaseWorkers = 12,
                 GenerationLevel = 5,
                 Name = "Ж/д промышленность",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1214,7 +1216,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 100,
+                BaseWorkers = 32,
                 GenerationLevel = 6,
                 Name = "Авиа промышленность",
                 CanProductionMaterials = new Dictionary<int, List<Material>>

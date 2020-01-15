@@ -6,7 +6,12 @@ namespace Epam.ImitationGames.Production.Domain
     [Serializable]
     public class CustomerGenerationLevelChange : CustomerRDSpentChange
     {
-        public CustomerGenerationLevelChange(GameTime time, Customer customer, int newGenerationLevel, decimal spentSumToNextGenerationLevel, decimal sumToNextGenerationLevel, string description = null)
+        /// <summary>
+        /// Изменение уровня поколения фабрик.
+        /// </summary>
+        public int NewFactoryGenerationLevel { get; protected set; }
+
+        public CustomerGenerationLevelChange(GameTime time, Customer customer, int newGenerationLevel, decimal? spentSumToNextGenerationLevel = null, decimal? sumToNextGenerationLevel = null, string description = null)
             : base(time, customer, spentSumToNextGenerationLevel, sumToNextGenerationLevel, description)
         {
             NewFactoryGenerationLevel = newGenerationLevel;
@@ -14,8 +19,8 @@ namespace Epam.ImitationGames.Production.Domain
 
         public override void DoAction()
         {
-            NewRDProgress = Customer.RDProgress;
             base.DoAction();
+            Customer.FactoryGenerationLevel = NewFactoryGenerationLevel;
         }
     }
 }

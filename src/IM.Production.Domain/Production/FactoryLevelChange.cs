@@ -4,33 +4,23 @@ using Epam.ImitationGames.Production.Domain.Base;
 namespace Epam.ImitationGames.Production.Domain.Production
 {
     [Serializable]
-    public class FactoryLevelChange : FactoryChange
+    public class FactoryLevelChange : FactoryRDSpentChange
     {
-        public decimal? SpentSumToNextLevelUp { get; protected set; }
-        public decimal? NeedSumToNextLevelUp { get; protected set; }
+        /// <summary>
+        /// Изменение уровня.
+        /// </summary>
+        public int NewLevel { get; protected set; }
 
-        public FactoryLevelChange(GameTime time, Factory factory, int newLevel, decimal? spentSumToNextLevelUp = null, decimal? needSumToNextLevelUp = null, string description = null)
-            : base(time, factory, newLevel, null, null, description)
+        public FactoryLevelChange(GameTime time, Factory factory, int newLevel, decimal? spentSumToNextLevel = null, decimal? sumToNextLevel = null, string description = null)
+            : base(time, factory, spentSumToNextLevel, sumToNextLevel, description)
         {
-            SpentSumToNextLevelUp = spentSumToNextLevelUp;
-            NeedSumToNextLevelUp = needSumToNextLevelUp;
+            NewLevel = newLevel;
         }
 
         public override void DoAction()
         {
             base.DoAction();
-
-            if (SpentSumToNextLevelUp.HasValue)
-            {
-                Factory.SpentSumToNextLevelUp = SpentSumToNextLevelUp.Value;
-            }
-
-            if (NeedSumToNextLevelUp.HasValue)
-            {
-                Factory.NeedSumToNextLevelUp = NeedSumToNextLevelUp.Value;
-            }
-
-            NewRDProgress = Factory.RDProgress;
+            Factory.Level = NewLevel;
         }
     }
 }

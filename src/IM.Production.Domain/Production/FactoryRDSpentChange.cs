@@ -9,8 +9,13 @@ namespace Epam.ImitationGames.Production.Domain.Production
         public decimal? SpentSumToNextLevel { get; protected set; }
         public decimal? SumToNextLevel { get; protected set; }
 
+        /// <summary>
+        /// Изменение % исследования по RD.
+        /// </summary>
+        public decimal? NewRDProgress { get; set; }
+
         public FactoryRDSpentChange(GameTime time, Factory factory, decimal? spentSumToNextLevel,  decimal? sumToNextLevel, string description = null)
-            : base(time, factory, null, null, null,  description)
+            : base(time, factory, description)
         {
             SpentSumToNextLevel = spentSumToNextLevel;
             SumToNextLevel = sumToNextLevel;
@@ -28,6 +33,8 @@ namespace Epam.ImitationGames.Production.Domain.Production
             {
                 Factory.NeedSumToNextLevelUp = SumToNextLevel.Value;
             }
+
+            NewRDProgress = Factory.RDProgress;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// <summary>
         /// Производимые материалы на этой фабрике (из подмножества <see><cref>FactoryDefinition.CanProductionMaterials</cref> </see>).
         /// </summary>
-        protected IList<Material> _productionMaterials { get; set; }
+        internal IList<Material> _productionMaterials { get; set; }
 
         public IEnumerable<Material> ProductionMaterials => _productionMaterials;
 
@@ -87,6 +87,11 @@ namespace Epam.ImitationGames.Production.Domain.Production
         public decimal TotalOnSalary { get; internal set; }
 
         /// <summary>
+        /// Всего затраты по фабрике.
+        /// </summary>
+        public decimal TotalExpenses => TotalOnRD + TotalOnSalary + TotalOnTaxes;
+
+        /// <summary>
         /// Склад материалов на фабрике.
         /// </summary>
         internal IList<MaterialOnStock> _stock { get; set; }
@@ -97,9 +102,6 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// Отображаемое в интерфейсе описание.
         /// </summary>
         public string DisplayName => $"Фабрика {FactoryDefinition.Name} (L {FactoryDefinition.GenerationLevel}, W {Workers}, P {Performance:P})";
-
-        internal void SetProductionMaterials(IEnumerable<Material> materials) =>
-            _productionMaterials = new List<Material>(materials);
 
         public static Factory CreateFactory(Customer customer, FactoryDefinition factoryDefinition)
         {

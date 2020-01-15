@@ -6,6 +6,11 @@ namespace Epam.ImitationGames.Production.Domain
     [Serializable]
     public class CustomerNewContractChange : CustomerChange
     {
+        /// <summary>
+        /// Заключенный контракт.
+        /// </summary>
+        public Contract NewContract { get; protected set; }
+
         public CustomerNewContractChange(GameTime time, Contract newContract, string description = null)
             : base(time,  newContract.Customer, description)
         {
@@ -15,7 +20,7 @@ namespace Epam.ImitationGames.Production.Domain
         public override void DoAction()
         {
             base.DoAction();
-            Customer.AddContract(NewContract);
+            Customer._contracts.Add(NewContract);
         }
     }
 }

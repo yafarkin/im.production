@@ -10,7 +10,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         public IList<Material> Materials { get; protected set; }
 
         public FactoryProductionMaterialChange(GameTime time, Factory factory, IList<Material> materials, string description = null)
-            : base(time, factory, null, null, null, description)
+            : base(time, factory, description)
         {
             Materials = materials;
         }
@@ -18,7 +18,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         public override void DoAction()
         {
             base.DoAction();
-            Factory.SetProductionMaterials(Materials);
+            Factory._productionMaterials = new List<Material>(Materials);
         }
     }
 }
