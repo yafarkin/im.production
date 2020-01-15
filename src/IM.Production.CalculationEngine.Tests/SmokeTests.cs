@@ -11,7 +11,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace IM.Production.CalculationEngine.Tests
 {
     [TestClass]
-    [Ignore]
     public class SmokeTests
     {
         public Game Game;

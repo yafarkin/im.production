@@ -142,10 +142,7 @@ namespace IM.Production.CalculationEngine
         /// <summary>
         /// Обновление данных текущей игры для упрощенного создания объектов.
         /// </summary>
-        protected void UpdateCurrentGameProperties()
-        {
-            CurrentGameProps.GameDay = _game.Time.Day;
-        }
+        protected void UpdateCurrentGameProperties() => CurrentGameProps.GameDay = _game.Time.Day;
 
         /// <summary>
         /// Начисление процентов по вкладу и выплата накоплений в случае, если срок вклада подошел к концу.
@@ -277,7 +274,11 @@ namespace IM.Production.CalculationEngine
 
         protected void ProduceFactory(Factory factory)
         {
-            _game.AddActivity(new FactoryPerformanceChange(_game.Time, factory, ReferenceData.CalculateFactoryPerformance(factory)));
+            var performance = ReferenceData.CalculateFactoryPerformance(factory);
+            if (factory.Performance != performance)
+            {
+                _game.AddActivity(new FactoryPerformanceChange(_game.Time, factory, performance));
+            }
 
             // 2. выполняем производство материалов и помещаем их на склад
 
@@ -361,7 +362,10 @@ namespace IM.Production.CalculationEngine
                 materialOnStock.Amount -= usedMaterial.Amount;
             }
 
-            _game.AddActivity(new FactoryRemoveEmptyMaterialsFromStockChange(time, factory));
+            if (factory.Stock.Any(m => m.Amount == 0))
+            {
+                _game.AddActivity(new FactoryRemoveEmptyMaterialsFromStockChange(time, factory));
+            }
 
             // 3. списываем ФОТ. Cписываем деньги со счёта игрока
             var totalSalary = factory.Workers * ReferenceData.CalculateWorkerSalary(factory);
