@@ -418,9 +418,8 @@ namespace IM.Production.CalculationEngine.Tests
             RunCycles();
 
             // ничего не произвели, т.к. "забыли" заключить контракт на поставку материалов от игры
-            // но на складе есть пришедшие материалы
-            Assert.AreEqual(1, f1_1.Stock.Count());
-            Assert.AreEqual(1, f2_1.Stock.Count());
+            Assert.AreEqual(0, f1_1.Stock.Count());
+            Assert.AreEqual(0, f2_1.Stock.Count());
 
             // очередь производства не очищается
             Assert.AreEqual(1, f1_1.ProductionMaterials.Count());
@@ -451,17 +450,19 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(178128, c1.Sum);
             Assert.AreEqual(79728, c2.Sum);
 
-            Assert.AreEqual(2, f1_1.Stock.Count());
-            Assert.AreEqual(220000, f1_1.Stock.ToList()[0].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo_ruda").Id, f1_1.Stock.ToList()[0].Material.Id);
-            Assert.AreEqual(100000, f1_1.Stock.ToList()[1].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, f1_1.Stock.ToList()[1].Material.Id);
+            var stock = f1_1.Stock.OrderBy(m => m.Material.DisplayName).ToList();
+            Assert.AreEqual(2, stock.Count);
+            Assert.AreEqual(200000, stock[0].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo_ruda").Id, stock[0].Material.Id);
+            Assert.AreEqual(100000, stock[1].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, stock[1].Material.Id);
 
-            Assert.AreEqual(2, f2_1.Stock.Count());
-            Assert.AreEqual(275000, f2_1.Stock.ToList()[0].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii_ruda").Id, f2_1.Stock.ToList()[0].Material.Id);
-            Assert.AreEqual(200000, f2_1.Stock.ToList()[1].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, f2_1.Stock.ToList()[1].Material.Id);
+            stock = f2_1.Stock.OrderBy(m => m.Material.DisplayName).ToList();
+            Assert.AreEqual(2, stock.Count);
+            Assert.AreEqual(250000, stock[0].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii_ruda").Id, stock[0].Material.Id);
+            Assert.AreEqual(200000, stock[1].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, stock[1].Material.Id);
 
             // закупаем фабрики
             var f1_2 = Logic.BuyFactoryFromGame(c1, ReferenceData.GetAvailFactoryDefenitions(c1).First());
@@ -505,33 +506,37 @@ namespace IM.Production.CalculationEngine.Tests
             RunCycles(10);
 
             // деньги потихоньку начинаем зарабатывать, не смотря на то, что у нас есть новые фабрики
-            Assert.AreEqual(138105, c1.Sum);
-            Assert.AreEqual(38555, c2.Sum);
+            Assert.AreEqual(137016, c1.Sum);
+            Assert.AreEqual(37466, c2.Sum);
             Assert.AreEqual(3, c1.FactoryGenerationLevel);
             Assert.AreEqual(3, c2.FactoryGenerationLevel);
 
             // руды у нас уже нет на складе, т.к. излишки продаём игре
-            Assert.AreEqual(2, f1_1.Stock.Count());
-            Assert.AreEqual(0, f1_1.Stock.ToList()[0].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo_ruda").Id, f1_1.Stock.ToList()[0].Material.Id);
-            Assert.AreEqual(200000, f1_1.Stock.ToList()[1].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, f1_1.Stock.ToList()[1].Material.Id);
-            Assert.AreEqual(2, f1_2.Stock.Count());
-            Assert.AreEqual(100000, f1_2.Stock.ToList()[0].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo_ruda").Id, f1_2.Stock.ToList()[0].Material.Id);
-            Assert.AreEqual(200, f1_2.Stock.ToList()[1].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo").Id, f1_2.Stock.ToList()[1].Material.Id);
+            stock = f1_1.Stock.OrderBy(m => m.Material.DisplayName).ToList();
+            Assert.AreEqual(2, stock.Count);
+            Assert.AreEqual(0, stock[0].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo_ruda").Id, stock[0].Material.Id);
+            Assert.AreEqual(200000, stock[1].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, stock[1].Material.Id);
+            stock = f1_2.Stock.OrderBy(m => m.Material.DisplayName).ToList();
+            Assert.AreEqual(2, stock.Count);
+            Assert.AreEqual(200, stock[0].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo").Id, stock[0].Material.Id);
+            Assert.AreEqual(100000, stock[1].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo_ruda").Id, stock[1].Material.Id);
 
-            Assert.AreEqual(2, f2_1.Stock.Count());
-            Assert.AreEqual(0, f2_1.Stock.ToList()[0].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii_ruda").Id, f2_1.Stock.ToList()[0].Material.Id);
-            Assert.AreEqual(400000, f2_1.Stock.ToList()[1].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, f2_1.Stock.ToList()[1].Material.Id);
-            Assert.AreEqual(2, f2_2.Stock.Count());
-            Assert.AreEqual(170000, f2_2.Stock.ToList()[0].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii_ruda").Id, f2_2.Stock.ToList()[0].Material.Id);
-            Assert.AreEqual(10000, f2_2.Stock.ToList()[1].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii").Id, f2_2.Stock.ToList()[1].Material.Id);
+            stock = f2_1.Stock.OrderBy(m => m.Material.DisplayName).ToList();
+            Assert.AreEqual(2, stock.Count);
+            Assert.AreEqual(0, stock[0].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii_ruda").Id, stock[0].Material.Id);
+            Assert.AreEqual(400000, stock[1].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, stock[1].Material.Id);
+            stock = f2_2.Stock.OrderBy(m => m.Material.DisplayName).ToList();
+            Assert.AreEqual(2, stock.Count);
+            Assert.AreEqual(170000, stock[0].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii_ruda").Id, stock[0].Material.Id);
+            Assert.AreEqual(10000, stock[1].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii").Id, stock[1].Material.Id);
 
             // покупаем фабрики третьего уровня
             var f1_3 = Logic.BuyFactoryFromGame(c1, ReferenceData.GetAvailFactoryDefenitions(c1).First());
@@ -546,8 +551,8 @@ namespace IM.Production.CalculationEngine.Tests
                 // денег не хватило
             }
 
-            Assert.AreEqual(88105, c1.Sum);
-            Assert.AreEqual(38555, c2.Sum);
+            Assert.AreEqual(87016, c1.Sum);
+            Assert.AreEqual(37466, c2.Sum);
 
             // тормозим исследования, т.к. денег жестко не хватает
             Logic.UpdateCustomerSettings(c1, 0);
