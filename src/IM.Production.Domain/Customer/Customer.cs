@@ -85,7 +85,7 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public decimal SpentSumToNextGenerationLevel { get; internal set; }
 
-        public bool ReadyForNextGenerationLevel => SpentSumToNextGenerationLevel > SumToNextGenerationLevel;
+        public bool ReadyForNextGenerationLevel => SpentSumToNextGenerationLevel >= SumToNextGenerationLevel;
 
         /// <summary>
         /// Общий прогресс исследования, для открытия фабрик следующего уровня.

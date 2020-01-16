@@ -392,11 +392,13 @@ namespace IM.Production.CalculationEngine.Tests
 
             Assert.AreEqual(99000, c.Sum);
 
+            var diff = 155.35m;
             RunCycles(10);
 
-            Assert.AreEqual(99155.35m, c.Sum);
+            Assert.AreEqual(99000+diff, c.Sum);
 
-            // теперь фабрика второго уровня, производит в два раза больше
+            // теперь фабрика второго уровня, производит в два раза больше. тормозим исследования по ней и обновляем контракт
+            // что бы производить больше материалов
             Assert.AreEqual(2, f1.Performance);
             Logic.UpdateFactorySettings(f1, null, 0);
 
@@ -407,7 +409,99 @@ namespace IM.Production.CalculationEngine.Tests
                 DestinationFactory = f1
             });
 
+            // после модернизации фабрики и отключения затрат на исследования по ней, прибыль значительно выросла
+            diff += 1751;
             RunCycles(10);
+
+            Assert.AreEqual(2, f1.Level);
+            Assert.AreEqual(99000 + diff, c.Sum);
+
+            // выделяем сумму на исследование следующего поколения фабрик и останавливаем продажу ресурсов игре
+            Logic.CloseContract(co2);
+
+            Logic.UpdateCustomerSettings(c, 100);
+
+            // мы поставили исследование и перестали продавать товар игре, а затраты на налоги и покупку остались
+            diff -= 2594.5m;
+            RunCycles(5);
+
+            Assert.AreEqual(2, c.FactoryGenerationLevel);
+            Assert.AreEqual(99000 + diff, c.Sum);
+
+            // покупаем фабрику №2, организовываем поставку товара на вторую фабрику, а продажу с фабрики №2 - игре
+            Logic.UpdateCustomerSettings(c, 0);
+            var f2 = Logic.BuyFactoryFromGame(c, ReferenceData.GetAvailFactoryDefenitions(c).First());
+
+            // организовываем производство материала на второй фабрике
+            Logic.UpdateFactorySettings(f2, null, null,
+                new List<Material> {ReferenceData.GetMaterialByKey("metall_zelezo")});
+
+            var materialZelezoRuda = ReferenceData.GetMaterialByKey("metall_zelezo_ruda");
+            var nowZelezoRuda = f1.Stock.First(m => m.Material.Id == materialZelezoRuda.Id);
+
+            // разовым контрактом переместим всё что накопилось на складе первой фабрики на вторую фабрику
+            var co3 = Logic.AddContract(
+                new Contract(Game.Time, c,
+                    new MaterialWithPrice {Amount = nowZelezoRuda.Amount, Material = materialZelezoRuda})
+                {
+                    SourceFactory = f1, DestinationFactory = f2, TillCount = Convert.ToInt32(nowZelezoRuda.Amount)
+                });
+
+            // добавляем постоянный контракт на перенос
+            var co4 = Logic.AddContract(
+                new Contract(Game.Time, c,
+                    new MaterialWithPrice {Amount = 40000, Material = materialZelezoRuda})
+                {
+                    SourceFactory = f1, DestinationFactory = f2
+                });
+
+            // и контракт на продажу игре
+            var co5 = Logic.AddContract(
+                new Contract(Game.Time, c,
+                    new MaterialWithPrice {Amount = 999999, Material = ReferenceData.GetMaterialByKey("metall_zelezo")})
+                {
+                    SourceFactory = f2,
+                });
+
+            // мы купили фабрику и идут новые налоги; с другой стороны - организовано производство №2
+            diff -= 5420.75m;
+            RunCycles(10);
+            Assert.AreEqual(99000 + diff, c.Sum);
+
+            // понимаем, что фабрика №2 может перерабатывать только 10к единиц материала, а мы поставляем ей 40к. прокачиваем до третьего уровня, причем сразу
+            Logic.UpdateFactorySettings(f2, null, f2.NeedSumToNextLevelUp);
+            RunCycles();
+            Assert.AreEqual(2, f2.Level);
+            Assert.AreEqual(2, f2.Performance);
+            Logic.UpdateFactorySettings(f2, null, f2.NeedSumToNextLevelUp);
+            RunCycles();
+            Assert.AreEqual(3, f2.Level);
+            Assert.AreEqual(3, f2.Performance);
+            Logic.UpdateFactorySettings(f2, null, f2.NeedSumToNextLevelUp);
+            RunCycles();
+            Assert.AreEqual(4, f2.Level);
+            Assert.AreEqual(4, f2.Performance);
+            Logic.UpdateFactorySettings(f2, null, 0);
+
+            diff -= 3658.00625m;
+            RunCycles(10);
+            Assert.AreEqual(99000 + diff, c.Sum);
+
+            var nowZelezoRudaCnt = f2.Stock.First(m => m.Material.Id == materialZelezoRuda.Id).Amount;
+            diff += 7643.125m;
+            RunCycles(50);
+
+            // мы стали зарабатывать деньги
+            Assert.AreEqual(99000 + diff, c.Sum);
+
+            // количество материала не изменяется, мы всё что пришло - всё и перерабатываем
+            Assert.AreEqual(nowZelezoRudaCnt, f2.Stock.First(m => m.Material.Id == materialZelezoRuda.Id).Amount);
+
+            diff += 7643.125m;
+            RunCycles(50);
+
+            Assert.AreEqual(99000 + diff, c.Sum);
+            Assert.AreEqual(nowZelezoRudaCnt, f2.Stock.First(m => m.Material.Id == materialZelezoRuda.Id).Amount);
         }
 
         [TestMethod]

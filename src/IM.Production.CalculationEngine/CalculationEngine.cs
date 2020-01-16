@@ -98,7 +98,8 @@ namespace IM.Production.CalculationEngine
                         {
                             ProduceFactory(factory);
 
-                            var contracts = customer.Contracts.Where(c => c.SourceFactory != null && c.SourceFactory.Id == factory.Id);
+                            var contracts = customer.Contracts
+                                .Where(c => c.SourceFactory != null && c.SourceFactory.Id == factory.Id).ToList();
 
                             foreach (var contract in contracts)
                             {
@@ -436,7 +437,7 @@ namespace IM.Production.CalculationEngine
                 return;
             }
 
-            if (contract.TillCount.HasValue && contract.TillCount >= contract.TotalCountCompleted)
+            if (contract.TillCount.HasValue && contract.TotalCountCompleted >= contract.TillCount)
             {
                 // закрываем контракт по достижению поставленного количества
                 _game.AddActivity(new CustomerCloseContractChange(time, contract,
@@ -460,17 +461,26 @@ namespace IM.Production.CalculationEngine
             var isGameDemand = null == contract.DestinationFactory;
             var needAmount = 0;
 
-            var sellPrice = isGameDemand
-                ? ReferenceData.Demand.Materials.First(m => m.Material.Id == material.Id).SellPrice
-                : contract.MaterialWithPrice.SellPrice;
+            var sellPrice = contract.MaterialWithPrice.SellPrice;
+
+            if (isGameDemand)
+            {
+                var demandMaterial = ReferenceData.Demand.Materials.FirstOrDefault(m => m.Material.Id == material.Id);
+                if (null == demandMaterial)
+                {
+                    // такой материал ещё никто не производит, значит нельзя определить цену и контракт нельзя выполнить
+                    _game.AddActivity(new InfoChanging(_game.Time, contract.Customer, $"Не организовано производство материала {material.DisplayName}, контракт нельзя выполнить"));
+                    return;
+                }
+
+                sellPrice = demandMaterial.SellPrice;
+            }
 
             amount = Convert.ToInt32(contract.MaterialWithPrice.Amount);
             if (contract.TillCount.HasValue && contract.TotalCountCompleted + amount > contract.TillCount)
             {
                 amount = contract.TillCount.Value - contract.TotalCountCompleted;
             }
-
-            contract.TotalCountCompleted += amount;
 
             if (materialOnStock.Amount < amount)
             {
@@ -483,7 +493,6 @@ namespace IM.Production.CalculationEngine
 
             var selfPrice = ReferenceData.CalculateMaterialCostPrice(material);
             var selfPriceTotal = selfPrice * amount;
-            var income = totalPrice - selfPriceTotal;
 
             // сумма налога
             var tax = ReferenceData.CalculateTaxOnMaterial(material);
