@@ -101,7 +101,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// <summary>
         /// Отображаемое в интерфейсе описание.
         /// </summary>
-        public string DisplayName => $"Фабрика {FactoryDefinition.Name} (L {FactoryDefinition.GenerationLevel}, W {Workers}, P {Performance:P})";
+        public string DisplayName => $"Фабрика {FactoryDefinition?.Name} (L {FactoryDefinition?.GenerationLevel}, W {Workers}, P {Performance:P})";
 
         public static Factory CreateFactory(Customer customer, FactoryDefinition factoryDefinition)
         {
@@ -112,7 +112,11 @@ namespace Epam.ImitationGames.Production.Domain.Production
                 _productionMaterials = new List<Material>()
             };
 
+            factory.NeedSumToNextLevelUp = ReferenceData.ReferenceData.CalculateRDSummToNextFactoryLevelUp(factory);
+
             return factory;
         }
+
+        public override string ToString() => DisplayName;
     }
 }

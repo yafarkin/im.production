@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Bank
 {
@@ -9,8 +8,8 @@ namespace Epam.ImitationGames.Production.Domain.Bank
     [Serializable]
     public abstract class BankFinOperation : BaseBank
     {
-        protected BankFinOperation(GameTime time, Customer customer, decimal sum, string description = null)
-            : base(time, customer, description)
+        protected BankFinOperation(Customer customer, decimal sum, string description = null)
+            : base(customer, description)
         {
             Status = OperationStatus.Active;
             Sum = sum;

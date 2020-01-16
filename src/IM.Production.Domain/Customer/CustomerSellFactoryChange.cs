@@ -22,8 +22,8 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public decimal SumChange { get; protected set; }
 
-        public CustomerSellFactoryChange(GameTime time, Factory soldFactory, decimal cost, Customer otherCustomer = null, string description = null)
-            : base(time, soldFactory.Customer, description)
+        public CustomerSellFactoryChange(Factory soldFactory, decimal cost, Customer otherCustomer = null, string description = null)
+            : base(soldFactory.Customer, description)
         {
             SoldFactory = soldFactory;
             OtherCustomer = otherCustomer;

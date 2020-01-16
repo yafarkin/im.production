@@ -107,6 +107,8 @@ namespace Epam.ImitationGames.Production.Domain
                 ProductionType = productionType,
             };
 
+            customer.SumToNextGenerationLevel = ReferenceData.ReferenceData.CalculateRDSummToNextGenerationLevel(customer);
+
             return customer;
         }
     }

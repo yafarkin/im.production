@@ -36,8 +36,8 @@ namespace Epam.ImitationGames.Production.Domain.Bank
 
         public override string DisplayName => $"Выплаты по {(FinOperation is BankDebit ? "вкладу" : "кредиту")}, сумма {TotalSum}";
 
-        public BankFinAction(GameTime time, Customer customer, decimal sumChange, string description = null)
-            : base(time, customer, description)
+        public BankFinAction(Customer customer, decimal sumChange, string description = null)
+            : base(customer, description)
         {
             SumChange = sumChange;
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 using Epam.ImitationGames.Production.Domain.Production;
 
 namespace Epam.ImitationGames.Production.Domain
@@ -61,8 +60,8 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public decimal TotalOnTaxes { get; set; }
 
-        public Contract(GameTime time, Customer customer, MaterialWithPrice materialWithPrice, string description = null)
-            : base(time, materialWithPrice, description)
+        public Contract(Customer customer, MaterialWithPrice materialWithPrice, string description = null)
+            : base(materialWithPrice, description)
         {
             Customer = customer;
         }

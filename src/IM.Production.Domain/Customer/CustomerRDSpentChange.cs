@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain
 {
@@ -14,8 +13,8 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public decimal? NewRDProgress { get; set; }
 
-        public CustomerRDSpentChange(GameTime time, Customer customer, decimal? spentSumToNextGenerationLevel, decimal? sumToNextGenerationLevel, string description = null)
-            : base(time, customer, description)
+        public CustomerRDSpentChange(Customer customer, decimal? spentSumToNextGenerationLevel, decimal? sumToNextGenerationLevel, string description = null)
+            : base(customer, description)
         {
             SpentSumToNextGenerationLevel = spentSumToNextGenerationLevel;
             SumToNextGenerationLevel = sumToNextGenerationLevel;

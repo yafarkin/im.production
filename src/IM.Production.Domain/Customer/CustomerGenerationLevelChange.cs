@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain
 {
@@ -11,8 +10,8 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public int NewFactoryGenerationLevel { get; protected set; }
 
-        public CustomerGenerationLevelChange(GameTime time, Customer customer, int newGenerationLevel, decimal? spentSumToNextGenerationLevel = null, decimal? sumToNextGenerationLevel = null, string description = null)
-            : base(time, customer, spentSumToNextGenerationLevel, sumToNextGenerationLevel, description)
+        public CustomerGenerationLevelChange(Customer customer, int newGenerationLevel, decimal? spentSumToNextGenerationLevel = null, decimal? sumToNextGenerationLevel = null, string description = null)
+            : base(customer, spentSumToNextGenerationLevel, sumToNextGenerationLevel, description)
         {
             NewFactoryGenerationLevel = newGenerationLevel;
         }

@@ -11,8 +11,8 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// </summary>
         public int NewLevel { get; protected set; }
 
-        public FactoryLevelChange(GameTime time, Factory factory, int newLevel, decimal? spentSumToNextLevel = null, decimal? sumToNextLevel = null, string description = null)
-            : base(time, factory, spentSumToNextLevel, sumToNextLevel, description)
+        public FactoryLevelChange(Factory factory, int newLevel, decimal? spentSumToNextLevel = null, decimal? sumToNextLevel = null, string description = null)
+            : base(factory, spentSumToNextLevel, sumToNextLevel, description)
         {
             NewLevel = newLevel;
         }

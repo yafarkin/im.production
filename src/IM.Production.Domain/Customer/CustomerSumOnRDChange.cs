@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain
 {
@@ -11,8 +10,8 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public decimal NewSumOnRD { get; protected set; }
 
-        public CustomerSumOnRDChange(GameTime time, Customer customer, decimal newSumOnRd, string description = null) :
-            base(time, customer, description)
+        public CustomerSumOnRDChange(Customer customer, decimal newSumOnRd, string description = null) :
+            base(customer, description)
         {
             NewSumOnRD = newSumOnRd;
         }

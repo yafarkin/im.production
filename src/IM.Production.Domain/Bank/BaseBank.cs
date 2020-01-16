@@ -11,8 +11,8 @@ namespace Epam.ImitationGames.Production.Domain.Bank
     {
         public abstract string DisplayName { get; }
 
-        protected BaseBank(GameTime time, Customer customer, string description = null)
-            : base(time, customer, description)
+        protected BaseBank(Customer customer, string description = null)
+            : base(customer, description)
         {
         }
     }

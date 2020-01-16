@@ -15,14 +15,6 @@ namespace IM.Production.CalculationEngine.Tests
         }
 
         [TestMethod]
-        public void Constructor_Default_InitializesTime()
-        {
-            var game = new Game();
-
-            Assert.IsNotNull(game.Time);
-        }
-
-        [TestMethod]
         public void Constructor_Default_InitializesActivity()
         {
             var game = new Game();

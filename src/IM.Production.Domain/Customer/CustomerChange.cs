@@ -9,8 +9,8 @@ namespace Epam.ImitationGames.Production.Domain
     [Serializable]
     public abstract class CustomerChange : BaseChanging
     {
-        protected CustomerChange(GameTime time, Customer customer, string description = null)
-            : base(time, customer, description)
+        protected CustomerChange(Customer customer, string description = null)
+            : base(customer, description)
         {
         }
     }

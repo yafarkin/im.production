@@ -261,7 +261,7 @@ namespace IM.Production.Domain.Tests
         {
             var material = ReferenceData.GetMaterialByKey("metall_ruda");
             var factory = Factory.CreateFactory(null, new FactoryDefinition());
-            new FactoryProductionMaterialChange(new GameTime(), factory, new List<Material> {material}).DoAction();
+            new FactoryProductionMaterialChange(factory, new List<Material> {material}).DoAction();
             var factories = new List<Factory> {factory};
 
             ReferenceData.UpdateGameDemand(factories);
@@ -281,8 +281,8 @@ namespace IM.Production.Domain.Tests
         public void CalculateFactoryPerformance_AnyWorkersAndLevel_PerformanceReturned(int workers, int level, int baseWorkers, double expected)
         {
             var factory = Factory.CreateFactory(null, new FactoryDefinition {BaseWorkers = baseWorkers});
-            new FactoryLevelChange(new GameTime(), factory, level).DoAction();
-            new FactoryWorkerCountChange(new GameTime(), factory, workers).DoAction();
+            new FactoryLevelChange(factory, level).DoAction();
+            new FactoryWorkerCountChange(factory, workers).DoAction();
 
             var performance = ReferenceData.CalculateFactoryPerformance(factory);
 

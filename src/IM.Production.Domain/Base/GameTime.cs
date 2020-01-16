@@ -9,7 +9,9 @@ namespace Epam.ImitationGames.Production.Domain.Base
     [Serializable]
     public class GameTime : BaseEntity
     {
-        public GameTime()
+        public static GameTime GetGameTime => new GameTime();
+
+        internal GameTime()
         {
             Day = CurrentGameProps.GameDay;
             When = DateTime.UtcNow;

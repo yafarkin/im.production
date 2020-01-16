@@ -17,8 +17,8 @@ namespace Epam.ImitationGames.Production.Domain.Production
 
         public decimal OnSalary { get; set; }
 
-        public FinanceFactoryChange(GameTime time, Factory factory, decimal onRd, decimal onTax, decimal onSalary, string description = null) :
-            base(time, factory.Customer, onRd + onTax + onSalary, description)
+        public FinanceFactoryChange(Factory factory, decimal onRd, decimal onTax, decimal onSalary, string description = null) :
+            base(factory.Customer, onRd + onTax + onSalary, description)
         {
             Factory = factory;
             OnRd = onRd;

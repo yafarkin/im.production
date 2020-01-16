@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain
 {
@@ -11,8 +10,8 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public Contract NewContract { get; protected set; }
 
-        public CustomerNewContractChange(GameTime time, Contract newContract, string description = null)
-            : base(time,  newContract.Customer, description)
+        public CustomerNewContractChange(Contract newContract, string description = null)
+            : base(newContract.Customer, description)
         {
             NewContract = newContract;
         }

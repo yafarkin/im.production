@@ -9,8 +9,8 @@ namespace Epam.ImitationGames.Production.Domain.Production
     [Serializable]
     public class TaxFactoryChange : FinanceFactoryChange
     {
-        public TaxFactoryChange(GameTime time, Factory factory, decimal onTax, string description = null)
-            : base(time, factory, 0, onTax, 0, description)
+        public TaxFactoryChange(Factory factory, decimal onTax, string description = null)
+            : base(factory, 0, onTax, 0, description)
         {
         }
     }

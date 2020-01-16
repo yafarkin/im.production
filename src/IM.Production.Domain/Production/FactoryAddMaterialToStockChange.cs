@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
@@ -8,8 +7,8 @@ namespace Epam.ImitationGames.Production.Domain.Production
     {
         public MaterialOnStock MaterialOnStock { get; protected set; }
 
-        public FactoryAddMaterialToStockChange(GameTime time, Factory factory, MaterialOnStock materialOnStock, string description = null)
-            : base(time, factory, description)
+        public FactoryAddMaterialToStockChange(Factory factory, MaterialOnStock materialOnStock, string description = null)
+            : base(factory, description)
         {
             MaterialOnStock = materialOnStock;
         }
@@ -20,6 +19,11 @@ namespace Epam.ImitationGames.Production.Domain.Production
             if (MaterialOnStock != null)
             {
                 ReferenceData.ReferenceData.AddMaterialToStock(Factory._stock, MaterialOnStock);
+            }
+
+            if (string.IsNullOrEmpty(Description))
+            {
+                Description = $"Внесение {MaterialOnStock} на склад";
             }
         }
     }

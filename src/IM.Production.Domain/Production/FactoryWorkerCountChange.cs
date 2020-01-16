@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
@@ -11,8 +10,8 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// </summary>
         public int NewWorkersCount { get; protected set; }
 
-        public FactoryWorkerCountChange(GameTime time, Factory factory, int newWorkersCount, string description = null)
-            : base(time, factory, description)
+        public FactoryWorkerCountChange(Factory factory, int newWorkersCount, string description = null)
+            : base(factory, description)
         {
             NewWorkersCount = newWorkersCount;
         }

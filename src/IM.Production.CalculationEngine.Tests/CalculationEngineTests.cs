@@ -3,7 +3,6 @@ using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Production;
 using Epam.ImitationGames.Production.Domain.ReferenceData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,8 +27,8 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var sum = 0;
             var customer = new Customer();
-            var contract = new Contract(null, customer, null) {SourceFactory = new Factory()};
-            _game.AddActivity(new CustomerNewContractChange(_game.Time, contract));
+            var contract = new Contract(customer, null) {SourceFactory = new Factory()};
+            _game.AddActivity(new CustomerNewContractChange(contract));
             _game.Customers.Add(customer);
 
             _calculationEngine.Calculate();
@@ -44,10 +43,10 @@ namespace IM.Production.CalculationEngine.Tests
             var amount = 100;
             var customer = new Customer();
             _game.Customers.Add(customer);
-            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 10));
+            _game.AddActivity(new FinanceCustomerChange(customer, 10));
             var factory = Factory.CreateFactory(customer, null);
-            var contract = new Contract(null, customer, new MaterialWithPrice { Material = material, Amount = amount }) { DestinationFactory = factory };
-            _game.AddActivity(new CustomerNewContractChange(_game.Time, contract));
+            var contract = new Contract(customer, new MaterialWithPrice { Material = material, Amount = amount }) { DestinationFactory = factory };
+            _game.AddActivity(new CustomerNewContractChange(contract));
 
             _calculationEngine.Calculate();
 
@@ -62,16 +61,16 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var material = ReferenceData.GetMaterialByKey(MaterialKeys.MetalRuda);
             var customer = new Customer();
-            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 10));
+            _game.AddActivity(new FinanceCustomerChange(customer, 10));
             var factory = Factory.CreateFactory(customer, null);
             var contract =
-                new Contract(null, customer, new MaterialWithPrice {Amount = 100, Material = material})
+                new Contract(customer, new MaterialWithPrice {Amount = 100, Material = material})
                 {
                     DestinationFactory = factory
                 };
             var materialOnStock = new MaterialOnStock {Amount = 1, Material = material};
-            _game.AddActivity(new FactoryAddMaterialToStockChange(_game.Time, factory, materialOnStock));
-            _game.AddActivity(new CustomerNewContractChange(_game.Time, contract));
+            _game.AddActivity(new FactoryAddMaterialToStockChange(factory, materialOnStock));
+            _game.AddActivity(new CustomerNewContractChange(contract));
             _game.Customers.Add(customer);
 
             _calculationEngine.Calculate();
@@ -101,9 +100,9 @@ namespace IM.Production.CalculationEngine.Tests
             var customer = new Customer();
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, sum));
-            _game.AddActivity(new CustomerSumOnRDChange(_game.Time, customer, sumOnRD));
-            _game.AddActivity(new CustomerRDSpentChange(_game.Time, customer, spent, null));
+            _game.AddActivity(new FinanceCustomerChange(customer, sum));
+            _game.AddActivity(new CustomerSumOnRDChange(customer, sumOnRD));
+            _game.AddActivity(new CustomerRDSpentChange(customer, spent, null));
 
             _calculationEngine.Calculate();
 
@@ -117,8 +116,8 @@ namespace IM.Production.CalculationEngine.Tests
             var customer = new Customer();
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 10000));
-            _game.AddActivity(new CustomerSumOnRDChange(_game.Time, customer, 6000));
+            _game.AddActivity(new FinanceCustomerChange(customer, 10000));
+            _game.AddActivity(new CustomerSumOnRDChange(customer, 6000));
 
             _calculationEngine.Calculate();
 
@@ -136,9 +135,9 @@ namespace IM.Production.CalculationEngine.Tests
             var customer = new Customer();
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 10));
-            _game.AddActivity(new CustomerSumOnRDChange(_game.Time, customer, 1));
-            _game.AddActivity(new CustomerRDSpentChange(_game.Time, customer, 2, sumToNext));
+            _game.AddActivity(new FinanceCustomerChange(customer, 10));
+            _game.AddActivity(new CustomerSumOnRDChange(customer, 1));
+            _game.AddActivity(new CustomerRDSpentChange(customer, 2, sumToNext));
 
             _calculationEngine.Calculate();
 
@@ -155,7 +154,7 @@ namespace IM.Production.CalculationEngine.Tests
             var customer = new Customer();
             var factory = Factory.CreateFactory(customer, definition);
 
-            _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
             _game.Customers.Add(customer);
 
             _calculationEngine.Calculate();
@@ -173,12 +172,12 @@ namespace IM.Production.CalculationEngine.Tests
             var customer = new Customer();
             var factory = Factory.CreateFactory(null, description);
 
-            _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 1));
-            _game.AddActivity(new FactorySumOnRDChange(_game.Time, factory, sumOnRD));
-            _game.AddActivity(new FactoryRDSpentChange(_game.Time, factory, spentSum, 1));
+            _game.AddActivity(new FinanceCustomerChange(customer, 1));
+            _game.AddActivity(new FactorySumOnRDChange(factory, sumOnRD));
+            _game.AddActivity(new FactoryRDSpentChange(factory, spentSum, 1));
 
             _calculationEngine.Calculate();
 
@@ -196,12 +195,12 @@ namespace IM.Production.CalculationEngine.Tests
             var customer = new Customer();
             var factory = Factory.CreateFactory(customer, definition);
 
-            _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 100));
-            _game.AddActivity(new FactorySumOnRDChange(_game.Time, factory, 10));
-            _game.AddActivity(new FactoryRDSpentChange(_game.Time, factory, 2, needSum));
+            _game.AddActivity(new FinanceCustomerChange(customer, 100));
+            _game.AddActivity(new FactorySumOnRDChange(factory, 10));
+            _game.AddActivity(new FactoryRDSpentChange(factory, 2, needSum));
 
             _calculationEngine.Calculate();
 
@@ -217,12 +216,12 @@ namespace IM.Production.CalculationEngine.Tests
             var definition = ReferenceData.FactoryDefinitions.First();
             var customer = new Customer();
             var factory = Factory.CreateFactory(customer, definition);
-            _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 100));
-            _game.AddActivity(new FactorySumOnRDChange(_game.Time, factory, 50));
-            _game.AddActivity(new FactoryRDSpentChange(_game.Time, factory, 0, 10));
+            _game.AddActivity(new FinanceCustomerChange(customer, 100));
+            _game.AddActivity(new FactorySumOnRDChange(factory, 50));
+            _game.AddActivity(new FactoryRDSpentChange(factory, 0, 10));
 
             _calculationEngine.Calculate();
 
@@ -238,10 +237,10 @@ namespace IM.Production.CalculationEngine.Tests
             var description = ReferenceData.FactoryDefinitions.First();
             var customer = new Customer();
             var factory = Factory.CreateFactory(customer, description);
-            _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 100));
+            _game.AddActivity(new FinanceCustomerChange(customer, 100));
 
             _calculationEngine.Calculate();
 
@@ -253,10 +252,10 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var customer = new Customer();
             var factory = Factory.CreateFactory(customer, new FactoryDefinition {GenerationLevel = 1, BaseWorkers = 1, ProductionType = new ProductionType()});
-            _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FactoryWorkerCountChange(_game.Time, factory, 1));
+            _game.AddActivity(new FactoryWorkerCountChange(factory, 1));
             
 
             _calculationEngine.Calculate();
@@ -276,10 +275,10 @@ namespace IM.Production.CalculationEngine.Tests
             var customer = new Customer();
             var factory = Factory.CreateFactory(customer, new FactoryDefinition {GenerationLevel = 1, ProductionType = new ProductionType()});
 
-            _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FactoryProductionMaterialChange(_game.Time, factory, new List<Material> { material }));
+            _game.AddActivity(new FactoryProductionMaterialChange(factory, new List<Material> { material }));
 
             _calculationEngine.Calculate();
 
@@ -304,14 +303,14 @@ namespace IM.Production.CalculationEngine.Tests
             var factory = Factory.CreateFactory(customer,
                 new FactoryDefinition {GenerationLevel = 1, ProductionType = new ProductionType(), BaseWorkers = 1});
 
-            _game.AddActivity(new FactoryProductionMaterialChange(_game.Time, factory, new List<Material>{material}));
-            _game.AddActivity(new FactoryAddMaterialToStockChange(_game.Time, factory, new MaterialOnStock {Material = firstInput, Amount = 3}));
-            _game.AddActivity(new FactoryAddMaterialToStockChange(_game.Time, factory, new MaterialOnStock {Material = secondInput, Amount = 5}));
+            _game.AddActivity(new FactoryProductionMaterialChange(factory, new List<Material>{material}));
+            _game.AddActivity(new FactoryAddMaterialToStockChange(factory, new MaterialOnStock {Material = firstInput, Amount = 3}));
+            _game.AddActivity(new FactoryAddMaterialToStockChange(factory, new MaterialOnStock {Material = secondInput, Amount = 5}));
 
-            _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FactoryWorkerCountChange(_game.Time, factory, 1));
+            _game.AddActivity(new FactoryWorkerCountChange(factory, 1));
 
             _calculationEngine.Calculate();
 
@@ -358,16 +357,16 @@ namespace IM.Production.CalculationEngine.Tests
             var customer = new Customer();
             var factory = Factory.CreateFactory(customer,  new FactoryDefinition {GenerationLevel = 1, BaseWorkers = 1, ProductionType = new ProductionType()});
 
-            _game.AddActivity(new FactoryProductionMaterialChange(_game.Time, factory,
+            _game.AddActivity(new FactoryProductionMaterialChange(factory,
                 new List<Material> {firstMaterial, secondMaterial, thirdMaterial, fourthMaterial}));
 
-            _game.AddActivity(new FactoryAddMaterialToStockChange(_game.Time, factory,
+            _game.AddActivity(new FactoryAddMaterialToStockChange(factory,
                 new MaterialOnStock {Material = input, Amount = 5}));
 
-            _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FactoryWorkerCountChange(_game.Time, factory, 1));
+            _game.AddActivity(new FactoryWorkerCountChange(factory, 1));
 
             _calculationEngine.Calculate();
 
@@ -398,12 +397,12 @@ namespace IM.Production.CalculationEngine.Tests
             var customer = new Customer();
             var factory = Factory.CreateFactory(customer,
                 new FactoryDefinition {ProductionType = new ProductionType(), BaseWorkers = 1, GenerationLevel = 1});
-            _game.AddActivity(new FactoryProductionMaterialChange(_game.Time, factory, new List<Material>{material}));
-            _game.AddActivity(new FactoryAddMaterialToStockChange(_game.Time, factory, new MaterialOnStock { Material = input, Amount = 1 }));
-            _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
+            _game.AddActivity(new FactoryProductionMaterialChange(factory, new List<Material>{material}));
+            _game.AddActivity(new FactoryAddMaterialToStockChange(factory, new MaterialOnStock { Material = input, Amount = 1 }));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FactoryWorkerCountChange(_game.Time, factory, 1));
+            _game.AddActivity(new FactoryWorkerCountChange(factory, 1));
 
             _calculationEngine.Calculate();
 
@@ -422,11 +421,11 @@ namespace IM.Production.CalculationEngine.Tests
             var factory = Factory.CreateFactory(customer,
                 new FactoryDefinition {GenerationLevel = 10, ProductionType = new ProductionType(), BaseWorkers = 10});
 
-            _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, 0));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
             _game.Customers.Add(customer);
 
-            _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, 2000));
-            _game.AddActivity(new FactoryWorkerCountChange(_game.Time, factory, 10));
+            _game.AddActivity(new FinanceCustomerChange(customer, 2000));
+            _game.AddActivity(new FactoryWorkerCountChange(factory, 10));
 
             _calculationEngine.Calculate();
 

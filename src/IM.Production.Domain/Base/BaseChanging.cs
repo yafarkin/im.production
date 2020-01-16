@@ -11,21 +11,21 @@ namespace Epam.ImitationGames.Production.Domain.Base
         /// <summary>
         /// Когда произошли изменения.
         /// </summary>
-        public GameTime Time { get; set; }
+        public GameTime Time { get; protected set; }
 
         /// <summary>
         /// С какой командой связаны изменения.
         /// </summary>
-        public Customer Customer { get; set; }
+        public Customer Customer { get; protected set; }
 
         /// <summary>
         /// Текстовое описание для UI о сути изменений.
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; protected set; }
 
-        public BaseChanging(GameTime time, Customer customer, string description = null)
+        public BaseChanging(Customer customer, string description = null)
         {
-            Time = time;
+            Time = GameTime.GetGameTime;
             Customer = customer;
             Description = description;
         }
@@ -35,7 +35,6 @@ namespace Epam.ImitationGames.Production.Domain.Base
         /// </summary>
         public virtual void DoAction()
         {
-
         }
 
         public override string ToString() => Description;

@@ -29,10 +29,36 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// </summary>
         public TaxFactoryChange Tax { get; set; }
 
-        public MaterialLogistic(GameTime time, MaterialWithPrice materialWithPrice, string description = null)
-            : base(time, null, description)
+        public MaterialLogistic(MaterialWithPrice materialWithPrice, string description = null)
+            : base(null, description)
         {
             MaterialWithPrice = materialWithPrice;
+        }
+
+        public override void DoAction()
+        {
+            base.DoAction();
+            if (string.IsNullOrWhiteSpace(Description))
+            {
+                Description = $"Перемещение {MaterialWithPrice} ";
+                if (null == SourceFactory)
+                {
+                    Description += " от игры ";
+                }
+                else
+                {
+                    Description += $"с фабрики {SourceFactory} ";
+                }
+
+                if (null == DestinationFactory)
+                {
+                    Description += "к игре";
+                }
+                else
+                {
+                    Description += $"на фабрику {DestinationFactory}";
+                }
+            }
         }
     }
 }

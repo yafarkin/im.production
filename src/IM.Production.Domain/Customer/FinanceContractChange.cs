@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain
 {
@@ -13,8 +12,8 @@ namespace Epam.ImitationGames.Production.Domain
         public decimal NetSum { get; set; }
         public decimal TaxSum { get; set; }
 
-        public FinanceContractChange(GameTime time, Contract contract, decimal netSum, decimal taxSum, int amount, string description = null) :
-            base(time, contract.Customer, netSum+taxSum, description)
+        public FinanceContractChange(Contract contract, decimal netSum, decimal taxSum, int amount, string description = null) :
+            base(contract.Customer, netSum+taxSum, description)
         {
             Contract = contract;
             Amount = amount;

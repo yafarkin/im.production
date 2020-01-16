@@ -11,8 +11,8 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// </summary>
         public decimal NewSumOnRD { get; protected set; }
 
-        public FactorySumOnRDChange(GameTime time, Factory factory, decimal newSumOnRD, string description = null)
-            : base(time, factory, description)
+        public FactorySumOnRDChange(Factory factory, decimal newSumOnRD, string description = null)
+            : base(factory, description)
         {
             NewSumOnRD = newSumOnRD;
         }

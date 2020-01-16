@@ -1,6 +1,7 @@
 ﻿using Epam.ImitationGames.Production.Domain.Production;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using CalculationEngine;
 using Epam.ImitationGames.Production.Domain.Base;
 
 namespace IM.Production.Domain.Tests.Production
@@ -41,7 +42,7 @@ namespace IM.Production.Domain.Tests.Production
         public void ReadyForNextLevel_CorrectSums_ReadyOrNotReturned(int needSum, int spentSum, bool expected)
         {
             var factory = new Factory();
-            new FactoryRDSpentChange(new GameTime(), factory, spentSum, needSum).DoAction();
+            new FactoryRDSpentChange(factory, spentSum, needSum).DoAction();
 
             var ready = factory.ReadyForNextLevel;
 

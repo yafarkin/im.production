@@ -230,7 +230,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             ReferenceData.Materials.Add(new Material
             {
-                AmountPerDay = 2000m,
+                AmountPerDay = 8000m,
                 Key = "provoloka",
                 InputMaterials = new List<MaterialOnStock>
                 {
@@ -242,22 +242,6 @@ namespace IM.Production.CalculationEngine.Tests
                 },
                 ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
                 DisplayName = "Железная проволока"
-            });
-
-            ReferenceData.Materials.Add(new Material
-            {
-                AmountPerDay = 1,
-                Key = "blok_upravlenia",
-                InputMaterials = new List<MaterialOnStock>
-                {
-                    new MaterialOnStock
-                    {
-                        Material = ReferenceData.GetMaterialByKey("electro_blok"),
-                        Amount = 3
-                    }
-                },
-                ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
-                DisplayName = "Блок управления"
             });
 
             ReferenceData.Materials.Add(new Material
@@ -328,6 +312,22 @@ namespace IM.Production.CalculationEngine.Tests
             ReferenceData.Materials.Add(new Material
             {
                 AmountPerDay = 1,
+                Key = "blok_upravlenia",
+                InputMaterials = new List<MaterialOnStock>
+                {
+                    new MaterialOnStock
+                    {
+                        Material = ReferenceData.GetMaterialByKey("electro_blok"),
+                        Amount = 3
+                    }
+                },
+                ProductionType = ReferenceData.GetProductionTypeByKey("metall"),
+                DisplayName = "Блок управления"
+            });
+
+            ReferenceData.Materials.Add(new Material
+            {
+                AmountPerDay = 1,
                 Key = "computer",
                 InputMaterials = new List<MaterialOnStock>
                 {
@@ -338,7 +338,7 @@ namespace IM.Production.CalculationEngine.Tests
                     }
                 },
                 ProductionType = ReferenceData.GetProductionTypeByKey("electronic"),
-                DisplayName = "Электронный блок"
+                DisplayName = "Компьютер"
             });
 
             ReferenceData.Supply.Materials = new List<MaterialWithPrice>
@@ -377,14 +377,14 @@ namespace IM.Production.CalculationEngine.Tests
                 new List<Material> {ReferenceData.GetMaterialByKey("metall_zelezo_ruda")});
 
             // руда -> команде
-            var co1 = Logic.AddContract(new Contract(Game.Time, c,
+            var co1 = Logic.AddContract(new Contract(c,
                 new MaterialWithPrice {Amount = 100000, Material = ReferenceData.GetMaterialByKey("ruda")})
             {
                 DestinationFactory = f1
             });
 
             // железная руда -> игре
-            var co2 = Logic.AddContract(new Contract(Game.Time, c,
+            var co2 = Logic.AddContract(new Contract(c,
                 new MaterialWithPrice { Amount = 999999, Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda") })
             {
                 SourceFactory = f1
@@ -403,7 +403,7 @@ namespace IM.Production.CalculationEngine.Tests
             Logic.UpdateFactorySettings(f1, null, 0);
 
             Logic.CloseContract(co1);
-            co1 = Logic.AddContract(new Contract(Game.Time, c,
+            co1 = Logic.AddContract(new Contract(c,
                 new MaterialWithPrice {Amount = 200000, Material = ReferenceData.GetMaterialByKey("ruda")})
             {
                 DestinationFactory = f1
@@ -441,7 +441,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             // разовым контрактом переместим всё что накопилось на складе первой фабрики на вторую фабрику
             var co3 = Logic.AddContract(
-                new Contract(Game.Time, c,
+                new Contract(c,
                     new MaterialWithPrice {Amount = nowZelezoRuda.Amount, Material = materialZelezoRuda})
                 {
                     SourceFactory = f1, DestinationFactory = f2, TillCount = Convert.ToInt32(nowZelezoRuda.Amount)
@@ -449,7 +449,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             // добавляем постоянный контракт на перенос
             var co4 = Logic.AddContract(
-                new Contract(Game.Time, c,
+                new Contract(c,
                     new MaterialWithPrice {Amount = 40000, Material = materialZelezoRuda})
                 {
                     SourceFactory = f1, DestinationFactory = f2
@@ -457,7 +457,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             // и контракт на продажу игре
             var co5 = Logic.AddContract(
-                new Contract(Game.Time, c,
+                new Contract(c,
                     new MaterialWithPrice {Amount = 999999, Material = ReferenceData.GetMaterialByKey("metall_zelezo")})
                 {
                     SourceFactory = f2,
@@ -528,7 +528,7 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(0, c2.Factories.Count());
             Assert.AreEqual(1, c2.FactoryGenerationLevel);
 
-            Logic.TakeDebitOrCredit(c1, new BankCredit(Game.Time, c1, 100000));
+            Logic.TakeDebitOrCredit(c1, new BankCredit(c1, 100000));
             Assert.AreEqual(ReferenceData.InitialCustomerBalance + 100000, c1.Sum);
             Assert.AreEqual(ReferenceData.InitialCustomerBalance, c2.Sum);
 
@@ -572,16 +572,16 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(1, f2_1.ProductionMaterials.Count());
 
             // заключаем контракты
-            Logic.AddContract(new Contract(Game.Time, c1,
+            Logic.AddContract(new Contract(c1,
                 new MaterialWithPrice {Amount = 110000, Material = ReferenceData.GetMaterialByKey("ruda")})
             {
                 DestinationFactory = f1_1
             });
 
-            Logic.AddContract(new Contract(Game.Time, c2,
+            Logic.AddContract(new Contract(c2,
                 new MaterialWithPrice {Amount = 120000, Material = ReferenceData.GetMaterialByKey("ruda")})
             {
-                DestinationFactory = f2_1,
+                DestinationFactory = f2_1
             });
 
             Logic.UpdateFactorySettings(f1_1, null, null, new List<Material> { ReferenceData.GetMaterialByKey("metall_zelezo_ruda") });
@@ -622,36 +622,23 @@ namespace IM.Production.CalculationEngine.Tests
                 new List<Material> {ReferenceData.GetMaterialByKey("electronic_kremnii")});
 
             // организовываем контракты уже между своими фабриками
-            Logic.AddContract(new Contract(Game.Time, c1,
-                new MaterialWithPrice {Amount = 20000, Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda")})
+            Logic.AddContract(new Contract(c1,
+                new MaterialWithPrice {Amount = 999999, Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda")})
             {
                 SourceFactory = f1_1, DestinationFactory = f1_2
             });
 
-            Logic.AddContract(new Contract(Game.Time, c2,
-                new MaterialWithPrice {Amount = 25000, Material = ReferenceData.GetMaterialByKey("electronic_kremnii_ruda")})
+            Logic.AddContract(new Contract(c2,
+                new MaterialWithPrice {Amount = 999999, Material = ReferenceData.GetMaterialByKey("electronic_kremnii_ruda")})
             {
                 SourceFactory = f2_1, DestinationFactory = f2_2
             });
 
-            // и начинаем продавать излишки игре, что бы заработать денежек
-            Logic.AddContract(new Contract(Game.Time, c1,
-                new MaterialWithPrice { Amount = 50000, Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda") })
-            {
-                SourceFactory = f1_1
-            });
-
-            Logic.AddContract(new Contract(Game.Time, c2,
-                new MaterialWithPrice { Amount = 50000, Material = ReferenceData.GetMaterialByKey("electronic_kremnii_ruda") })
-            {
-                SourceFactory = f2_1
-            });
-
             RunCycles(10);
 
-            // деньги потихоньку начинаем зарабатывать, не смотря на то, что у нас есть новые фабрики
-            Assert.AreEqual(190117.5125m, c1.Sum);
-            Assert.AreEqual(91386.2m, c2.Sum);
+            // деньги пока тратим
+            Assert.AreEqual(187068.3125m, c1.Sum);
+            Assert.AreEqual(87901.4m, c2.Sum);
             Assert.AreEqual(3, c1.FactoryGenerationLevel);
             Assert.AreEqual(3, c2.FactoryGenerationLevel);
 
@@ -664,7 +651,7 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(2, stock.Count);
             Assert.AreEqual(200, stock[0].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo").Id, stock[0].Material.Id);
-            Assert.AreEqual(20000, stock[1].Amount);
+            Assert.AreEqual(300000, stock[1].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo_ruda").Id, stock[1].Material.Id);
 
             stock = f2_1.Stock.OrderBy(m => m.Material.DisplayName).ToList();
@@ -675,49 +662,171 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, stock[1].Material.Id);
             stock = f2_2.Stock.OrderBy(m => m.Material.DisplayName).ToList();
             Assert.AreEqual(2, stock.Count);
-            Assert.AreEqual(95000, stock[0].Amount);
+            Assert.AreEqual(495000, stock[0].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii_ruda").Id, stock[0].Material.Id);
             Assert.AreEqual(10000, stock[1].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii").Id, stock[1].Material.Id);
 
             // покупаем фабрики третьего уровня
             var f1_3 = Logic.BuyFactoryFromGame(c1, ReferenceData.GetAvailFactoryDefenitions(c1).First());
-            //var f2_3 = Logic.BuyFactoryFromGame(c2, ReferenceData.GetAvailFactoryDefenitions(c2).First());
+            var f2_3 = Logic.BuyFactoryFromGame(c2, ReferenceData.GetAvailFactoryDefenitions(c2).First());
+            Logic.UpdateFactorySettings(f2_3, 0);
 
-            Assert.AreEqual(185117.5125m, c1.Sum);
-            Assert.AreEqual(91386.2m, c2.Sum);
-
-            // тормозим исследования
-            Logic.UpdateCustomerSettings(c1, 0);
-            Logic.UpdateCustomerSettings(c2, 0);
+            Assert.AreEqual(182068.3125m, c1.Sum);
+            Assert.AreEqual(82901.4m, c2.Sum);
 
             // команда №1 запускает производство следующего уровня - начинает делать железные листы
             // команда №2 - пока копит ресурсы, потому что для производства плат надо проволоку
-            Logic.AddContract(new Contract(Game.Time, c1,
+            Logic.AddContract(new Contract(c1,
                 new MaterialWithPrice { Amount = 50, Material = ReferenceData.GetMaterialByKey("metall_zelezo") })
             {
                 SourceFactory = f1_2,
                 DestinationFactory = f1_3
             });
 
-            Logic.AddContract(new Contract(Game.Time, c1,
-                new MaterialWithPrice { Amount = 10000, Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda") })
-            {
-                SourceFactory = f1_2
-            });
-
-            Logic.AddContract(new Contract(Game.Time, c1,
-                new MaterialWithPrice { Amount = 10, Material = ReferenceData.GetMaterialByKey("metall_zelezo_list") })
-            {
-                SourceFactory = f1_3
-            });
-
             Logic.UpdateFactorySettings(f1_3, null, null, new List<Material> {ReferenceData.GetMaterialByKey("metall_zelezo_list")});
 
             RunCycles(20);
 
-            Assert.AreEqual(183205.125m, c1.Sum);
-            Assert.AreEqual(88152.3m, c2.Sum);
+            Assert.AreEqual(172493.025m, c1.Sum);
+            Assert.AreEqual(74478.9m, c2.Sum);
+
+            // организовываем производство проволоки
+            Assert.AreEqual(4, c1.FactoryGenerationLevel);
+            Assert.AreEqual(4, c2.FactoryGenerationLevel);
+
+            var f1_4 = Logic.BuyFactoryFromGame(c1, ReferenceData.GetAvailFactoryDefenitions(c1).First());
+            Logic.UpdateFactorySettings(f1_4, null, null, new List<Material> { ReferenceData.GetMaterialByKey("provoloka") });
+            Logic.AddContract(new Contract(c1,
+                new MaterialWithPrice { Amount = 50, Material = ReferenceData.GetMaterialByKey("metall_zelezo_list") })
+            {
+                SourceFactory = f1_3,
+                DestinationFactory = f1_4
+            });
+
+            var cost = ReferenceData.CalculateMaterialCostPrice(ReferenceData.GetMaterialByKey("provoloka"));
+
+            // продаём произведенную проволоку команде №2
+            Logic.AddContract(new Contract(c1,
+                new MaterialWithPrice
+                {
+                    Amount = 7000, Material = ReferenceData.GetMaterialByKey("provoloka"), SellPrice = cost * 3
+                }) {SourceFactory = f1_4, DestinationFactory = f2_3, Fine = 1});
+
+            // поставляем кремний на фабрику производства печатных плат
+            Logic.AddContract(new Contract(c2,
+                new MaterialWithPrice { Amount = 12000, Material = ReferenceData.GetMaterialByKey("electronic_kremnii") })
+            {
+                SourceFactory = f2_2,
+                DestinationFactory = f2_3
+            });
+
+            // команда №2 организовывает производство печатных плат
+            Logic.UpdateFactorySettings(f2_3, f2_3.FactoryDefinition.BaseWorkers, null, new List<Material>{ReferenceData.GetMaterialByKey("plata")});
+
+            // команда №2 организовывает производство электроблоков
+            var f2_4 = Logic.BuyFactoryFromGame(c2, ReferenceData.GetAvailFactoryDefenitions(c2).First());
+            Logic.UpdateFactorySettings(f2_4, null, null,  new List<Material> {ReferenceData.GetMaterialByKey("electro_blok")});
+
+            Logic.AddContract(new Contract(c2,
+                new MaterialWithPrice {Amount = 3, Material = ReferenceData.GetMaterialByKey("plata")})
+            {
+                SourceFactory = f2_3, DestinationFactory = f2_4
+            });
+
+            // сильно прокачиваем фабрику производства плат, до третьего уровня
+            Logic.UpdateFactorySettings(f2_4, null, f2_4.NeedSumToNextLevelUp);
+            RunCycles();
+            Logic.UpdateFactorySettings(f2_4, null, f2_4.NeedSumToNextLevelUp);
+            RunCycles();
+            Assert.AreEqual(3, f2_4.Performance);
+            Logic.UpdateFactorySettings(f2_4, null, 0);
+
+            RunCycles(30);
+
+            Assert.AreEqual(5, c1.FactoryGenerationLevel);
+            Assert.AreEqual(5, c2.FactoryGenerationLevel);
+
+            // тормозим исследования
+            Logic.UpdateCustomerSettings(c1, 0);
+            Logic.UpdateCustomerSettings(c2, 0);
+
+            Assert.AreEqual(151320.6m, c1.Sum);
+            Assert.AreEqual(41656.21875m, c2.Sum);
+
+            // поставляем электронные блоки на металургию а так же строим компы
+            var f1_5 = Logic.BuyFactoryFromGame(c1, ReferenceData.GetAvailFactoryDefenitions(c1).First());
+            var f2_5 = Logic.BuyFactoryFromGame(c2, ReferenceData.GetAvailFactoryDefenitions(c2).First());
+
+            Logic.UpdateFactorySettings(f1_5, null, null, new List<Material> { ReferenceData.GetMaterialByKey("blok_upravlenia") });
+            Logic.UpdateFactorySettings(f2_5, null, null, new List<Material> { ReferenceData.GetMaterialByKey("computer") });
+
+            cost = ReferenceData.CalculateMaterialCostPrice(ReferenceData.GetMaterialByKey("electro_blok"));
+            Logic.AddContract(new Contract(c1,
+                new MaterialWithPrice
+                {
+                    Amount = 3, Material = ReferenceData.GetMaterialByKey("electro_blok"), SellPrice = cost * 2
+                }) {SourceFactory = f2_4, DestinationFactory = f1_5});
+
+            Logic.AddContract(new Contract(c2,
+                new MaterialWithPrice {Amount = 3, Material = ReferenceData.GetMaterialByKey("electro_blok")})
+            {
+                SourceFactory = f2_4, DestinationFactory = f2_5
+            });
+
+            // на этом этапе становится ясно, что потребуется увеличение мощностей производства
+            Assert.AreEqual(5, f1_1.Level);
+            Assert.AreEqual(1, f1_2.Level);
+            Assert.AreEqual(1, f1_3.Level);
+            Assert.AreEqual(1, f1_4.Level);
+            Assert.AreEqual(3, f2_1.Level);
+            Assert.AreEqual(1, f2_2.Level);
+            Assert.AreEqual(1, f2_3.Level);
+
+            Logic.UpdateFactorySettings(f1_1, null, 0);
+            Logic.UpdateFactorySettings(f2_1, null, 0);
+
+            Logic.UpdateFactorySettings(f1_2, null, f1_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_3, null, f1_3.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_4, null, f1_4.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_2, null, f2_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_3, null, f2_3.NeedSumToNextLevelUp);
+
+            RunCycles();
+
+            Logic.UpdateFactorySettings(f1_2, null, f1_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_3, null, f1_3.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_4, null, f1_4.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_2, null, f2_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_3, null, f2_3.NeedSumToNextLevelUp);
+
+            RunCycles();
+
+            Assert.AreEqual(5, f1_1.Level);
+            Assert.AreEqual(3, f1_2.Level);
+            Assert.AreEqual(3, f1_3.Level);
+            Assert.AreEqual(3, f1_4.Level);
+            Assert.AreEqual(3, f2_1.Level);
+            Assert.AreEqual(3, f2_2.Level);
+            Assert.AreEqual(3, f2_3.Level);
+
+            RunCycles();
+
+            // организуем продажу конечного продукта игре
+            //Logic.AddContract(new Contract(Game.Time, c1,
+            //    new MaterialWithPrice {Amount = 999, Material = ReferenceData.GetMaterialByKey("blok_upravlenia")})
+            //{
+            //    SourceFactory = f1_5
+            //});
+
+            //Logic.AddContract(new Contract(Game.Time, c2,
+            //    new MaterialWithPrice {Amount = 999, Material = ReferenceData.GetMaterialByKey("computer")})
+            //{
+            //    SourceFactory = f2_5
+            //});
+
+            RunCycles(30);
+
         }
     }
 }

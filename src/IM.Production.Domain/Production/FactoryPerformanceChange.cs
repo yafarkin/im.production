@@ -8,8 +8,8 @@ namespace Epam.ImitationGames.Production.Domain.Production
     {
         public decimal Performance { get; protected set; }
 
-        public FactoryPerformanceChange(GameTime time, Factory factory, decimal performance, string description = null)
-            : base(time, factory, description)
+        public FactoryPerformanceChange(Factory factory, decimal performance, string description = null)
+            : base(factory, description)
         {
             Performance = performance;
         }

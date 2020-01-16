@@ -13,8 +13,8 @@ namespace Epam.ImitationGames.Production.Domain.Base
         /// </summary>
         public decimal SumChange { get; protected set; }
 
-        protected FinanceChange(GameTime time, Customer customer, decimal sumChange, string description = null)
-            : base(time, customer, description)
+        protected FinanceChange(Customer customer, decimal sumChange, string description = null)
+            : base(customer, description)
         {
             SumChange = sumChange;
         }

@@ -31,8 +31,8 @@ namespace IM.Production.CalculationEngine
                 var customer = Customer.CreateCustomer(login, Game.GetMD5Hash(password), name, productionType);
                 _game.Customers.Add(customer);
 
-                _game.AddActivity(new InfoChanging(_game.Time, customer, "Добавление новой команды"));
-                _game.AddActivity(new FinanceCustomerChange(_game.Time, customer, initialBalance ?? ReferenceData.InitialCustomerBalance,  "Установка начальной суммы на счёте"));
+                _game.AddActivity(new InfoChanging(customer, "Добавление новой команды"));
+                _game.AddActivity(new FinanceCustomerChange(customer, initialBalance ?? ReferenceData.InitialCustomerBalance,  "Установка начальной суммы на счёте"));
                 
                 return customer;
             }
@@ -74,9 +74,7 @@ namespace IM.Production.CalculationEngine
             {
                 var sum = isCredit ? finOperation.Sum : -finOperation.Sum;
 
-                var finAction =
-                    new BankFinAction(finOperation.Time, customer, sum,
-                        isCredit ? "Открытие кредита" : "Открытие вклада") {FinOperation = finOperation,};
+                var finAction = new BankFinAction(customer, sum,  isCredit ? "Открытие кредита" : "Открытие вклада") {FinOperation = finOperation,};
 
                 _game.AddActivity(finOperation);
                 _game.AddActivity(finAction);
@@ -111,7 +109,7 @@ namespace IM.Production.CalculationEngine
 
             lock (_lockObj)
             {
-                _game.AddActivity(new CustomerNewContractChange(_game.Time, contract, "Добавление нового контракта"));
+                _game.AddActivity(new CustomerNewContractChange(contract, "Добавление нового контракта"));
                 return contract;
             }
         }
@@ -129,7 +127,7 @@ namespace IM.Production.CalculationEngine
 
             lock (_lockObj)
             {
-                _game.AddActivity(new CustomerCloseContractChange(_game.Time, contract, "Закрытие контракта"));
+                _game.AddActivity(new CustomerCloseContractChange(contract, "Закрытие контракта"));
             }
         }
 
@@ -147,7 +145,7 @@ namespace IM.Production.CalculationEngine
 
             lock (_lockObj)
             {
-                _game.AddActivity(new CustomerSumOnRDChange(_game.Time, customer, sumOnRD, $"Установка суммы на исследование фабрик следующего поколения = {sumOnRD:C}"));
+                _game.AddActivity(new CustomerSumOnRDChange(customer, sumOnRD, $"Установка суммы на исследование фабрик следующего поколения = {sumOnRD:C}"));
             }
         }
 
@@ -193,17 +191,17 @@ namespace IM.Production.CalculationEngine
             {
                 if (workers.HasValue)
                 {
-                    _game.AddActivity(new FactoryWorkerCountChange(_game.Time, factory, workers.Value, $"Установка кол-ва рабочих на фабрике = {workers.Value}"));
+                    _game.AddActivity(new FactoryWorkerCountChange(factory, workers.Value, $"Установка кол-ва рабочих на фабрике = {workers.Value}"));
                 }
 
                 if (sumOnRD.HasValue)
                 {
-                    _game.AddActivity(new FactorySumOnRDChange(_game.Time, factory, sumOnRD.Value, $"Установка суммы на улучшение фабрики = {sumOnRD.Value:C}"));
+                    _game.AddActivity(new FactorySumOnRDChange(factory, sumOnRD.Value, $"Установка суммы на улучшение фабрики = {sumOnRD.Value:C}"));
                 }
 
                 if (productionMaterials != null)
                 {
-                    _game.AddActivity(new FactoryProductionMaterialChange(_game.Time, factory, productionMaterials, $"Изменение списка производимых материалов, кол-во = {productionMaterials.Count}"));
+                    _game.AddActivity(new FactoryProductionMaterialChange(factory, productionMaterials, $"Изменение списка производимых материалов, кол-во = {productionMaterials.Count}"));
                 }
             }
         }
@@ -250,8 +248,8 @@ namespace IM.Production.CalculationEngine
 
             lock (_lockObj)
             {
-                _game.AddActivity(new CustomerSellFactoryChange(_game.Time, factory, cost, customer, $"Продажа фабрики {factory.DisplayName} команде {customer.DisplayName} по цене {cost:C}"));
-                _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, cost, otherCustomer, $"Покупка фабрики {factory.DisplayName} у команды {otherCustomer.DisplayName}, по цене {cost:C}"));
+                _game.AddActivity(new CustomerSellFactoryChange(factory, cost, customer, $"Продажа фабрики {factory.DisplayName} команде {customer.DisplayName} по цене {cost:C}"));
+                _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, cost, otherCustomer, $"Покупка фабрики {factory.DisplayName} у команды {otherCustomer.DisplayName}, по цене {cost:C}"));
             }
         }
 
@@ -293,12 +291,12 @@ namespace IM.Production.CalculationEngine
             {
                 var factory = Factory.CreateFactory(customer, factoryDefinition);
 
-                _game.AddActivity(new CustomerBuyFactoryChange(_game.Time, customer, factory, buySumm, null, "Покупка фабрики у игры"));
-                _game.AddActivity(new FactoryWorkerCountChange(_game.Time, factory, 0 == workers ? factoryDefinition.BaseWorkers : workers));
+                _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, buySumm, null, "Покупка фабрики у игры"));
+                _game.AddActivity(new FactoryWorkerCountChange(factory, 0 == workers ? factoryDefinition.BaseWorkers : workers));
 
                 if (productionMaterials != null)
                 {
-                    _game.AddActivity(new FactoryProductionMaterialChange(_game.Time, factory, productionMaterials));
+                    _game.AddActivity(new FactoryProductionMaterialChange(factory, productionMaterials));
                 }
 
                 return factory;
@@ -320,7 +318,7 @@ namespace IM.Production.CalculationEngine
             {
                 var sellSumm = ReferenceData.CalculateFactoryCostForSell(factory);
 
-                _game.AddActivity(new CustomerSellFactoryChange(_game.Time, factory, sellSumm, null, "Продажа фабрики игре"));
+                _game.AddActivity(new CustomerSellFactoryChange(factory, sellSumm, null, "Продажа фабрики игре"));
             }
         }
     }

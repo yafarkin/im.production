@@ -233,6 +233,11 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <returns>Стоимость исследования следующего уровня производительности фабрики.</returns>
         public static decimal CalculateRDSummToNextFactoryLevelUp(Factory factory, int level = 0)
         {
+            if (null == factory || null == factory.FactoryDefinition)
+            {
+                return 0;
+            }
+
             var currentFactoryLevel = 0 == level ? factory.Level : level;
             var cost = FindNearest(currentFactoryLevel + 1, FactoryLevelUpRDCost);
             return CalculateFactoryCostForBuy(factory.FactoryDefinition) * cost;

@@ -42,7 +42,7 @@ namespace IM.Production.Domain.Tests
         {
             var game = new Game();
             var customer = new Customer();
-            game.AddActivity(new CustomerRDSpentChange(game.Time, customer, spent, sum));
+            game.AddActivity(new CustomerRDSpentChange(customer, spent, sum));
 
             var ready = customer.ReadyForNextGenerationLevel;
 

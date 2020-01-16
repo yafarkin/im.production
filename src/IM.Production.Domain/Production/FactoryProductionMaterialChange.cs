@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
@@ -9,8 +8,8 @@ namespace Epam.ImitationGames.Production.Domain.Production
     {
         public IList<Material> Materials { get; protected set; }
 
-        public FactoryProductionMaterialChange(GameTime time, Factory factory, IList<Material> materials, string description = null)
-            : base(time, factory, description)
+        public FactoryProductionMaterialChange(Factory factory, IList<Material> materials, string description = null)
+            : base(factory, description)
         {
             Materials = materials;
         }

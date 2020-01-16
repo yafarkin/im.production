@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Bank
 {
@@ -17,8 +16,8 @@ namespace Epam.ImitationGames.Production.Domain.Bank
 
         public override string DisplayName => $"Закрытие {(SourceOperation is BankDebit ? "вклада" : "кредита")}, сумма {Sum}";
 
-        public BankCloseFinOperation(GameTime time, Customer customer, string description = null)
-            : base(time, customer, 0, description)
+        public BankCloseFinOperation(Customer customer, string description = null)
+            : base(customer, 0, description)
         {
         }
     }

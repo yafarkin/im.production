@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Bank
 {
@@ -12,8 +11,8 @@ namespace Epam.ImitationGames.Production.Domain.Bank
         public override string DisplayName =>
             $"Оформление вклада для {Customer.DisplayName}, сумма {Sum}, ставка {Percent}";
 
-        public BankDebit(GameTime time, Customer customer, decimal sum, string description = null)
-            : base(time, customer, sum, description)
+        public BankDebit(Customer customer, decimal sum, string description = null)
+            : base(customer, sum, description)
         {
         }
     }

@@ -14,8 +14,8 @@ namespace Epam.ImitationGames.Production.Domain.Production
         /// </summary>
         public Factory Factory { get; protected set; }
 
-        protected FactoryChange(GameTime time, Factory factory, string description = null)
-            : base(time, factory.Customer, description)
+        protected FactoryChange(Factory factory, string description = null)
+            : base(factory.Customer, description)
         {
             Factory = factory;
         }

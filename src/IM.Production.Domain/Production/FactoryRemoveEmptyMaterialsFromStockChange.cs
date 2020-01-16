@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
     [Serializable]
     public class FactoryRemoveEmptyMaterialsFromStockChange : FactoryChange
     {
-        public FactoryRemoveEmptyMaterialsFromStockChange(GameTime time, Factory factory, string description = null)
-            : base(time, factory, description)
+        public FactoryRemoveEmptyMaterialsFromStockChange(Factory factory, string description = null)
+            : base(factory, description)
         {
         }
 
@@ -18,6 +17,11 @@ namespace Epam.ImitationGames.Production.Domain.Production
             foreach (var m in materialsToRemove)
             {
                 Factory._stock.Remove(m);
+            }
+
+            if (string.IsNullOrWhiteSpace(Description))
+            {
+                Description = $"Удаление материалов со склада: {string.Join(',', materialsToRemove.Select(m => m.Material.DisplayName))}";
             }
         }
     }
