@@ -37,7 +37,7 @@ namespace IM.Production.Domain.Tests
         [DataTestMethod]
         [DataRow(1, 2, true)]
         [DataRow(2, 1, false)]
-        [DataRow(1, 1, false)]
+        [DataRow(1, 1, true)]
         public void ReadyForNextGenerationLevel_CorrectSums_ReadyOrNot(int sum, int spent, bool expected)
         {
             var game = new Game();

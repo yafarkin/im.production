@@ -682,16 +682,17 @@ namespace IM.Production.CalculationEngine.Tests
 
             // покупаем фабрики третьего уровня
             var f1_3 = Logic.BuyFactoryFromGame(c1, ReferenceData.GetAvailFactoryDefenitions(c1).First());
-            var f2_3 = Logic.BuyFactoryFromGame(c2, ReferenceData.GetAvailFactoryDefenitions(c2).First());
+            //var f2_3 = Logic.BuyFactoryFromGame(c2, ReferenceData.GetAvailFactoryDefenitions(c2).First());
 
             Assert.AreEqual(185117.5125m, c1.Sum);
-            Assert.AreEqual(86386.2m, c2.Sum);
+            Assert.AreEqual(91386.2m, c2.Sum);
 
             // тормозим исследования
             Logic.UpdateCustomerSettings(c1, 0);
             Logic.UpdateCustomerSettings(c2, 0);
 
-            // команда №2 пока копит денег, а команда №1 запускает производство следующего уровня - начинает делать железные листы
+            // команда №1 запускает производство следующего уровня - начинает делать железные листы
+            // команда №2 - пока копит ресурсы, потому что для производства плат надо проволоку
             Logic.AddContract(new Contract(Game.Time, c1,
                 new MaterialWithPrice { Amount = 50, Material = ReferenceData.GetMaterialByKey("metall_zelezo") })
             {
@@ -711,12 +712,12 @@ namespace IM.Production.CalculationEngine.Tests
                 SourceFactory = f1_3
             });
 
-            Logic.UpdateFactorySettings(f1_3, null, null, new List<Material> { ReferenceData.GetMaterialByKey("metall_zelezo_list") });
+            Logic.UpdateFactorySettings(f1_3, null, null, new List<Material> {ReferenceData.GetMaterialByKey("metall_zelezo_list")});
 
             RunCycles(20);
 
             Assert.AreEqual(183205.125m, c1.Sum);
-            Assert.AreEqual(82501.3m, c2.Sum);
+            Assert.AreEqual(88152.3m, c2.Sum);
         }
     }
 }

@@ -297,7 +297,7 @@ namespace IM.Production.Domain.Tests
 
             var salary = ReferenceData.CalculateWorkerSalary(factory10);
 
-            Assert.AreEqual(19, salary);
+            Assert.AreEqual(11.4m, salary);
 
             var definition1 = new FactoryDefinition {GenerationLevel = 1};
             var factory1 = Factory.CreateFactory(null, definition1);

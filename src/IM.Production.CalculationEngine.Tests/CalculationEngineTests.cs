@@ -88,7 +88,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEngine.Calculate();
 
-            Assert.AreEqual(5000, customer.SumToNextGenerationLevel);
+            Assert.AreEqual(500, customer.SumToNextGenerationLevel);
         }
 
         [DataTestMethod]
@@ -124,8 +124,8 @@ namespace IM.Production.CalculationEngine.Tests
 
             Assert.AreEqual(2, customer.FactoryGenerationLevel);
             Assert.AreEqual(4000, customer.Sum);
-            Assert.AreEqual(1000, customer.SpentSumToNextGenerationLevel);
-            Assert.AreEqual(15000, customer.SumToNextGenerationLevel);
+            Assert.AreEqual(5500, customer.SpentSumToNextGenerationLevel);
+            Assert.AreEqual(1500, customer.SumToNextGenerationLevel);
         }
 
         [TestMethod]
@@ -160,7 +160,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEngine.Calculate();
 
-            Assert.AreEqual(3300, factory.NeedSumToNextLevelUp);
+            Assert.AreEqual(330, factory.NeedSumToNextLevelUp);
         }
 
         [DataTestMethod]
@@ -183,7 +183,7 @@ namespace IM.Production.CalculationEngine.Tests
             _calculationEngine.Calculate();
 
             // -5 - налог на саму фабрику
-            Assert.AreEqual(-5, customer.Sum);
+            Assert.AreEqual(0.25m, customer.Sum);
             Assert.AreEqual(spentSum, factory.SpentSumToNextLevelUp);
         }
 
@@ -205,7 +205,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEngine.Calculate();
 
-            Assert.AreEqual(84, customer.Sum);
+            Assert.AreEqual(89.25m, customer.Sum);
             Assert.AreEqual(12, factory.SpentSumToNextLevelUp);
             Assert.AreEqual(level, factory.Level);
             Assert.AreEqual(1000, factory.NeedSumToNextLevelUp);
@@ -227,9 +227,9 @@ namespace IM.Production.CalculationEngine.Tests
             _calculationEngine.Calculate();
 
             Assert.AreEqual(2, factory.Level);
-            Assert.AreEqual(38, customer.Sum);
+            Assert.AreEqual(49.1m, customer.Sum);
             Assert.AreEqual(40, factory.SpentSumToNextLevelUp);
-            Assert.AreEqual(7500, factory.NeedSumToNextLevelUp);
+            Assert.AreEqual(750, factory.NeedSumToNextLevelUp);
         }
 
         [TestMethod]
@@ -245,7 +245,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEngine.Calculate();
 
-            Assert.AreEqual(94, customer.Sum);
+            Assert.AreEqual(99.25m, customer.Sum);
         }
 
         [TestMethod]
@@ -430,7 +430,7 @@ namespace IM.Production.CalculationEngine.Tests
 
             _calculationEngine.Calculate();
 
-            Assert.AreEqual(1210, customer.Sum);
+            Assert.AreEqual(1811, customer.Sum);
         }
     }
 }

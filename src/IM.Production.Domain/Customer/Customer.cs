@@ -90,7 +90,7 @@ namespace Epam.ImitationGames.Production.Domain
         /// <summary>
         /// Общий прогресс исследования, для открытия фабрик следующего уровня.
         /// </summary>
-        public decimal RDProgress => SpentSumToNextGenerationLevel / SumToNextGenerationLevel;
+        public decimal RDProgress => 0 == SumToNextGenerationLevel ? 0 : SpentSumToNextGenerationLevel / SumToNextGenerationLevel;
 
         /// <summary>
         /// Итоговая сумма на счету команды
