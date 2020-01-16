@@ -1,5 +1,4 @@
 ﻿using System;
-using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
@@ -12,6 +11,16 @@ namespace Epam.ImitationGames.Production.Domain.Production
         public TaxFactoryChange(Factory factory, decimal onTax, string description = null)
             : base(factory, 0, onTax, 0, description)
         {
+        }
+
+        public override void DoAction()
+        {
+            base.DoAction();
+
+            if (string.IsNullOrWhiteSpace(Description))
+            {
+                Description = $"Оплата налогов на фабрику {Factory} в сумме {OnTax:C}";
+            }
         }
     }
 }

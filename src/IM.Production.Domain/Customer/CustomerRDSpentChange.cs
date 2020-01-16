@@ -34,6 +34,20 @@ namespace Epam.ImitationGames.Production.Domain
             }
 
             NewRDProgress = Customer.RDProgress;
+
+            if (string.IsNullOrWhiteSpace(Description))
+            {
+                Description = $"Изменение уровня исследования до {NewRDProgress:P}";
+                if (SpentSumToNextGenerationLevel.HasValue)
+                {
+                    Description += $"; затрачено {SpentSumToNextGenerationLevel:C}";
+                }
+
+                if (SumToNextGenerationLevel.HasValue)
+                {
+                    Description += $"; нужно на след. уровень {SumToNextGenerationLevel:C}";
+                }
+            }
         }
     }
 }

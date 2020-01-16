@@ -8,6 +8,16 @@
         /// <summary>
         /// Текущий игровой день.
         /// </summary>
-        public static int GameDay { get; set; }
+        public static int GameDay { get; private set; }
+
+        static CurrentGameProps()
+        {
+            GameDay = 1;
+        }
+
+        public static void IncGameDay()
+        {
+            GameDay++;
+        }
     }
 }

@@ -111,7 +111,13 @@ namespace CalculationEngine
 
             if (gameDay.HasValue)
             {
-                result = result.Where(x => x.Time.Day == (0 == gameDay ? CurrentGameProps.GameDay : gameDay.Value));
+                var filterDay = gameDay.Value;
+                if (0 == gameDay)
+                {
+                    filterDay = result.Max(x => x.Time.Day);
+                }
+
+                result = result.Where(x => x.Time.Day == filterDay);
             }
 
             if (customer != null)

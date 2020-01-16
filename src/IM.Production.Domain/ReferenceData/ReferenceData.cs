@@ -48,7 +48,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <summary>
         /// Начальная сумма на счету команды.
         /// </summary>
-        public static readonly decimal InitialCustomerBalance = 100000m;
+        public static readonly decimal InitialCustomerBalance = 1000000m;
 
         /// <summary>
         /// На какое количество дней открывается кредит.

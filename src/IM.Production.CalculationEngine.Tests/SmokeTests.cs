@@ -531,6 +531,8 @@ namespace IM.Production.CalculationEngine.Tests
             Logic.TakeDebitOrCredit(c1, new BankCredit(c1, 100000));
             Assert.AreEqual(ReferenceData.InitialCustomerBalance + 100000, c1.Sum);
             Assert.AreEqual(ReferenceData.InitialCustomerBalance, c2.Sum);
+            var c1Sum = c1.Sum;
+            var c2Sum = c2.Sum;
 
             Assert.AreEqual(1, c1.BankFinanceOperations.Count());
             Assert.AreEqual(0, c2.BankFinanceOperations.Count());
@@ -542,8 +544,10 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(1, c1.Factories.Count());
             Assert.AreEqual(1, c2.Factories.Count());
 
-            Assert.AreEqual(199000, c1.Sum);
-            Assert.AreEqual(99000, c2.Sum);
+            Assert.IsTrue(c1Sum > c1.Sum);
+            Assert.IsTrue(c2Sum > c2.Sum);
+            c1Sum = c1.Sum;
+            c2Sum = c2.Sum;
 
             Logic.UpdateFactorySettings(f1_1, null, 50);
             Logic.UpdateFactorySettings(f2_1, null, 25);
@@ -554,8 +558,10 @@ namespace IM.Production.CalculationEngine.Tests
             RunCycles();
 
             // выплаты ушли на налоги и зарплаты
-            Assert.AreEqual(198781.25m, c1.Sum);
-            Assert.AreEqual(98831.25m, c2.Sum);
+            Assert.IsTrue(c1Sum > c1.Sum);
+            Assert.IsTrue(c2Sum > c2.Sum);
+            c1Sum = c1.Sum;
+            c2Sum = c2.Sum;
 
             // начинаем организовывать производство
             Logic.UpdateFactorySettings(f1_1, null, null, new List<Material> {ReferenceData.GetMaterialByKey("metall_zelezo_ruda")});
@@ -573,13 +579,13 @@ namespace IM.Production.CalculationEngine.Tests
 
             // заключаем контракты
             Logic.AddContract(new Contract(c1,
-                new MaterialWithPrice {Amount = 110000, Material = ReferenceData.GetMaterialByKey("ruda")})
+                new MaterialWithPrice {Amount = 500000, Material = ReferenceData.GetMaterialByKey("ruda")})
             {
                 DestinationFactory = f1_1
             });
 
             Logic.AddContract(new Contract(c2,
-                new MaterialWithPrice {Amount = 120000, Material = ReferenceData.GetMaterialByKey("ruda")})
+                new MaterialWithPrice {Amount = 500000, Material = ReferenceData.GetMaterialByKey("ruda")})
             {
                 DestinationFactory = f2_1
             });
@@ -593,28 +599,32 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(2, c1.FactoryGenerationLevel);
             Assert.AreEqual(2, c2.FactoryGenerationLevel);
 
-            Assert.AreEqual(194174.1m, c1.Sum);
-            Assert.AreEqual(94575, c2.Sum);
+            Assert.IsTrue(c1Sum > c1.Sum);
+            Assert.IsTrue(c2Sum > c2.Sum);
+            c1Sum = c1.Sum;
+            c2Sum = c2.Sum;
 
             var stock = f1_1.Stock.OrderBy(m => m.Material.DisplayName).ToList();
             Assert.AreEqual(2, stock.Count);
-            Assert.AreEqual(200000, stock[0].Amount);
+            Assert.AreEqual(320000, stock[0].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo_ruda").Id, stock[0].Material.Id);
-            Assert.AreEqual(100000, stock[1].Amount);
+            Assert.AreEqual(3400000, stock[1].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, stock[1].Material.Id);
 
             stock = f2_1.Stock.OrderBy(m => m.Material.DisplayName).ToList();
             Assert.AreEqual(2, stock.Count);
             Assert.AreEqual(250000, stock[0].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii_ruda").Id, stock[0].Material.Id);
-            Assert.AreEqual(200000, stock[1].Amount);
+            Assert.AreEqual(4000000, stock[1].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, stock[1].Material.Id);
 
             // закупаем фабрики
             var f1_2 = Logic.BuyFactoryFromGame(c1, ReferenceData.GetAvailFactoryDefenitions(c1).First());
             var f2_2 = Logic.BuyFactoryFromGame(c2, ReferenceData.GetAvailFactoryDefenitions(c2).First());
-            Assert.AreEqual(191674.1m, c1.Sum);
-            Assert.AreEqual(92075, c2.Sum);
+            Assert.IsTrue(c1Sum > c1.Sum);
+            Assert.IsTrue(c2Sum > c2.Sum);
+            c1Sum = c1.Sum;
+            c2Sum = c2.Sum;
 
             Logic.UpdateFactorySettings(f1_2, null, null,
                 new List<Material> {ReferenceData.GetMaterialByKey("metall_zelezo")});
@@ -623,13 +633,13 @@ namespace IM.Production.CalculationEngine.Tests
 
             // организовываем контракты уже между своими фабриками
             Logic.AddContract(new Contract(c1,
-                new MaterialWithPrice {Amount = 999999, Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda")})
+                new MaterialWithPrice {Amount = 9999999, Material = ReferenceData.GetMaterialByKey("metall_zelezo_ruda")})
             {
                 SourceFactory = f1_1, DestinationFactory = f1_2
             });
 
             Logic.AddContract(new Contract(c2,
-                new MaterialWithPrice {Amount = 999999, Material = ReferenceData.GetMaterialByKey("electronic_kremnii_ruda")})
+                new MaterialWithPrice {Amount = 9999999, Material = ReferenceData.GetMaterialByKey("electronic_kremnii_ruda")})
             {
                 SourceFactory = f2_1, DestinationFactory = f2_2
             });
@@ -637,32 +647,36 @@ namespace IM.Production.CalculationEngine.Tests
             RunCycles(10);
 
             // деньги пока тратим
-            Assert.AreEqual(187068.3125m, c1.Sum);
-            Assert.AreEqual(87901.4m, c2.Sum);
+            Assert.IsTrue(c1Sum > c1.Sum);
+            Assert.IsTrue(c2Sum > c2.Sum);
+            c1Sum = c1.Sum;
+            c2Sum = c2.Sum;
+
             Assert.AreEqual(3, c1.FactoryGenerationLevel);
             Assert.AreEqual(3, c2.FactoryGenerationLevel);
 
-            // руды у нас уже нет на складе, т.к. излишки продаём игре
             stock = f1_1.Stock.OrderBy(m => m.Material.DisplayName).ToList();
-            Assert.AreEqual(1, stock.Count);
-            Assert.AreEqual(200000, stock[0].Amount);
-            Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, stock[0].Material.Id);
+            Assert.AreEqual(2, stock.Count);
+            Assert.AreEqual(0, stock[0].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo_ruda").Id, stock[0].Material.Id);
+            Assert.AreEqual(6300000, stock[1].Amount);
+            Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, stock[1].Material.Id);
             stock = f1_2.Stock.OrderBy(m => m.Material.DisplayName).ToList();
             Assert.AreEqual(2, stock.Count);
             Assert.AreEqual(200, stock[0].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo").Id, stock[0].Material.Id);
-            Assert.AreEqual(300000, stock[1].Amount);
+            Assert.AreEqual(640000, stock[1].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("metall_zelezo_ruda").Id, stock[1].Material.Id);
 
             stock = f2_1.Stock.OrderBy(m => m.Material.DisplayName).ToList();
             Assert.AreEqual(2, stock.Count);
             Assert.AreEqual(0, stock[0].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii_ruda").Id, stock[0].Material.Id);
-            Assert.AreEqual(100000, stock[1].Amount);
+            Assert.AreEqual(7100000, stock[1].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("ruda").Id, stock[1].Material.Id);
             stock = f2_2.Stock.OrderBy(m => m.Material.DisplayName).ToList();
             Assert.AreEqual(2, stock.Count);
-            Assert.AreEqual(495000, stock[0].Amount);
+            Assert.AreEqual(645000, stock[0].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii_ruda").Id, stock[0].Material.Id);
             Assert.AreEqual(10000, stock[1].Amount);
             Assert.AreEqual(ReferenceData.GetMaterialByKey("electronic_kremnii").Id, stock[1].Material.Id);
@@ -672,13 +686,15 @@ namespace IM.Production.CalculationEngine.Tests
             var f2_3 = Logic.BuyFactoryFromGame(c2, ReferenceData.GetAvailFactoryDefenitions(c2).First());
             Logic.UpdateFactorySettings(f2_3, 0);
 
-            Assert.AreEqual(182068.3125m, c1.Sum);
-            Assert.AreEqual(82901.4m, c2.Sum);
+            Assert.IsTrue(c1Sum > c1.Sum);
+            Assert.IsTrue(c2Sum > c2.Sum);
+            c1Sum = c1.Sum;
+            c2Sum = c2.Sum;
 
             // команда №1 запускает производство следующего уровня - начинает делать железные листы
             // команда №2 - пока копит ресурсы, потому что для производства плат надо проволоку
             Logic.AddContract(new Contract(c1,
-                new MaterialWithPrice { Amount = 50, Material = ReferenceData.GetMaterialByKey("metall_zelezo") })
+                new MaterialWithPrice { Amount = 9999999, Material = ReferenceData.GetMaterialByKey("metall_zelezo") })
             {
                 SourceFactory = f1_2,
                 DestinationFactory = f1_3
@@ -688,8 +704,10 @@ namespace IM.Production.CalculationEngine.Tests
 
             RunCycles(20);
 
-            Assert.AreEqual(172493.025m, c1.Sum);
-            Assert.AreEqual(74478.9m, c2.Sum);
+            Assert.IsTrue(c1Sum > c1.Sum);
+            Assert.IsTrue(c2Sum > c2.Sum);
+            c1Sum = c1.Sum;
+            c2Sum = c2.Sum;
 
             // организовываем производство проволоки
             Assert.AreEqual(4, c1.FactoryGenerationLevel);
@@ -698,7 +716,7 @@ namespace IM.Production.CalculationEngine.Tests
             var f1_4 = Logic.BuyFactoryFromGame(c1, ReferenceData.GetAvailFactoryDefenitions(c1).First());
             Logic.UpdateFactorySettings(f1_4, null, null, new List<Material> { ReferenceData.GetMaterialByKey("provoloka") });
             Logic.AddContract(new Contract(c1,
-                new MaterialWithPrice { Amount = 50, Material = ReferenceData.GetMaterialByKey("metall_zelezo_list") })
+                new MaterialWithPrice { Amount = 9999999, Material = ReferenceData.GetMaterialByKey("metall_zelezo_list") })
             {
                 SourceFactory = f1_3,
                 DestinationFactory = f1_4
@@ -710,12 +728,12 @@ namespace IM.Production.CalculationEngine.Tests
             Logic.AddContract(new Contract(c1,
                 new MaterialWithPrice
                 {
-                    Amount = 7000, Material = ReferenceData.GetMaterialByKey("provoloka"), SellPrice = cost * 3
+                    Amount = 40000, Material = ReferenceData.GetMaterialByKey("provoloka"), SellPrice = cost * 3
                 }) {SourceFactory = f1_4, DestinationFactory = f2_3, Fine = 1});
 
             // поставляем кремний на фабрику производства печатных плат
             Logic.AddContract(new Contract(c2,
-                new MaterialWithPrice { Amount = 12000, Material = ReferenceData.GetMaterialByKey("electronic_kremnii") })
+                new MaterialWithPrice { Amount = 9999999, Material = ReferenceData.GetMaterialByKey("electronic_kremnii") })
             {
                 SourceFactory = f2_2,
                 DestinationFactory = f2_3
@@ -751,8 +769,10 @@ namespace IM.Production.CalculationEngine.Tests
             Logic.UpdateCustomerSettings(c1, 0);
             Logic.UpdateCustomerSettings(c2, 0);
 
-            Assert.AreEqual(151320.6m, c1.Sum);
-            Assert.AreEqual(41656.21875m, c2.Sum);
+            Assert.IsTrue(c1Sum > c1.Sum);
+            Assert.IsTrue(c2Sum > c2.Sum);
+            c1Sum = c1.Sum;
+            c2Sum = c2.Sum;
 
             // поставляем электронные блоки на металургию а так же строим компы
             var f1_5 = Logic.BuyFactoryFromGame(c1, ReferenceData.GetAvailFactoryDefenitions(c1).First());
@@ -762,17 +782,17 @@ namespace IM.Production.CalculationEngine.Tests
             Logic.UpdateFactorySettings(f2_5, null, null, new List<Material> { ReferenceData.GetMaterialByKey("computer") });
 
             cost = ReferenceData.CalculateMaterialCostPrice(ReferenceData.GetMaterialByKey("electro_blok"));
-            Logic.AddContract(new Contract(c1,
+            Logic.AddContract(new Contract(c2,
                 new MaterialWithPrice
                 {
                     Amount = 3, Material = ReferenceData.GetMaterialByKey("electro_blok"), SellPrice = cost * 2
-                }) {SourceFactory = f2_4, DestinationFactory = f1_5});
+                }) {SourceFactory = f2_4, DestinationFactory = f1_5, Fine = 1});
 
-            Logic.AddContract(new Contract(c2,
-                new MaterialWithPrice {Amount = 3, Material = ReferenceData.GetMaterialByKey("electro_blok")})
-            {
-                SourceFactory = f2_4, DestinationFactory = f2_5
-            });
+            //Logic.AddContract(new Contract(c2,
+            //    new MaterialWithPrice {Amount = 10, Material = ReferenceData.GetMaterialByKey("electro_blok")})
+            //{
+            //    SourceFactory = f2_4, DestinationFactory = f2_5
+            //});
 
             // на этом этапе становится ясно, что потребуется увеличение мощностей производства
             Assert.AreEqual(5, f1_1.Level);
@@ -783,32 +803,64 @@ namespace IM.Production.CalculationEngine.Tests
             Assert.AreEqual(1, f2_2.Level);
             Assert.AreEqual(1, f2_3.Level);
 
+            Logic.UpdateFactorySettings(f1_1, null, f1_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_2, null, f1_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_3, null, f1_3.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_4, null, f1_4.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_1, null, f2_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_2, null, f2_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_3, null, f2_3.NeedSumToNextLevelUp);
+
+            RunCycles();
+
+            Logic.UpdateFactorySettings(f1_1, null, f1_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_2, null, f1_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_3, null, f1_3.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_4, null, f1_4.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_1, null, f2_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_2, null, f2_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_3, null, f2_3.NeedSumToNextLevelUp);
+
+            RunCycles();
+
+            Logic.UpdateFactorySettings(f1_1, null, f1_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_2, null, f1_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_3, null, f1_3.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_4, null, f1_4.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_1, null, f2_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_2, null, f2_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_3, null, f2_3.NeedSumToNextLevelUp);
+
+            RunCycles();
+
+            Logic.UpdateFactorySettings(f1_1, null, f1_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_2, null, f1_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_3, null, f1_3.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f1_4, null, f1_4.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_1, null, f2_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_2, null, f2_2.NeedSumToNextLevelUp);
+            Logic.UpdateFactorySettings(f2_3, null, f2_3.NeedSumToNextLevelUp);
+
+            RunCycles();
+
+            Assert.AreEqual(8, f1_1.Level);
+            Assert.AreEqual(5, f1_2.Level);
+            Assert.AreEqual(5, f1_3.Level);
+            Assert.AreEqual(5, f1_4.Level);
+            Assert.AreEqual(7, f2_1.Level);
+            Assert.AreEqual(5, f2_2.Level);
+            Assert.AreEqual(5, f2_3.Level);
+
             Logic.UpdateFactorySettings(f1_1, null, 0);
+            Logic.UpdateFactorySettings(f1_2, null, 0);
+            Logic.UpdateFactorySettings(f1_3, null, 0);
+            Logic.UpdateFactorySettings(f1_4, null, 0);
+            Logic.UpdateFactorySettings(f1_5, null, 0);
             Logic.UpdateFactorySettings(f2_1, null, 0);
-
-            Logic.UpdateFactorySettings(f1_2, null, f1_2.NeedSumToNextLevelUp);
-            Logic.UpdateFactorySettings(f1_3, null, f1_3.NeedSumToNextLevelUp);
-            Logic.UpdateFactorySettings(f1_4, null, f1_4.NeedSumToNextLevelUp);
-            Logic.UpdateFactorySettings(f2_2, null, f2_2.NeedSumToNextLevelUp);
-            Logic.UpdateFactorySettings(f2_3, null, f2_3.NeedSumToNextLevelUp);
-
-            RunCycles();
-
-            Logic.UpdateFactorySettings(f1_2, null, f1_2.NeedSumToNextLevelUp);
-            Logic.UpdateFactorySettings(f1_3, null, f1_3.NeedSumToNextLevelUp);
-            Logic.UpdateFactorySettings(f1_4, null, f1_4.NeedSumToNextLevelUp);
-            Logic.UpdateFactorySettings(f2_2, null, f2_2.NeedSumToNextLevelUp);
-            Logic.UpdateFactorySettings(f2_3, null, f2_3.NeedSumToNextLevelUp);
-
-            RunCycles();
-
-            Assert.AreEqual(5, f1_1.Level);
-            Assert.AreEqual(3, f1_2.Level);
-            Assert.AreEqual(3, f1_3.Level);
-            Assert.AreEqual(3, f1_4.Level);
-            Assert.AreEqual(3, f2_1.Level);
-            Assert.AreEqual(3, f2_2.Level);
-            Assert.AreEqual(3, f2_3.Level);
+            Logic.UpdateFactorySettings(f2_2, null, 0);
+            Logic.UpdateFactorySettings(f2_3, null, 0);
+            Logic.UpdateFactorySettings(f2_4, null, 0);
+            Logic.UpdateFactorySettings(f2_5, null, 0);
 
             RunCycles();
 
@@ -826,7 +878,6 @@ namespace IM.Production.CalculationEngine.Tests
             //});
 
             RunCycles(30);
-
         }
     }
 }

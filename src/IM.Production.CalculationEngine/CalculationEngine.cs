@@ -131,7 +131,7 @@ namespace IM.Production.CalculationEngine
                 // п. 10. Прибавляем счётчик игровых дней.
                 _game.AddActivity(new InfoChanging(null, "Завершение игрового цикла"));
 
-                CurrentGameProps.GameDay++;
+                CurrentGameProps.IncGameDay();
             }
         }
 
@@ -285,10 +285,13 @@ namespace IM.Production.CalculationEngine
 
                     performancePerMaterial = decimal.Divide(1, productionMaterials.Count);
 
+                    MaterialOnStock materialOnStock = null;
+                    decimal requiredAmount = 0;
+
                     foreach (var inputMaterial in material.InputMaterials)
                     {
-                        var materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == inputMaterial.Material.Id);
-                        var requiredAmount = inputMaterial.Amount * factory.Performance * performancePerMaterial;
+                        materialOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == inputMaterial.Material.Id);
+                        requiredAmount = inputMaterial.Amount * factory.Performance * performancePerMaterial;
 
                         if (materialOnStock == null || materialOnStock.Amount < requiredAmount)
                         {
@@ -309,7 +312,8 @@ namespace IM.Production.CalculationEngine
                         productionMaterials.Remove(material);
                         usedMaterialsOnStock.Clear();
 
-                        _game.AddActivity(new WarningChanging(factory.Customer, factory, $"Не хватает ресурсов для производства материала {material.DisplayName}"));
+                        _game.AddActivity(new WarningChanging(factory.Customer, factory,
+                            $"Не хватает ресурсов для производства материала {material.DisplayName}: нужно {materialOnStock} в количестве {requiredAmount}"));
 
                         i = -1;
                         continue;
@@ -509,13 +513,20 @@ namespace IM.Production.CalculationEngine
             }
 
             // добавляем активность по поставке материала
-            materialLogistic = new MaterialLogistic(new MaterialWithPrice {Amount = amount, Material = material, SellPrice = sellPrice})
+            if (amount != 0)
             {
-                Tax = taxChange,
-                SourceFactory = contract.SourceFactory,
-                DestinationFactory = contract.DestinationFactory
-            };
-            _game.AddActivity(materialLogistic);
+                materialLogistic =
+                    new MaterialLogistic(new MaterialWithPrice
+                    {
+                        Amount = amount, Material = material, SellPrice = sellPrice
+                    })
+                    {
+                        Tax = taxChange,
+                        SourceFactory = contract.SourceFactory,
+                        DestinationFactory = contract.DestinationFactory
+                    };
+                _game.AddActivity(materialLogistic);
+            }
 
             if (!isGameDemand)
             {
