@@ -1,0 +1,10 @@
+{
+    "/Contracts": {
+      "target": "http://localhost:54726",
+      "secure": false,
+      "pathRewrite": {
+        "^/Contracts": ""
+      },
+      "changeOrigin": false
+    }
+}

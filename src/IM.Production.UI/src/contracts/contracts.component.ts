@@ -5,15 +5,17 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 
 import { Contract } from '../models/Contract';
+import { ContractsService } from '../services/ContractsService.service';
 
 @Component({
   selector: 'app-contracts',
   templateUrl: './contracts.component.html',
-  styleUrls: ['./contracts.component.css']
+  styleUrls: ['./contracts.component.css'],
+  providers: [ContractsService]
 })
 export class ContractsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private contractsService: ContractsService) { }
 
   displayedColumns: string[] = [ 'position', 'fine', 'srcInsurancePremium', 'srcInsuranceAmount', 'destInsurancePremium', 'destInsuranceAmount', 'tillDate', 'tillCount', 'totalCountCompleted', 'totalSumm', 'totalOnTaxes'];
   arrayData: Contract[] = [
@@ -34,6 +36,16 @@ export class ContractsComponent implements OnInit {
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
+    this.contractsService.getAllContracts().subscribe(
+      (success) => {
+        console.log("[success] contractsService.getAllContracts()");
+        console.log("obj: " + success);
+      },
+      (error) => {
+        console.log("[error] contractsService.getAllContracts()" + error);
+      }
+    );
   }
 
 }

@@ -1,12 +1,13 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
-import { AppComponent } from './app.component';
-import { ContractsComponent } from '../contracts/contracts.component';
+import { BrowserModule } from '@angular/platform-browser';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { AppComponent } from './app.component';
+import { ContractsComponent } from '../contracts/contracts.component';
 
 @NgModule({
    declarations: [
@@ -16,6 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
    imports: [
       BrowserModule,
       MatTableModule, MatPaginatorModule, MatSortModule,
+      HttpClientModule,
       BrowserAnimationsModule
    ],
    providers: [],
