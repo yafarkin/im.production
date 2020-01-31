@@ -22,7 +22,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.CalculationEn
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.Domain.Tests", "src\IM.Production.Domain.Tests\IM.Production.Domain.Tests.csproj", "{CC1ED266-222A-4DBE-8546-E314CDD9D1E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IM.Production.WebApp", "src\IM.Production.WebApp\IM.Production.WebApp.csproj", "{7967DDA2-324B-4DF3-8FB6-2F4047469F41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.WebApp", "src\IM.Production.WebApp\IM.Production.WebApp.csproj", "{7967DDA2-324B-4DF3-8FB6-2F4047469F41}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BBCF7CAF-92D3-4832-ACED-618EB488CA70} = {BBCF7CAF-92D3-4832-ACED-618EB488CA70}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,8 +4,21 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 
-import { Contract } from '../models/Contract';
+import { Contract } from '../models/Customer/Contract';
 import { ContractsService } from '../services/ContractsService.service';
+
+export class A {
+  constructor(public f1:number)
+  {
+  }
+}
+
+export class B extends A {
+  constructor(public name:any) 
+  {
+      super(21);
+  }
+}
 
 @Component({
   selector: 'app-contracts',
@@ -18,15 +31,7 @@ export class ContractsComponent implements OnInit {
   constructor(private contractsService: ContractsService) { }
 
   displayedColumns: string[] = [ 'position', 'fine', 'srcInsurancePremium', 'srcInsuranceAmount', 'destInsurancePremium', 'destInsuranceAmount', 'tillDate', 'tillCount', 'totalCountCompleted', 'totalSumm', 'totalOnTaxes'];
-  arrayData: Contract[] = [
-    { position: 1, fine: 10_000, srcInsurancePremium: 10_000, srcInsuranceAmount: 15_000, destInsurancePremium: 100_000, destInsuranceAmount: 150_000, tillDate: 10122020, tillCount: 2500, totalCountCompleted: 25_000, totalSumm: 500_000, totalOnTaxes: 54_000 },
-    { position: 2, fine: 10_000, srcInsurancePremium: 11_000, srcInsuranceAmount: 15_000, destInsurancePremium: 100_000, destInsuranceAmount: 150_000, tillDate: 10122020, tillCount: 2500, totalCountCompleted: 25_000, totalSumm: 500_000, totalOnTaxes: 54_000 },
-    { position: 3, fine: 10_000, srcInsurancePremium: 10_200, srcInsuranceAmount: 15_000, destInsurancePremium: 100_000, destInsuranceAmount: 150_000, tillDate: 10122020, tillCount: 2500, totalCountCompleted: 25_000, totalSumm: 500_000, totalOnTaxes: 54_000 },
-    { position: 4, fine: 10_000, srcInsurancePremium: 10_400, srcInsuranceAmount: 15_000, destInsurancePremium: 100_000, destInsuranceAmount: 150_000, tillDate: 10122020, tillCount: 2500, totalCountCompleted: 25_000, totalSumm: 500_000, totalOnTaxes: 54_000 },
-    { position: 5, fine: 10_000, srcInsurancePremium: 20_000, srcInsuranceAmount: 15_000, destInsurancePremium: 100_000, destInsuranceAmount: 150_000, tillDate: 10122020, tillCount: 2500, totalCountCompleted: 25_000, totalSumm: 500_000, totalOnTaxes: 54_000 },
-    { position: 6, fine: 10_000, srcInsurancePremium: 43_000, srcInsuranceAmount: 15_000, destInsurancePremium: 100_000, destInsuranceAmount: 150_000, tillDate: 10122020, tillCount: 2500, totalCountCompleted: 25_000, totalSumm: 500_000, totalOnTaxes: 54_000 },
-    { position: 7, fine: 10_000, srcInsurancePremium: 12_000, srcInsuranceAmount: 15_000, destInsurancePremium: 100_000, destInsuranceAmount: 150_000, tillDate: 10122020, tillCount: 2500, totalCountCompleted: 25_000, totalSumm: 500_000, totalOnTaxes: 54_000 },
-  ];
+  arrayData: Contract[] = [];
 
   dataSource = new MatTableDataSource<Contract>(this.arrayData);
 
@@ -37,13 +42,20 @@ export class ContractsComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
+    for (let i = 0; i < 25; i++) {
+      let constract: Contract = new Contract(i, i*111 , i*10_000, i*15_000, 
+        i*100_000, i*150_000, 
+        i*10122020, i*2500, i*25_000, i*50000, i*54_000, null, null, null, null);
+      this.arrayData.push(constract);
+    }
+
     this.contractsService.getAllContracts().subscribe(
-      (success) => {
+      (contract) => {
         console.log("[success] contractsService.getAllContracts()");
-        console.log("obj: " + success);
+        console.log("obj: " + contract);
       },
       (error) => {
-        console.log("[error] contractsService.getAllContracts()" + error);
+        console.log("[error] contractsService.getAllContracts()" + error.message);
       }
     );
   }

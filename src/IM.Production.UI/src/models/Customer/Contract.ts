@@ -1,4 +1,9 @@
-export class Contract {
+import { MaterialLogistic } from '../Production/MaterialLogistic';
+import { MaterialWithPrice } from '../Production/MaterialWithPrice';
+import { Factory } from '../Production/Factory';
+import { TaxFactoryChange } from '../Production/TaxFactoryChange';
+
+export class Contract extends MaterialLogistic {
     constructor(
         //only for contract table presentation
         public position: number,
@@ -31,7 +36,21 @@ export class Contract {
         public totalSumm: number,
         
         /// Общая сумма уплаченных налогов по контракту.
-        public totalOnTaxes: number)
+        public totalOnTaxes: number,
+
+        public sourceFactory: Factory,
+        public destinationFactory: Factory,
+        public materialWithPrice: MaterialWithPrice,
+        public tax: TaxFactoryChange)
     {
+        /*
+            constructor(
+                SourceFactory: Factory,
+                DestinationFactory: Factory,
+                MaterialWithPrice: MaterialWithPrice,
+                Tax: TaxFactoryChange
+            )
+        */
+        super(sourceFactory, destinationFactory, materialWithPrice, tax);
     }
 }
