@@ -20,9 +20,9 @@ namespace IM.Production.WebApp
         {
             services.AddControllers();
             /// <summary>
-            /// Тестовые данные для проверки отображения информации по командам.
+            /// Test data for cheking displaying information about teams.
             /// </summary>>
-            _ = services.AddSingleton<Game>(new Game()
+            services.AddSingleton<Game>(new Game()
             {
                 Customers = new List<Customer> {
                 new Customer{
