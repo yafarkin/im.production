@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { Team } from '../models/team';
 import { TeamsService } from '../services/teams.service';
+import { DataSource } from '@angular/cdk/table';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-teams',
@@ -15,15 +17,11 @@ export class TeamsComponent implements OnInit {
     teams: Team[];
 
     constructor(private serv: TeamsService) { }
-
     ngOnInit() {
-        this.loadUsers();
+        this.loadTeams();
     }
 
-    private loadUsers() {
-        this.teams = this.serv.getTeams();
+    loadTeams() {
+        this.serv.getTeams().subscribe(data => this.teams = data);
     }
-
 }
-
-
