@@ -34,7 +34,6 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public decimal DestInsuranceAmount { get; set; }
 
-
         /// <summary>
         /// Если указано, то контракт действует до указанной даты.
         /// </summary>

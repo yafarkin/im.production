@@ -1,6 +1,8 @@
 import { ProductionType } from '../Production/ProductionType';
+import { BaseProduction } from './BaseProduction';
+import { IVisibleEntity } from '../Base/IVisibleEntity';
 
-export class FactoryDefinition {
+export class FactoryDefinition extends BaseProduction implements IVisibleEntity {
     constructor(
         /// <summary>
         /// Тип производства.
@@ -22,8 +24,11 @@ export class FactoryDefinition {
         /// <summary>
         /// Название производства.
         /// </summary>
-        public name: string
+        public name: string,
+        public displayName: string,
+        public id: any
     )
     {
+        super(id);
     }
 }

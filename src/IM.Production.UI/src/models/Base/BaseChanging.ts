@@ -1,7 +1,8 @@
 import { GameTime } from './GameTime';
 import { Customer } from '../Customer/Customer';
+import { BaseEntity } from './BaseEntity';
 
-export class BaseChanging {
+export class BaseChanging extends BaseEntity {
     constructor(
         /// <summary>
         /// Когда произошли изменения.
@@ -14,7 +15,9 @@ export class BaseChanging {
         /// <summary>
         /// Текстовое описание для UI о сути изменений.
         /// </summary>
-        public description: string = null)
+        public description: string = null,
+        public id: any)
     {
+        super(id);
     }
 }

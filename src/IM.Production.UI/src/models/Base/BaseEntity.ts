@@ -1,6 +1,6 @@
-export class BaseEntity {
+export abstract class BaseEntity {
     constructor(
-        public id: string
+        public id: any
     )
     {
     }

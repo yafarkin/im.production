@@ -2,8 +2,10 @@ import { Customer } from '../Customer/Customer';
 import { FactoryDefinition } from './FactoryDefinition';
 import { Material } from './Material';
 import { MaterialOnStock } from './MaterialOnStock';
+import { BaseProduction } from './BaseProduction';
+import { IVisibleEntity } from '../Base/IVisibleEntity';
 
-export class Factory {
+export class Factory extends BaseProduction implements IVisibleEntity {
     constructor(
         /// <summary>
         /// Ссылка на команду, которой принадлежит фабрика.
@@ -84,8 +86,10 @@ export class Factory {
         public stock: any, // MaterialOnStock[]
         private _stock: any, // MaterialOnStock[]
         
+        public id: any,
         public displayName: string
     )
     {
+        super(id);
     }
 }

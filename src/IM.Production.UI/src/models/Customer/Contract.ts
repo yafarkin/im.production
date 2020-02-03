@@ -41,7 +41,8 @@ export class Contract extends MaterialLogistic {
         public sourceFactory: Factory,
         public destinationFactory: Factory,
         public materialWithPrice: MaterialWithPrice,
-        public tax: TaxFactoryChange)
+        public tax: TaxFactoryChange,
+        public id: any)
     {
         /*
             constructor(
@@ -51,6 +52,6 @@ export class Contract extends MaterialLogistic {
                 Tax: TaxFactoryChange
             )
         */
-        super(sourceFactory, destinationFactory, materialWithPrice, tax);
+        super(sourceFactory, destinationFactory, materialWithPrice, tax, id);
     }
 }

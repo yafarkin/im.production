@@ -5,21 +5,22 @@ import { BaseChanging } from '../Base/BaseChanging';
 
 export class MaterialLogistic extends BaseChanging {
     constructor(
-        public SourceFactory: Factory,
+        public sourceFactory: Factory,
         /// <summary>
         /// Фабрика назначения, если не задано - продается игре.
         /// </summary>
-        public DestinationFactory: Factory,
+        public destinationFactory: Factory,
         /// <summary>
         /// Конкретный материал с указанием цены (за единицу) и количества.
         /// </summary>
-        public MaterialWithPrice: MaterialWithPrice,
+        public materialWithPrice: MaterialWithPrice,
         /// <summary>
         /// Ссылка на списание налога за поставку материала.
         /// </summary>
-        public Tax: TaxFactoryChange
+        public tax: TaxFactoryChange,
+        public id: any
     )
     {
-        super(null, null, null);
+        super(null, null, null, id);
     }
 }
