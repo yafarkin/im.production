@@ -2,3 +2,10 @@ table
 {
     width: 100%;
 }
+
+.MainText {
+    display: flex;
+    font-size:32px;
+    align-items: center;
+    justify-content: center;
+}

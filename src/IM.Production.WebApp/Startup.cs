@@ -36,13 +36,24 @@ namespace IM.Production.WebApp
 
             #region CreateCustomers
             var customerList = new List<Customer>();
+
+            #region Add customer game
+            {
+                var productionType = new ProductionType();
+                productionType.Key = "GameProductionTypeKey";
+                productionType.DisplayName = "GameProductionTypeDisplayName";
+                var customer = logic.AddCustomer("Game", "GamePassword", "GameName", productionType);
+                customerList.Add(customer);
+            }
+            #endregion
+
             for (int c = 0; c < customersCount; c++)
             {
-
                 var productionType = new ProductionType();
                 productionType.Key = "key";
                 productionType.DisplayName = "DisplayName";
-                var customer = logic.AddCustomer("CustomerLogin" + c, "CustomerPassword" + c, "CustomerName" + c, productionType);
+                var customer = logic.AddCustomer("CustomerLogin" + c, "CustomerPassword" + c, 
+                    "CustomerName" + c, productionType);
                 customerList.Add(customer);
             }
             #endregion

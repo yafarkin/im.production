@@ -1,13 +1,14 @@
-<div>
-  Contracts info
+<div class="MainText">
+  Информация по контрактам
 </div>
 
 <mat-button-toggle-group [(ngModel)]="toggleButtonFlag"
   (change)="toggleButtonFlagChanged()"
   multiple name="fontStyle" aria-label="Font Style">  
-  <mat-button-toggle value="GamePlayerSale">ИграИгрок продажа</mat-button-toggle>
-  <mat-button-toggle value="GamePlayerBuy">ИграИгрок покупка</mat-button-toggle>
-  <mat-button-toggle value="PlayerPlayer">ИгрокИгрок продажа/покупка</mat-button-toggle>
+  <mat-button-toggle value="All">Все контракты</mat-button-toggle>
+  <mat-button-toggle value="GamePlayerSale">Игра продает игроку</mat-button-toggle>
+  <mat-button-toggle value="GamePlayerBuy">Игра покупает у игрока</mat-button-toggle>
+  <mat-button-toggle value="PlayerPlayer">Все контракты между игроками</mat-button-toggle>
 </mat-button-toggle-group>
 
 
@@ -53,6 +54,6 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[18, 5, 10]" showFirstLastButtons></mat-paginator>
 </div>
   

@@ -48,6 +48,7 @@ export class ContractsComponent implements OnInit {
     console.log("toggleButtonFlag: " + this.toggleButtonFlag);
 
     //"GamePlayerSale,GamePlayerBuy,PlayerPlayerSale"
+    let allIndex: number = this.toggleButtonFlag.indexOf("All");
     let gamePlayerSaleIndex: number = this.toggleButtonFlag.indexOf("GamePlayerSale");
     let gamePlayerBuyIndex: number = this.toggleButtonFlag.indexOf("GamePlayerBuy");
     let playerPlayerIndex: number = this.toggleButtonFlag.indexOf("PlayerPlayer");
@@ -59,38 +60,44 @@ export class ContractsComponent implements OnInit {
       return;
     }
 
+    if (allIndex != -1) {
+      this.dataSource = new MatTableDataSource<ContractDto>(this.arrayData);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+      return;
+    }
+
     let filteredArrayData: ContractDto[] = [];
     for (let i: number = 0; i < this.arrayData.length; i++) 
     {
       let data: ContractDto = this.arrayData[i];
-      if ((gamePlayerSaleIndex != -1 || gamePlayerBuyIndex != -1)
-        && data.sourceFactoryCustomerLogin === "game" 
-        && data.destinationFactoryCustomerLogin !== "game") 
+      if (gamePlayerSaleIndex != -1
+        && data.sourceFactoryCustomerLogin === "Game" 
+        && data.destinationFactoryCustomerLogin !== "Game") 
+      {
+        filteredArrayData.push(data);
+      }
+
+      if (gamePlayerBuyIndex != -1
+        && data.sourceFactoryCustomerLogin !== "Game" 
+        && data.destinationFactoryCustomerLogin === "Game") 
       {
         filteredArrayData.push(data);
       }
       
       if (playerPlayerIndex != -1
-        && data.sourceFactoryCustomerLogin !== "game" 
-        && data.destinationFactoryCustomerLogin !== "game") 
+        && data.sourceFactoryCustomerLogin !== "Game" 
+        && data.destinationFactoryCustomerLogin !== "Game") 
       {
         filteredArrayData.push(data);
       }
 
     }
-    
+
     this.dataSource = new MatTableDataSource<ContractDto>(filteredArrayData);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
 
-    //if (splitted === null) {
-    //  return;
-    //}
-    //console.log("splitted.length: " + splitted.length);
-    //for (let i: number = 0; i < splitted.length; i++) {
-    //  console.log("splitted: " + splitted[i]);
-    //}
-    
   }
 
   ngOnInit() {
