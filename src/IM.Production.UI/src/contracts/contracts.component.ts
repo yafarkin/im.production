@@ -2,17 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatSort, MatSortable } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 
-import { Contract } from '../models/Customer/Contract';
 import { ContractDto } from '../models/Dtos/ContractDto';
-import { DateTime } from '../models/Net/DateTime';
 import { ContractsService } from '../services/ContractsService.service';
-import { Factory } from '../models/Production/Factory';
-import { Customer } from '../models/Customer/Customer';
-import { FactoryDto } from '../models/Dtos/FactoryDto';
-import { CustomerDto } from '../models/Dtos/CustomerDto';
-import { group } from '@angular/animations';
 
 @Component({
   selector: 'app-contracts',
@@ -68,22 +61,16 @@ export class ContractsComponent implements OnInit {
   }
 
   toggleButtonFlagChanged(): void {
-    console.log("Changed!");
     if (this.toggleButtonFlag === null || this.toggleButtonFlag.length <= 0) {
       this.dataSource = new MatTableDataSource<ContractDto>(this.arrayData);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
       return;
     }
-    console.log("toggleButtonFlag: " + this.toggleButtonFlag);
 
-    //"GamePlayerSale,GamePlayerBuy,PlayerPlayerSale"
     let gamePlayerSaleIndex: number = this.toggleButtonFlag.indexOf("GamePlayerSale");
     let gamePlayerBuyIndex: number = this.toggleButtonFlag.indexOf("GamePlayerBuy");
     let playerPlayerIndex: number = this.toggleButtonFlag.indexOf("PlayerPlayer");
-    console.log("gamePlayerSaleIndex: " + gamePlayerSaleIndex);
-    console.log("gamePlayerBuyIndex: " + gamePlayerBuyIndex);
-    console.log("playerPlayerIndex: " + playerPlayerIndex);
 
     if (this.arrayData === null || this.arrayData.length <= 0) {
       return;
@@ -113,13 +100,11 @@ export class ContractsComponent implements OnInit {
       {
         filteredArrayData.push(data);
       }
-
     }
 
     this.dataSource = new MatTableDataSource<ContractDto>(filteredArrayData);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-
   }
 
   ngOnInit() {
