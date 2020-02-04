@@ -3,9 +3,8 @@
 </div>
 
 <mat-button-toggle-group [(ngModel)]="toggleButtonFlag"
-(change)="toggleButtonFlagChanged()"
-multiple name="fontStyle" aria-label="Font Style">  
-<mat-button-toggle value="All">Все контракты</mat-button-toggle>
+  (change)="toggleButtonFlagChanged()"
+  multiple name="fontStyle" aria-label="Font Style">  
 <mat-button-toggle value="GamePlayerSale">Игра продает игроку</mat-button-toggle>
 <mat-button-toggle value="GamePlayerBuy">Игра покупает у игрока</mat-button-toggle>
 <mat-button-toggle value="PlayerPlayer">Все контракты между игроками</mat-button-toggle>

@@ -68,13 +68,16 @@ export class ContractsComponent implements OnInit {
   }
 
   toggleButtonFlagChanged(): void {
+    console.log("Changed!");
     if (this.toggleButtonFlag === null || this.toggleButtonFlag.length <= 0) {
+      this.dataSource = new MatTableDataSource<ContractDto>(this.arrayData);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
       return;
     }
     console.log("toggleButtonFlag: " + this.toggleButtonFlag);
 
     //"GamePlayerSale,GamePlayerBuy,PlayerPlayerSale"
-    let allIndex: number = this.toggleButtonFlag.indexOf("All");
     let gamePlayerSaleIndex: number = this.toggleButtonFlag.indexOf("GamePlayerSale");
     let gamePlayerBuyIndex: number = this.toggleButtonFlag.indexOf("GamePlayerBuy");
     let playerPlayerIndex: number = this.toggleButtonFlag.indexOf("PlayerPlayer");
@@ -83,13 +86,6 @@ export class ContractsComponent implements OnInit {
     console.log("playerPlayerIndex: " + playerPlayerIndex);
 
     if (this.arrayData === null || this.arrayData.length <= 0) {
-      return;
-    }
-
-    if (allIndex != -1) {
-      this.dataSource = new MatTableDataSource<ContractDto>(this.arrayData);
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
       return;
     }
 
