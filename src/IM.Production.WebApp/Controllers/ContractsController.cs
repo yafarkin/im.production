@@ -9,6 +9,7 @@ using Epam.ImitationGames.Production.Domain.Base;
 using Epam.ImitationGames.Production.Domain.Production;
 using IM.Production.CalculationEngine;
 using IM.Production.WebApp.Dtos;
+using IM.Production.WebApp.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +35,7 @@ namespace IM.Production.WebApp.Controllers
                 m_Mapper = m_ContractConfig.CreateMapper();
             }
 
-            var gameInstance = Startup.GameInstance;
+            var gameInstance = FakeGameInitializer.CreateGame(15);
             var customerContracts = new List<Contract>();
             foreach (var customer in gameInstance.Customers)
             {
@@ -48,9 +49,6 @@ namespace IM.Production.WebApp.Controllers
                
                 if (dto != null)
                 {
-                    //dto.DestinationFactoryCustomerLogin = element.DestinationFactory.Customer.Login;
-                    //dto.SourceFactoryCustomerLogin = element.SourceFactory.Customer.Login;
-
                     if (dto.DestinationFactoryCustomerLogin == null || dto.SourceFactoryCustomerLogin == null)
                     {
                         continue;
@@ -58,23 +56,6 @@ namespace IM.Production.WebApp.Controllers
                     result.Add(dto);
                 }
             }
-
-#if FALSE
-            +
-            Factory             - Factory
-            bool                - boolean
-            int?                - number
-            decimal             - number
-            Guid                - any
-            Material            - Material
-            MaterialLogistic    - MaterialLogistic  
-            MaterialWithPrice   - MaterialWithPrice
-            TaxFactoryChange    - TaxFactoryChange  
-
-            -
-            Customer
-            Contract[0]
-#endif
 
             return result;
         }
