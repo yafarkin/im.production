@@ -2,52 +2,24 @@
   Contracts info
 </div>
 
-<button> S1 </button>
-<button> S2 </button>
-<button> S3 </button>
+<mat-button-toggle-group [(ngModel)]="toggleButtonFlag"
+  (change)="toggleButtonFlagChanged()"
+  multiple name="fontStyle" aria-label="Font Style">  
+  <mat-button-toggle value="GamePlayerSale">ИграИгрок продажа</mat-button-toggle>
+  <mat-button-toggle value="GamePlayerBuy">ИграИгрок покупка</mat-button-toggle>
+  <mat-button-toggle value="PlayerPlayer">ИгрокИгрок продажа/покупка</mat-button-toggle>
+</mat-button-toggle-group>
+
 
 <div class="mat-elevation-z8" matSort>
   <table mat-table [dataSource]="dataSource">
   
-  <!--- Note that these columns can be defined in any order.
-    The actual rendered columns are set as a property on the row definition" -->
-    
     <!-- Position Column -->
     <ng-container matColumnDef="position">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Position </th>
       <td mat-cell *matCellDef="let element"> {{element.position}} </td>
     </ng-container>
 
-    <!-- Fine Column -->
-    <ng-container matColumnDef="fine">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Fine </th>
-      <td mat-cell *matCellDef="let element"> {{element.fine}} </td>
-    </ng-container>
-    
-    <!-- SrcInsurancePremium Column -->
-    <ng-container matColumnDef="srcInsurancePremium">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> SrcInsurancePremium </th>
-      <td mat-cell *matCellDef="let element"> {{element.srcInsurancePremium}} </td>
-    </ng-container>
-    
-    <!-- SrcInsuranceAmount Column -->
-    <ng-container matColumnDef="srcInsuranceAmount">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> SrcInsuranceAmount </th>
-      <td mat-cell *matCellDef="let element"> {{element.srcInsuranceAmount}} </td>
-    </ng-container>
-    
-    <!-- DestInsurancePremium Column -->
-    <ng-container matColumnDef="destInsurancePremium">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> DestInsurancePremium </th>
-      <td mat-cell *matCellDef="let element"> {{element.destInsurancePremium}} </td>
-    </ng-container>
-    
-    <!-- DestInsuranceAmount Column -->
-    <ng-container matColumnDef="destInsuranceAmount">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> DestInsuranceAmount </th>
-      <td mat-cell *matCellDef="let element"> {{element.destInsuranceAmount}} </td>
-    </ng-container>
-    
     <!-- TillDate Column -->
     <ng-container matColumnDef="tillDate">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> TillDate </th>
@@ -60,24 +32,24 @@
       <td mat-cell *matCellDef="let element"> {{element.tillCount}} </td>
     </ng-container>
     
-    <!-- TotalCountCompleted Column -->
-    <ng-container matColumnDef="totalCountCompleted">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> TotalCountCompleted </th>
-      <td mat-cell *matCellDef="let element"> {{element.totalCountCompleted}} </td>
-    </ng-container>
-    
     <!-- TotalSumm Column -->
     <ng-container matColumnDef="totalSumm">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> TotalSumm </th>
       <td mat-cell *matCellDef="let element"> {{element.totalSumm}} </td>
     </ng-container>
     
-    <!-- TotalOnTaxes Column -->
-    <ng-container matColumnDef="totalOnTaxes">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> TotalOnTaxes </th>
-      <td mat-cell *matCellDef="let element"> {{element.totalOnTaxes}} </td>
+    <!-- sourceFactoryCustomerLogin Column -->
+    <ng-container matColumnDef="sourceFactoryCustomerLogin">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> SourceFactory </th>
+      <td mat-cell *matCellDef="let element"> {{element.sourceFactoryCustomerLogin}} </td>
     </ng-container>
     
+    <!-- destinationFactoryCustomerLogin Column -->
+    <ng-container matColumnDef="destinationFactoryCustomerLogin">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> DestinationFactory </th>
+      <td mat-cell *matCellDef="let element"> {{element.destinationFactoryCustomerLogin}} </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>

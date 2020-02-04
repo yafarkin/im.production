@@ -10,9 +10,11 @@ export class ContractDto {
         /// Общая сумма на закупку/продажу, прошедшую по контракту.
         public totalSumm: number,
         /// Исходная фабрика, если не задано - поставляется игрой.
+        //SourceFactoryCustomerLogin
         public sourceFactoryCustomerLogin: string,
         /// Фабрика назначения, если не задано - продается игре.
-        public destenationFactoryCustomerLogin: string
+        //DestinationFactoryCustomerLogin
+        public destinationFactoryCustomerLogin: string
     )
     {
     }
