@@ -9,3 +9,7 @@ table
     align-items: center;
     justify-content: center;
 }
+
+.UpdateButton {
+    font-size:20px;
+}

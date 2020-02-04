@@ -29,7 +29,6 @@ export class ContractsComponent implements OnInit {
      , 'sourceFactoryCustomerLogin' , 'destinationFactoryCustomerLogin'
   ];
   arrayData: ContractDto[] = [
-    new ContractDto(0, 1, 2, 3, "login", "game")
   ];
   dataSource: MatTableDataSource<ContractDto> = new MatTableDataSource<ContractDto>(this.arrayData);
   toggleButtonFlag: string;
@@ -37,8 +36,35 @@ export class ContractsComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-  sortPlayerAndGame(): void {
-    let matSortable: MatSortable;
+  updateContracts(): void {
+    this.contractsService.getAllContracts().subscribe(
+      (contracts) => {
+        console.log("[success] contractsService.getAllContracts()");
+        
+        if (this.arrayData.length > 0) {
+          this.arrayData = [];
+        }
+
+        for (let i = 0; i < contracts.length; i++) 
+        {
+            let contract: ContractDto = contracts[i];
+            if (contract.sourceFactoryCustomerLogin === null || 
+                contract.destinationFactoryCustomerLogin === null)
+            {
+                continue;
+            }
+            this.arrayData.push(new ContractDto(i+1, contract.tillDate, contract.tillCount,
+              contract.totalSumm, contract.sourceFactoryCustomerLogin, contract.destinationFactoryCustomerLogin));
+        }
+
+        this.dataSource = new MatTableDataSource<ContractDto>(this.arrayData);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      },
+      (error) => {
+        console.log("[error] contractsService.getAllContracts()" + error.message);
+      }
+    );
   }
 
   toggleButtonFlagChanged(): void {
@@ -101,40 +127,7 @@ export class ContractsComponent implements OnInit {
   }
 
   ngOnInit() {
-    
-    this.contractsService.getAllContracts().subscribe(
-      (contracts) => {
-        console.log("[success] contractsService.getAllContracts()");
-        
-        for (let i = 0; i < contracts.length; i++) 
-        {
-            let contract: ContractDto = contracts[i];
-            if (contract.sourceFactoryCustomerLogin === null || 
-                contract.destinationFactoryCustomerLogin === null)
-            {
-                continue;
-            }
-            this.arrayData.push(new ContractDto(i+1, contract.tillDate, contract.tillCount,
-              contract.totalSumm, contract.sourceFactoryCustomerLogin, contract.destinationFactoryCustomerLogin));
-        }
-
-        this.dataSource = new MatTableDataSource<ContractDto>(this.arrayData);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
-
-        //let date: Date = new Date(contract.time.when);
-        //contract.time.when = date;
-        //this.debugContract(contract);
-        
-        // this.debugFactory(contract);
-        
-        //this.debugCustomer(contract);
-
-      },
-      (error) => {
-        console.log("[error] contractsService.getAllContracts()" + error.message);
-      }
-    );
+    this.updateContracts();
   }
 
 }
