@@ -7,6 +7,7 @@ using CalculationEngine;
 using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Base;
 using Epam.ImitationGames.Production.Domain.Production;
+using Epam.ImitationGames.Production.Domain.Services;
 using IM.Production.CalculationEngine;
 using IM.Production.WebApp.Dtos;
 using IM.Production.WebApp.Helpers;
@@ -19,34 +20,25 @@ namespace IM.Production.WebApp.Controllers
     [Route("api/contracts")] //contracts
     public class ContractsController : ControllerBase
     {
-        private readonly MapperConfiguration m_ContractConfig =
-            new MapperConfiguration(cfg =>
-            cfg.CreateMap<Contract, ContractDto>()
-            .ForMember(source => source.SourceFactoryCustomerLogin,      opt => opt.MapFrom(dest => dest.SourceFactory.Customer.Login))
-            .ForMember(source => source.DestinationFactoryCustomerLogin, opt => opt.MapFrom(dest => dest.DestinationFactory.Customer.Login)));
-        private IMapper m_Mapper;
+        private readonly IContractsService _service;
+        private readonly IMapper _mapper;
 
+        public ContractsController(IContractsService service, IMapper mapper)
+        {
+            _service = service;
+            _mapper = mapper;
+        }
+        
         [HttpGet]
         [Route("all")]
         public IEnumerable<ContractDto> GetContracts()
         {
-            if (m_Mapper == null)
-            {
-                m_Mapper = m_ContractConfig.CreateMapper();
-            }
-
-            var gameInstance = FakeGameInitializer.CreateGame(15);
-            var customerContracts = new List<Contract>();
-            foreach (var customer in gameInstance.Customers)
-            {
-                customerContracts.AddRange(customer.Contracts);
-            }
-
             var position = 0;
+            var customerContracts = _service.GetContracts();
             var result = new List<ContractDto>();
             foreach (var element in customerContracts)
             {
-                var dto = m_Mapper?.Map<ContractDto>(element);
+                var dto = _mapper?.Map<ContractDto>(element);
                
                 if (dto != null)
                 {

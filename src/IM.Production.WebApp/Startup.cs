@@ -1,14 +1,13 @@
+using AutoMapper;
+using CalculationEngine;
+using IM.Production.Services;
+using IM.Production.WebApp.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CalculationEngine;
-using Epam.ImitationGames.Production.Domain;
-using IM.Production.CalculationEngine;
-using Epam.ImitationGames.Production.Domain.Production;
-using System.Collections.Generic;
-using Epam.ImitationGames.Production.Domain.Bank;
+using Epam.ImitationGames.Production.Domain.Services;
+using IM.Production.WebApp.Dtos;
 
 namespace IM.Production.WebApp
 {
@@ -18,6 +17,13 @@ namespace IM.Production.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            /// <summary>
+            /// Test data for cheking displaying information about teams.
+            /// </summary>>
+            var game = FakeGameInitializer.CreateGame(15);
+            services.AddSingleton<Game>(game);
+            services.AddTransient<IContractsService, ContractsService>();
+            services.AddAutoMapper(c => c.AddProfile<FactoryProfile>(), typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

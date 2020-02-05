@@ -27,7 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.WebApp", "src
 		{BBCF7CAF-92D3-4832-ACED-618EB488CA70} = {BBCF7CAF-92D3-4832-ACED-618EB488CA70}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IM.Production.WebApp.Tests", "src\IM.Production.WebApp.Tests\IM.Production.WebApp.Tests.csproj", "{6DB7A61A-EF7D-435C-9488-849F3AE16477}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.WebApp.Tests", "src\IM.Production.WebApp.Tests\IM.Production.WebApp.Tests.csproj", "{6DB7A61A-EF7D-435C-9488-849F3AE16477}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IM.Production.Services", "src\IM.Production.Services\IM.Production.Services.csproj", "{8A8E799A-D5FF-4B81-8B5A-64EA790A2A14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{6DB7A61A-EF7D-435C-9488-849F3AE16477}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DB7A61A-EF7D-435C-9488-849F3AE16477}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DB7A61A-EF7D-435C-9488-849F3AE16477}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A8E799A-D5FF-4B81-8B5A-64EA790A2A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A8E799A-D5FF-4B81-8B5A-64EA790A2A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A8E799A-D5FF-4B81-8B5A-64EA790A2A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A8E799A-D5FF-4B81-8B5A-64EA790A2A14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

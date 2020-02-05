@@ -10,7 +10,7 @@ import { ContractsService } from '../services/contracts.service';
 @Component({
     selector: 'app-contracts',
     templateUrl: './contracts.component.html',
-    styleUrls: ['./contracts.component.css'],
+    styleUrls: ['./contracts.component.scss'],
     providers: [ContractsService]
 })
 export class ContractsComponent implements OnInit {
