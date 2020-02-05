@@ -9,23 +9,7 @@ namespace IM.Production.WebApp.Helpers
 {
     public class FakeGameInitializer
     {
-        private static Game SingleGame { get; set; }
-
-        public static Game CreateGame(int customersCount, bool callOnce = true)
-        {
-            if (callOnce)
-            {
-                if (SingleGame == null)
-                {
-                    SingleGame = GenerateData(customersCount);
-                }
-                return SingleGame;
-            }
-
-            return GenerateData(customersCount);
-        }
-
-        private static Game GenerateData(int customersCount)
+        private static Game CreateGame(int customersCount)
         {
             var game = new Game();
             var logic = new Logic(game);
