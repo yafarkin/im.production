@@ -1,6 +1,4 @@
-<div class="contract-main-text">
-    Информация по контрактам
-</div>
+<mat-toolbar class="contract-main-text">Информация по контрактам</mat-toolbar>
 
 <mat-button-toggle-group [(ngModel)]="toggleButtonFlag" (change)="toggleButtonFlagChanged()" multiple name="fontStyle"
     aria-label="Font Style">
@@ -9,7 +7,7 @@
     <mat-button-toggle value="PlayerPlayer">Все контракты между игроками</mat-button-toggle>
 </mat-button-toggle-group>
 
-<button (click)="updateContracts()" class="contract-update-button" mat-button>Update</button>
+<button (click)="updateContracts()"  mat-button>Update</button>
 
 <div class="mat-elevation-z8" matSort>
     <table class="contract-table" mat-table [dataSource]="dataSource">

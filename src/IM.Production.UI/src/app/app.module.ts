@@ -10,7 +10,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { AppComponent } from './app.component';
 import { ContractsComponent } from '../contracts/contracts.component';
 
@@ -22,7 +22,7 @@ import { ContractsComponent } from '../contracts/contracts.component';
     imports: [
         CommonModule, BrowserModule, FormsModule,
         MatTableModule, MatPaginatorModule, MatSortModule,
-        MatButtonModule, MatButtonToggleModule,
+        MatButtonModule, MatButtonToggleModule, MatToolbarModule,
         HttpClientModule,
         BrowserAnimationsModule
     ],
