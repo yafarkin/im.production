@@ -11,10 +11,10 @@
 
 <div class="mat-elevation-z8" matSort>
     <table class="contract-table" mat-table [dataSource]="dataSource">
-        <!-- Position Column -->
-        <ng-container matColumnDef="position">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Position </th>
-            <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+        <!-- Index Column -->
+        <ng-container matColumnDef="index">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Index </th>
+            <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
         </ng-container>
 
         <!-- TillDate Column -->

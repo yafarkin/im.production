@@ -33,7 +33,6 @@ namespace IM.Production.WebApp.Controllers
         [Route("all")]
         public IEnumerable<ContractDto> GetContracts()
         {
-            var position = 0;
             var customerContracts = _service.GetContracts();
             var result = new List<ContractDto>();
             foreach (var element in customerContracts)
@@ -46,8 +45,6 @@ namespace IM.Production.WebApp.Controllers
                     {
                         continue;
                     }
-                    dto.Position = position;
-                    position++;
                     result.Add(dto);
                 }
             }

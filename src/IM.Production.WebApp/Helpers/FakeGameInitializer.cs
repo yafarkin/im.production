@@ -9,7 +9,7 @@ namespace IM.Production.WebApp.Helpers
 {
     public class FakeGameInitializer
     {
-        private static Game CreateGame(int customersCount)
+        public static Game CreateGame(int customersCount)
         {
             var game = new Game();
             var logic = new Logic(game);

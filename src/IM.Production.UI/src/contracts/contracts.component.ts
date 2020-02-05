@@ -17,7 +17,7 @@ export class ContractsComponent implements OnInit {
 
     constructor(private contractsService: ContractsService) { }
     displayedColumns: string[] = [
-        'position', 'tillDate', 'tillCount', 'totalSumm'
+        'index', 'tillDate', 'tillCount', 'totalSumm'
         , 'sourceFactoryCustomerLogin', 'destinationFactoryCustomerLogin'
     ];
     arrayData: ContractDto[] = [
