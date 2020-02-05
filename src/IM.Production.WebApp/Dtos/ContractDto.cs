@@ -8,6 +8,10 @@ namespace IM.Production.WebApp.Dtos
     public class ContractDto
     {
         /// <summary>
+        /// Позиция контракта в таблице
+        /// </summary>
+        public int Position { get; set; }
+        /// <summary>
         /// Если указано, то контракт действует до указанной даты.
         /// </summary>
         public int TillDate { get; set; }

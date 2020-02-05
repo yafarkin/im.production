@@ -15,20 +15,20 @@ import { AppComponent } from './app.component';
 import { ContractsComponent } from '../contracts/contracts.component';
 
 @NgModule({
-   declarations: [
-      AppComponent,
-      ContractsComponent
-   ],
-   imports: [
-      CommonModule, BrowserModule, FormsModule,
-      MatTableModule, MatPaginatorModule, MatSortModule, 
-      MatButtonModule, MatButtonToggleModule,
-      HttpClientModule,
-      BrowserAnimationsModule
-   ],
-   providers: [],
-   bootstrap: [
-      AppComponent
-   ]
+    declarations: [
+        AppComponent,
+        ContractsComponent
+    ],
+    imports: [
+        CommonModule, BrowserModule, FormsModule,
+        MatTableModule, MatPaginatorModule, MatSortModule,
+        MatButtonModule, MatButtonToggleModule,
+        HttpClientModule,
+        BrowserAnimationsModule
+    ],
+    providers: [],
+    bootstrap: [
+        AppComponent
+    ]
 })
 export class AppModule { }

@@ -1,5 +1,5 @@
 {
-    "/Contracts":{
+    "/api":{
         "target" : "http://localhost:54726",
         "secure" : false
     }

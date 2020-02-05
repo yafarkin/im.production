@@ -1,15 +1,14 @@
-table 
-{
+.contract-table {
     width: 100%;
 }
 
-.MainText {
+.contract-main-text {
     display: flex;
     font-size:32px;
     align-items: center;
     justify-content: center;
 }
 
-.UpdateButton {
+.contract-update-button {
     font-size:20px;
 }

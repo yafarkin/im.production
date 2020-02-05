@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace IM.Production.WebApp.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/contracts")] //contracts
     public class ContractsController : ControllerBase
     {
         private readonly MapperConfiguration m_ContractConfig =
@@ -27,8 +27,8 @@ namespace IM.Production.WebApp.Controllers
         private IMapper m_Mapper;
 
         [HttpGet]
-        [Route("GetAllContracts")]
-        public IEnumerable<ContractDto> GetAllContracts()
+        [Route("all")]
+        public IEnumerable<ContractDto> GetContracts()
         {
             if (m_Mapper == null)
             {
@@ -42,6 +42,7 @@ namespace IM.Production.WebApp.Controllers
                 customerContracts.AddRange(customer.Contracts);
             }
 
+            var position = 0;
             var result = new List<ContractDto>();
             foreach (var element in customerContracts)
             {
@@ -53,6 +54,8 @@ namespace IM.Production.WebApp.Controllers
                     {
                         continue;
                     }
+                    dto.Position = position;
+                    position++;
                     result.Add(dto);
                 }
             }

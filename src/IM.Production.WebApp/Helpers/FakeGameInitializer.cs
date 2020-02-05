@@ -1,9 +1,9 @@
-﻿using CalculationEngine;
+﻿using System.Collections.Generic;
+using CalculationEngine;
 using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Bank;
 using Epam.ImitationGames.Production.Domain.Production;
 using IM.Production.CalculationEngine;
-using System.Collections.Generic;
 
 namespace IM.Production.WebApp.Helpers
 {
@@ -111,11 +111,11 @@ namespace IM.Production.WebApp.Helpers
                         #region CreateContract
                         contract.SourceFactory = GetFirstFactory(customer.Factories);
                         contract.TillCount =
-                            (int?)(r * materialNumber + c * System.DateTime.Now.Ticks / System.DateTime.Now.Second) % 10_000_000;
+                            (int?)((r * materialNumber + c * System.DateTime.Now.Ticks + 1) / (System.DateTime.Now.Second + 1) % 10_000_000);
                         contract.TillDate =
                             (int?)(System.DateTime.Now.Ticks % 10_000_000);
                         contract.TotalSumm =
-                            (decimal)(contract.TillCount * contract.TillDate) % 10_000_000;
+                            (decimal)(contract.TillCount * contract.TillDate + 1) % 10_000_000;
                         contract.DestinationFactory = (c >= 1) ? GetFirstFactory(customerList[c - 1].Factories) : new Factory();
 
                         if (contract?.DestinationFactory != null && contract?.SourceFactory != null)
