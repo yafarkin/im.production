@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Epam.ImitationGames.Production.Domain.Services;
 using IM.Production.WebApp.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using Epam.ImitationGames.Production.Domain;
 using AutoMapper;
-using Epam.ImitationGames.Production.Domain.Production;
 
 namespace IM.Production.WebApp.Controllers
 {
     [ApiController]
-    [Route("api/teams")]
+    [Route("api/[controller]")]
     public class TeamsController : ControllerBase
     {
         private readonly ITeamsService _service;
@@ -26,8 +23,8 @@ namespace IM.Production.WebApp.Controllers
         public IEnumerable<TeamDto> GetTeams()
         {
             var teams = _service.GetTeams();
-            var Teams = _mapper.Map<IEnumerable<Customer>, IEnumerable<TeamDto>>(teams);
-            return Teams;
+            var teamsDtos = _mapper.Map<IEnumerable<TeamDto>>(teams);
+            return teamsDtos;
         }
     }
 }

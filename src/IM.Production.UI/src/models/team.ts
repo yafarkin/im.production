@@ -1,7 +1,7 @@
-export interface Team {
+export class Team {
     name: string;
     productionType: string;
-    factories: string [];
+    factories: string[];
     sum: number;
     contracts: string;
 }
