@@ -1,11 +1,13 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Bank
 {
     /// <summary>
     /// Какое либо банковское действие со счётом команды.
     /// </summary>
-    public class BankFinAction : BaseBank
+    [Serializable]
+    public class BankFinAction : BaseBank, IFinanceChanging
     {
         /// <summary>
         /// Ссылка на исходный вклад / кредит.
@@ -15,7 +17,7 @@ namespace Epam.ImitationGames.Production.Domain.Bank
         /// <summary>
         /// Сумма тела, которая будет начислена / снята со счёта команды.
         /// </summary>
-        public decimal Sum { get; set; }
+        public decimal SumChange { get; protected set; }
 
         /// <summary>
         /// Сумма по процентам, которая будет начислена / снята со счёта команды
@@ -30,13 +32,20 @@ namespace Epam.ImitationGames.Production.Domain.Bank
         /// <summary>
         /// Итоговая сумма, которая будет начислена / снята со счёта команды
         /// </summary>
-        public decimal TotalSum => Sum + PercentSum - Fine;
+        public decimal TotalSum => SumChange + PercentSum - Fine;
 
         public override string DisplayName => $"Выплаты по {(FinOperation is BankDebit ? "вкладу" : "кредиту")}, сумма {TotalSum}";
 
-        public BankFinAction(GameTime time, Customer customer, string description = null)
-            : base(time, customer, description)
+        public BankFinAction(Customer customer, decimal sumChange, string description = null)
+            : base(customer, description)
         {
+            SumChange = sumChange;
+        }
+
+        public override void DoAction()
+        {
+            base.DoAction();
+            Customer.Sum += TotalSum;
         }
     }
 }

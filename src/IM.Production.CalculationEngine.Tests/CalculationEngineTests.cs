@@ -3,7 +3,6 @@ using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Production;
 using Epam.ImitationGames.Production.Domain.ReferenceData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,26 +11,27 @@ namespace IM.Production.CalculationEngine.Tests
     [TestClass]
     public class CalculationEngineTests
     {
-        private CalculationEgnine _calculationEgnine;
+        private CalculationEngine _calculationEngine;
+        private Game _game;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            _calculationEgnine = new CalculationEgnine();
-            _calculationEgnine.Game = new Game();
+            _game = new Game();
+            _calculationEngine = new CalculationEngine(_game);
+            ReferenceData.InitReferences();
         }
 
         [TestMethod]
         public void Calculate_NoContractsWithGame_SumNotChanged()
         {
             var sum = 0;
-            var customer = new Customer { Sum = sum };
-            var contract = new Contract(null, null) { SourceFactory = new Factory() };
-            var game = new Game();
-            customer.Contracts.Add(contract);
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            var contract = new Contract(customer, null) {SourceFactory = new Factory()};
+            _game.AddActivity(new CustomerNewContractChange(contract));
+            _game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate();
 
             Assert.AreEqual(sum, customer.Sum);
         }
@@ -41,14 +41,14 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var material = ReferenceData.GetMaterialByKey(MaterialKeys.MetalRuda);
             var amount = 100;
-            var customer = new Customer { Sum = 10 };
-            var factory = new Factory { Customer = customer };
-            var contract = new Contract(null, new MaterialWithPrice { Material = material, Amount = amount }) { DestinationFactory = factory };
-            var game = new Game();
-            customer.Contracts.Add(contract);
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            _game.Customers.Add(customer);
+            _game.AddActivity(new FinanceCustomerChange(customer, 10));
+            var factory = Factory.CreateFactory(customer, null);
+            var contract = new Contract(customer, new MaterialWithPrice { Material = material, Amount = amount }) { DestinationFactory = factory };
+            _game.AddActivity(new CustomerNewContractChange(contract));
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate();
 
             var materialOnStock = factory.Stock.First();
             Assert.AreSame(material, materialOnStock.Material);
@@ -60,16 +60,20 @@ namespace IM.Production.CalculationEngine.Tests
         public void Calculate_ContractWithGameAndMaterialOnStock_MaterialAmountIncreased()
         {
             var material = ReferenceData.GetMaterialByKey(MaterialKeys.MetalRuda);
-            var customer = new Customer { Sum = 10 };
-            var factory = new Factory() { Customer = customer };
-            var contract = new Contract(null, new MaterialWithPrice { Amount = 100, Material = material }) { DestinationFactory = factory };
-            var game = new Game();
-            var materialOnStock = new MaterialOnStock { Amount = 1, Material = material };
-            factory.Stock.Add(materialOnStock);
-            customer.Contracts.Add(contract);
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            _game.AddActivity(new FinanceCustomerChange(customer, 10));
+            var factory = Factory.CreateFactory(customer, null);
+            var contract =
+                new Contract(customer, new MaterialWithPrice {Amount = 100, Material = material})
+                {
+                    DestinationFactory = factory
+                };
+            var materialOnStock = new MaterialOnStock {Amount = 1, Material = material};
+            _game.AddActivity(new FactoryAddMaterialToStockChange(factory, materialOnStock));
+            _game.AddActivity(new CustomerNewContractChange(contract));
+            _game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate();
 
             Assert.AreEqual(101, materialOnStock.Amount);
             Assert.AreEqual(9, customer.Sum);
@@ -78,13 +82,12 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_SumForNextGenerationLevelIsZero_SetCorrectSum()
         {
-            var customer = new Customer { SumToNextGenerationLevel = 0, FactoryGenerationLevel = 1 };
-            var game = new Game();
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            _game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _calculationEngine.Calculate();
 
-            Assert.AreEqual(5000, customer.SumToNextGenerationLevel);
+            Assert.AreEqual(500, customer.SumToNextGenerationLevel);
         }
 
         [DataTestMethod]
@@ -94,11 +97,14 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var sum = 1;
             var spent = 1;
-            var customer = new Customer { SumOnRD = sumOnRD, Sum = sum, SpentSumToNextGenerationLevel = spent };
-            var game = new Game();
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            _game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new FinanceCustomerChange(customer, sum));
+            _game.AddActivity(new CustomerSumOnRDChange(customer, sumOnRD));
+            _game.AddActivity(new CustomerRDSpentChange(customer, spent, null));
+
+            _calculationEngine.Calculate();
 
             Assert.AreEqual(sum, customer.Sum);
             Assert.AreEqual(spent, customer.SpentSumToNextGenerationLevel);
@@ -107,16 +113,18 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_ReadyForNextGenerationLevel_GenerationLevelIncreasedAndSumsChanged()
         {
-            var customer = new Customer { Sum = 10000, SumOnRD = 6000, FactoryGenerationLevel = 1 };
-            var game = new Game();
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            _game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new FinanceCustomerChange(customer, 10000));
+            _game.AddActivity(new CustomerSumOnRDChange(customer, 6000));
+
+            _calculationEngine.Calculate();
 
             Assert.AreEqual(2, customer.FactoryGenerationLevel);
             Assert.AreEqual(4000, customer.Sum);
-            Assert.AreEqual(1000, customer.SpentSumToNextGenerationLevel);
-            Assert.AreEqual(15000, customer.SumToNextGenerationLevel);
+            Assert.AreEqual(5500, customer.SpentSumToNextGenerationLevel);
+            Assert.AreEqual(1500, customer.SumToNextGenerationLevel);
         }
 
         [TestMethod]
@@ -124,11 +132,14 @@ namespace IM.Production.CalculationEngine.Tests
         {
             const int generationLevel = 1;
             const int sumToNext = 5000;
-            var customer = new Customer { Sum = 10, SumOnRD = 1, SpentSumToNextGenerationLevel = 2, FactoryGenerationLevel = generationLevel, SumToNextGenerationLevel = sumToNext };
-            var game = new Game();
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            _game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new FinanceCustomerChange(customer, 10));
+            _game.AddActivity(new CustomerSumOnRDChange(customer, 1));
+            _game.AddActivity(new CustomerRDSpentChange(customer, 2, sumToNext));
+
+            _calculationEngine.Calculate();
 
             Assert.AreEqual(9, customer.Sum);
             Assert.AreEqual(3, customer.SpentSumToNextGenerationLevel);
@@ -141,14 +152,14 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var definition = ReferenceData.FactoryDefinitions.First();
             var customer = new Customer();
-            var factory = new Factory { NeedSumToNextLevelUp = 0, Level = 1, FactoryDefinition = definition, Customer = customer };
-            var game = new Game();
-            customer.Factories.Add(factory);
-            game.Customers.Add(customer);
+            var factory = Factory.CreateFactory(customer, definition);
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
+            _game.Customers.Add(customer);
 
-            Assert.AreEqual(330000, factory.NeedSumToNextLevelUp);
+            _calculationEngine.Calculate();
+
+            Assert.AreEqual(330, factory.NeedSumToNextLevelUp);
         }
 
         [DataTestMethod]
@@ -158,15 +169,20 @@ namespace IM.Production.CalculationEngine.Tests
         {
             var spentSum = 1;
             var description = ReferenceData.FactoryDefinitions.First();
-            var customer = new Customer { Sum = 1 };
-            var factory = new Factory { NeedSumToNextLevelUp = 1, SumOnRD = sumOnRD, SpentSumToNextLevelUp = spentSum, FactoryDefinition = description, Customer = customer };
-            var game = new Game();
-            customer.Factories.Add(factory);
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            var factory = Factory.CreateFactory(null, description);
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
+            _game.Customers.Add(customer);
 
-            Assert.AreEqual(0.9M, customer.Sum);
+            _game.AddActivity(new FinanceCustomerChange(customer, 1));
+            _game.AddActivity(new FactorySumOnRDChange(factory, sumOnRD));
+            _game.AddActivity(new FactoryRDSpentChange(factory, spentSum, 1));
+
+            _calculationEngine.Calculate();
+
+            // -5 - налог на саму фабрику
+            Assert.AreEqual(0.25m, customer.Sum);
             Assert.AreEqual(spentSum, factory.SpentSumToNextLevelUp);
         }
 
@@ -176,15 +192,19 @@ namespace IM.Production.CalculationEngine.Tests
             var definition = ReferenceData.FactoryDefinitions.First();
             const int level = 1;
             const int needSum = 1000;
-            var customer = new Customer { Sum = 100 };
-            var factory = new Factory { Level = level, NeedSumToNextLevelUp = needSum, SumOnRD = 10, SpentSumToNextLevelUp = 2, FactoryDefinition = definition, Customer = customer };
-            var game = new Game();
-            customer.Factories.Add(factory);
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            var factory = Factory.CreateFactory(customer, definition);
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
+            _game.Customers.Add(customer);
 
-            Assert.AreEqual(81, customer.Sum);
+            _game.AddActivity(new FinanceCustomerChange(customer, 100));
+            _game.AddActivity(new FactorySumOnRDChange(factory, 10));
+            _game.AddActivity(new FactoryRDSpentChange(factory, 2, needSum));
+
+            _calculationEngine.Calculate();
+
+            Assert.AreEqual(89.25m, customer.Sum);
             Assert.AreEqual(12, factory.SpentSumToNextLevelUp);
             Assert.AreEqual(level, factory.Level);
             Assert.AreEqual(1000, factory.NeedSumToNextLevelUp);
@@ -194,77 +214,83 @@ namespace IM.Production.CalculationEngine.Tests
         public void Calculate_ReadyForNextLevel_LevelIncreasedAndSumsChanged()
         {
             var definition = ReferenceData.FactoryDefinitions.First();
-            var customer = new Customer { Sum = 100 };
-            var factory = new Factory { Level = 1, SumOnRD = 50, NeedSumToNextLevelUp = 10, SpentSumToNextLevelUp = 0, FactoryDefinition = definition, Customer = customer };
-            var game = new Game();
-            customer.Factories.Add(factory);
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            var factory = Factory.CreateFactory(customer, definition);
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
+            _game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new FinanceCustomerChange(customer, 100));
+            _game.AddActivity(new FactorySumOnRDChange(factory, 50));
+            _game.AddActivity(new FactoryRDSpentChange(factory, 0, 10));
+
+            _calculationEngine.Calculate();
 
             Assert.AreEqual(2, factory.Level);
-            Assert.AreEqual(45, customer.Sum);
+            Assert.AreEqual(49.1m, customer.Sum);
             Assert.AreEqual(40, factory.SpentSumToNextLevelUp);
-            Assert.AreEqual(750000, factory.NeedSumToNextLevelUp);
+            Assert.AreEqual(750, factory.NeedSumToNextLevelUp);
         }
 
         [TestMethod]
         public void Calculate_FactoryWithoutSpecialTax_SumDecreasedByDefaultTax()
         {
             var description = ReferenceData.FactoryDefinitions.First();
-            var customer = new Customer { Sum = 100 };
-            var factory = new Factory { FactoryDefinition = description, Customer = customer };
-            var game = new Game();
-            customer.Factories.Add(factory);
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            var factory = Factory.CreateFactory(customer, description);
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
+            _game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new FinanceCustomerChange(customer, 100));
 
-            Assert.AreEqual(90, customer.Sum);
+            _calculationEngine.Calculate();
+
+            Assert.AreEqual(99.25m, customer.Sum);
         }
 
         [TestMethod]
         public void Calculate_AnyFactory_PerformanceSetWhileProducing()
         {
             var customer = new Customer();
-            var factory = new Factory
-            {
-                Workers = 1,
-                FactoryDefinition = new FactoryDefinition { GenerationLevel = 1, BaseWorkers = 1, ProductionType = new ProductionType() },
-                Customer = customer
-            };
-            var game = new Game();
-            customer.Factories.Add(factory);
-            game.Customers.Add(customer);
+            var factory = Factory.CreateFactory(customer, new FactoryDefinition {GenerationLevel = 1, BaseWorkers = 1, ProductionType = new ProductionType()});
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
+            _game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new FactoryWorkerCountChange(factory, 1));
+            
+
+            _calculationEngine.Calculate();
 
             Assert.AreEqual(1, factory.Performance);
         }
 
         [TestMethod]
-        public void Calculate_FactoryWithNotProducibleMaterial_MaterialRemoved()
+        public void Calculate_FactoryWithNotProducibleMaterial_MaterialNotRemoved()
         {
-            var input = new Material { AmountPerDay = 1 };
-            var material = new Material { AmountPerDay = 1, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input } } };
+            var input = new Material {AmountPerDay = 1};
+            var material = new Material
+            {
+                AmountPerDay = 1,
+                InputMaterials = new List<MaterialOnStock> {new MaterialOnStock {Material = input}}
+            };
             var customer = new Customer();
-            var factory = new Factory { FactoryDefinition = new FactoryDefinition { GenerationLevel = 1, ProductionType = new ProductionType() }, Customer = customer };
-            var game = new Game();
-            factory.ProductionMaterials.Add(material);
-            customer.Factories.Add(factory);
-            game.Customers.Add(customer);
+            var factory = Factory.CreateFactory(customer, new FactoryDefinition {GenerationLevel = 1, ProductionType = new ProductionType()});
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
+            _game.Customers.Add(customer);
+
+            _game.AddActivity(new FactoryProductionMaterialChange(factory, new List<Material> { material }));
+
+            _calculationEngine.Calculate();
 
             Assert.IsFalse(factory.Stock.Any());
-            Assert.IsFalse(factory.ProductionMaterials.Any());
+            Assert.IsTrue(factory.ProductionMaterials.Any());
         }
 
         [TestMethod]
         public void Calculate_FactoryWithProducibleMaterial_MaterialProducedAndMovedToStockAndInputMaterialDecreased()
         {
-            var firstInput = new Material { AmountPerDay = 1 };
-            var secondInput = new Material { AmountPerDay = 1 };
+            var firstInput = new Material {AmountPerDay = 1};
+            var secondInput = new Material {AmountPerDay = 1};
             var material = new Material
             {
                 AmountPerDay = 1,
@@ -274,26 +300,25 @@ namespace IM.Production.CalculationEngine.Tests
                 }
             };
             var customer = new Customer();
-            var factory = new Factory
-            {
-                FactoryDefinition = new FactoryDefinition { GenerationLevel = 1, ProductionType = new ProductionType(), BaseWorkers = 1 },
-                Customer = customer,
-                Workers = 1
-            };
-            var game = new Game();
-            factory.ProductionMaterials.Add(material);
-            factory.Stock.Add(new MaterialOnStock { Material = firstInput, Amount = 3 });
-            factory.Stock.Add(new MaterialOnStock { Material = secondInput, Amount = 5 });
-            customer.Factories.Add(factory);
-            game.Customers.Add(customer);
+            var factory = Factory.CreateFactory(customer,
+                new FactoryDefinition {GenerationLevel = 1, ProductionType = new ProductionType(), BaseWorkers = 1});
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new FactoryProductionMaterialChange(factory, new List<Material>{material}));
+            _game.AddActivity(new FactoryAddMaterialToStockChange(factory, new MaterialOnStock {Material = firstInput, Amount = 3}));
+            _game.AddActivity(new FactoryAddMaterialToStockChange(factory, new MaterialOnStock {Material = secondInput, Amount = 5}));
+
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
+            _game.Customers.Add(customer);
+
+            _game.AddActivity(new FactoryWorkerCountChange(factory, 1));
+
+            _calculationEngine.Calculate();
 
             var produced = factory.Stock.First(m => m.Material.Id == material.Id);
             var firstInputOnStock = factory.Stock.First(m => m.Material.Id == firstInput.Id);
             var secondInputOnStock = factory.Stock.First(m => m.Material.Id == secondInput.Id);
             Assert.IsTrue(factory.ProductionMaterials.Contains(material));
-            Assert.AreEqual(3, factory.Stock.Count);
+            Assert.AreEqual(3, factory.Stock.Count());
             Assert.AreSame(material, produced.Material);
             Assert.AreEqual(1, produced.Amount);
             Assert.AreEqual(1, firstInputOnStock.Amount);
@@ -301,40 +326,67 @@ namespace IM.Production.CalculationEngine.Tests
         }
 
         [TestMethod]
-        public void Calculate_FactoryWithDifferentMaterials_NotProducibleRemovedAndProducibleReleased()
+        public void Calculate_FactoryWithDifferentMaterials_NotProducibleNotRemovedAndProducibleReleased()
         {
-            var input = new Material { AmountPerDay = 1 };
-            var firstMaterial = new Material { AmountPerDay = 1, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input, Amount = 2 } } };
-            var secondMaterial = new Material { AmountPerDay = 2, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input, Amount = 3 } } };
-            var thirdMaterial = new Material { AmountPerDay = 3, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input, Amount = 100 } } };
-            var fourthMaterial = new Material { AmountPerDay = 4, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input, Amount = 100 } } };
-            var customer = new Customer();
-            var factory = new Factory
+            var input = new Material { AmountPerDay = 1, DisplayName = "входной материал"};
+            var firstMaterial = new Material
             {
-                Workers = 1,
-                FactoryDefinition = new FactoryDefinition { GenerationLevel = 1, BaseWorkers = 1, ProductionType = new ProductionType() },
-                Customer = customer
+                AmountPerDay = 1,
+                DisplayName = "выходной материал 1",
+                InputMaterials = new List<MaterialOnStock> {new MaterialOnStock {Material = input, Amount = 2}}
             };
-            var game = new Game();
-            factory.ProductionMaterials.AddRange(new List<Material> { firstMaterial, secondMaterial, thirdMaterial, fourthMaterial });
-            factory.Stock.Add(new MaterialOnStock { Material = input, Amount = 5 });
-            customer.Factories.Add(factory);
-            game.Customers.Add(customer);
+            var secondMaterial = new Material
+            {
+                AmountPerDay = 2,
+                DisplayName = "выходной материал 2",
+                InputMaterials = new List<MaterialOnStock> {new MaterialOnStock {Material = input, Amount = 3}}
+            };
+            var thirdMaterial = new Material
+            {
+                AmountPerDay = 3,
+                DisplayName = "выходной материал 3",
+                InputMaterials = new List<MaterialOnStock> {new MaterialOnStock {Material = input, Amount = 100}}
+            };
+            var fourthMaterial = new Material
+            {
+                AmountPerDay = 4,
+                DisplayName = "выходной материал 4",
+                InputMaterials = new List<MaterialOnStock> {new MaterialOnStock {Material = input, Amount = 100}}
+            };
 
-            _calculationEgnine.Calculate(game);
+            var customer = new Customer();
+            var factory = Factory.CreateFactory(customer,  new FactoryDefinition {GenerationLevel = 1, BaseWorkers = 1, ProductionType = new ProductionType()});
 
-            var firstProduced = factory.Stock.First(m => m.Material.Id == firstMaterial.Id);
-            var secondProduced = factory.Stock.Find(m => m.Material.Id == secondMaterial.Id);
+            _game.AddActivity(new FactoryProductionMaterialChange(factory,
+                new List<Material> {firstMaterial, secondMaterial, thirdMaterial, fourthMaterial}));
+
+            _game.AddActivity(new FactoryAddMaterialToStockChange(factory,
+                new MaterialOnStock {Material = input, Amount = 5}));
+
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
+            _game.Customers.Add(customer);
+
+            _game.AddActivity(new FactoryWorkerCountChange(factory, 1));
+
+            _calculationEngine.Calculate();
+
+            var firstProduced = factory.Stock.FirstOrDefault(m => m.Material.Id == firstMaterial.Id);
+            var secondProduced = factory.Stock.FirstOrDefault(m => m.Material.Id == secondMaterial.Id);
+            var thirdProduced = factory.Stock.FirstOrDefault(m => m.Material.Id == thirdMaterial.Id);
+            var fourthProduced = factory.Stock.FirstOrDefault(m => m.Material.Id == fourthMaterial.Id);
+            
             var inputOnStock = factory.Stock.First(m => m.Material.Id == input.Id);
             Assert.IsTrue(factory.ProductionMaterials.Contains(firstMaterial));
             Assert.IsTrue(factory.ProductionMaterials.Contains(secondMaterial));
-            Assert.IsFalse(factory.ProductionMaterials.Contains(thirdMaterial));
-            Assert.IsFalse(factory.ProductionMaterials.Contains(fourthMaterial));
-            Assert.AreEqual(3, factory.Stock.Count);
-            Assert.AreEqual(2, factory.ProductionMaterials.Count);
-            Assert.AreEqual(0.5M, firstProduced.Amount);
-            Assert.AreEqual(1M, secondProduced.Amount);
-            Assert.AreEqual(2.5M, inputOnStock.Amount);
+            Assert.IsTrue(factory.ProductionMaterials.Contains(thirdMaterial));
+            Assert.IsTrue(factory.ProductionMaterials.Contains(fourthMaterial));
+            Assert.AreEqual(3, factory.Stock.Count());
+            Assert.AreEqual(4, factory.ProductionMaterials.Count());
+            Assert.AreEqual(0.5m, firstProduced.Amount);
+            Assert.AreEqual(1, secondProduced.Amount);
+            Assert.AreEqual(2.5m, inputOnStock.Amount);
+            Assert.IsNull(thirdProduced);
+            Assert.IsNull(fourthProduced);
         }
 
         [TestMethod]
@@ -343,23 +395,20 @@ namespace IM.Production.CalculationEngine.Tests
             var input = new Material { AmountPerDay = 1 };
             var material = new Material { AmountPerDay = 1, InputMaterials = new List<MaterialOnStock> { new MaterialOnStock { Material = input, Amount = 1 } } };
             var customer = new Customer();
-            var factory = new Factory
-            {
-                Workers = 1,
-                FactoryDefinition = new FactoryDefinition { ProductionType = new ProductionType(), BaseWorkers = 1, GenerationLevel = 1 },
-                Customer = customer
-            };
-            var game = new Game();
-            factory.ProductionMaterials.Add(material);
-            factory.Stock.Add(new MaterialOnStock { Material = input, Amount = 1 });
-            customer.Factories.Add(factory);
-            game.Customers.Add(customer);
+            var factory = Factory.CreateFactory(customer,
+                new FactoryDefinition {ProductionType = new ProductionType(), BaseWorkers = 1, GenerationLevel = 1});
+            _game.AddActivity(new FactoryProductionMaterialChange(factory, new List<Material>{material}));
+            _game.AddActivity(new FactoryAddMaterialToStockChange(factory, new MaterialOnStock { Material = input, Amount = 1 }));
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
+            _game.Customers.Add(customer);
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new FactoryWorkerCountChange(factory, 1));
+
+            _calculationEngine.Calculate();
 
             var produced = factory.Stock.First(m => m.Material.Id == material.Id);
             var inputOnStock = factory.Stock.FirstOrDefault(m => m.Material.Id == input.Id);
-            Assert.AreEqual(1, factory.Stock.Count);
+            Assert.AreEqual(1, factory.Stock.Count());
             Assert.IsTrue(factory.ProductionMaterials.Contains(material));
             Assert.AreEqual(material, produced.Material);
             Assert.IsNull(inputOnStock);
@@ -368,20 +417,19 @@ namespace IM.Production.CalculationEngine.Tests
         [TestMethod]
         public void Calculate_FactoryWithAnyMaterials_SumDecreasedOnSalary()
         {
-            var customer = new Customer { Sum = 2000 };
-            var factory = new Factory
-            {
-                Workers = 10,
-                Customer = customer,
-                FactoryDefinition = new FactoryDefinition { GenerationLevel = 10, ProductionType = new ProductionType(), BaseWorkers = 10 }
-            };
-            var game = new Game();
-            customer.Factories.Add(factory);
-            game.Customers.Add(customer);
+            var customer = new Customer();
+            var factory = Factory.CreateFactory(customer,
+                new FactoryDefinition {GenerationLevel = 10, ProductionType = new ProductionType(), BaseWorkers = 10});
 
-            _calculationEgnine.Calculate(game);
+            _game.AddActivity(new CustomerBuyFactoryChange(customer, factory, 0));
+            _game.Customers.Add(customer);
 
-            Assert.AreEqual(800, customer.Sum);
+            _game.AddActivity(new FinanceCustomerChange(customer, 2000));
+            _game.AddActivity(new FactoryWorkerCountChange(factory, 10));
+
+            _calculationEngine.Calculate();
+
+            Assert.AreEqual(1811, customer.Sum);
         }
     }
 }

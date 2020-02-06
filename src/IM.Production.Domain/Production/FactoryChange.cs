@@ -1,39 +1,21 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
     /// <summary>
     /// Описание изменения, произошедшего с фабрикой
     /// </summary>
-    public class FactoryChange : BaseChanging
+    [Serializable]
+    public abstract class FactoryChange : BaseChanging
     {
         /// <summary>
         /// Ссылка на фабрику.
         /// </summary>
-        public Factory Factory { get; set; }
+        public Factory Factory { get; protected set; }
 
-        /// <summary>
-        /// Изменение уровня.
-        /// </summary>
-        public int LevelChange { get; set; }
-
-        /// <summary>
-        /// Изменение количества рабочих.
-        /// </summary>
-        public int WorkersChange { get; set; }
-
-        /// <summary>
-        /// Изменение % исследования по RD.
-        /// </summary>
-        public decimal RDProgressChange { get; set; }
-
-        /// <summary>
-        /// Изменение суммы, выделяемой на RD.
-        /// </summary>
-        public decimal SumOnRDChange { get; set; }
-
-        public FactoryChange(GameTime time, Factory factory, string description = null)
-            : base(time, factory.Customer, description)
+        protected FactoryChange(Factory factory, string description = null)
+            : base(factory.Customer, description)
         {
             Factory = factory;
         }

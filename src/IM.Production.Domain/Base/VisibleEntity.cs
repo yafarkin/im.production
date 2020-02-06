@@ -1,8 +1,11 @@
-﻿namespace Epam.ImitationGames.Production.Domain.Base
+﻿using System;
+
+namespace Epam.ImitationGames.Production.Domain.Base
 {
     /// <summary>
     /// Сущность, которая может отображаться в пользовательском интерфейсе.
     /// </summary>
+    [Serializable]
     public class VisibleEntity : BaseEntity, IVisibleEntity
     {
         /// <summary>

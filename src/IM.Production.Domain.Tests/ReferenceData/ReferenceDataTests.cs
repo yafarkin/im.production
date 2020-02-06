@@ -3,6 +3,8 @@ using Epam.ImitationGames.Production.Domain.ReferenceData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using CalculationEngine;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace IM.Production.Domain.Tests
 {
@@ -215,11 +217,10 @@ namespace IM.Production.Domain.Tests
         [TestMethod]
         public void CalculateFactoryExtraChargePercent_DefaultGeneration_DefaultPercentReturned()
         {
-            var factory = new Factory { FactoryDefinition = new FactoryDefinition { GenerationLevel = 1 } };
+            var factory = Factory.CreateFactory(null, new FactoryDefinition {GenerationLevel = 1});
             var factories = new List<Factory>
             {
-                new Factory{FactoryDefinition = new FactoryDefinition{GenerationLevel = 2}},
-                factory
+                Factory.CreateFactory(null, new FactoryDefinition {GenerationLevel = 2}), factory
             };
 
             var percent = ReferenceData.CalculateFactoryExtraChargePercent(factory, factories);
@@ -230,11 +231,10 @@ namespace IM.Production.Domain.Tests
         [TestMethod]
         public void CalculateFactoryExtraChargePercent_NotDefaultNorNotDeveloped_DefaultPercentReturned()
         {
-            var factory = new Factory { FactoryDefinition = new FactoryDefinition { GenerationLevel = 2 } };
+            var factory = Factory.CreateFactory(null, new FactoryDefinition { GenerationLevel = 2 });
             var factories = new List<Factory>
             {
-                new Factory{FactoryDefinition = new FactoryDefinition{GenerationLevel = 3}},
-                factory
+                Factory.CreateFactory(null, new FactoryDefinition {GenerationLevel = 3}), factory
             };
 
             var percent = ReferenceData.CalculateFactoryExtraChargePercent(factory, factories);
@@ -245,11 +245,10 @@ namespace IM.Production.Domain.Tests
         [TestMethod]
         public void CalculateFactoryExtraChargePercent_Developed_AdvancedPercentReturned()
         {
-            var factory = new Factory { FactoryDefinition = new FactoryDefinition { GenerationLevel = 3 } };
+            var factory = Factory.CreateFactory(null, new FactoryDefinition {GenerationLevel = 3});
             var factories = new List<Factory>
             {
-                new Factory{FactoryDefinition = new FactoryDefinition{GenerationLevel = 2}},
-                factory
+                Factory.CreateFactory(null, new FactoryDefinition {GenerationLevel = 2}), factory
             };
 
             var percent = ReferenceData.CalculateFactoryExtraChargePercent(factory, factories);
@@ -261,18 +260,15 @@ namespace IM.Production.Domain.Tests
         public void UpdateGameDemand_NotExistingMaterial_MaterialAdded()
         {
             var material = ReferenceData.GetMaterialByKey("metall_ruda");
-            var factory = new Factory
-            {
-                FactoryDefinition = new FactoryDefinition(),
-                ProductionMaterials = new List<Material> { material }
-            };
-            var factories = new List<Factory> { factory };
+            var factory = Factory.CreateFactory(null, new FactoryDefinition());
+            new FactoryProductionMaterialChange(factory, new List<Material> {material}).DoAction();
+            var factories = new List<Factory> {factory};
 
             ReferenceData.UpdateGameDemand(factories);
 
             var demand = ReferenceData.Demand.Materials.First();
             Assert.AreSame(material, demand.Material);
-            Assert.AreEqual(0.022M, demand.SellPrice);
+            Assert.AreEqual(0.03M, demand.SellPrice);
         }
 
         [DataTestMethod]
@@ -284,22 +280,31 @@ namespace IM.Production.Domain.Tests
         [DataRow(2, 2, 1, 3.1)]
         public void CalculateFactoryPerformance_AnyWorkersAndLevel_PerformanceReturned(int workers, int level, int baseWorkers, double expected)
         {
-            var factory = new Factory { Workers = workers, Level = level, FactoryDefinition = new FactoryDefinition { BaseWorkers = baseWorkers } };
+            var factory = Factory.CreateFactory(null, new FactoryDefinition {BaseWorkers = baseWorkers});
+            new FactoryLevelChange(factory, level).DoAction();
+            new FactoryWorkerCountChange(factory, workers).DoAction();
 
-            var performnce = ReferenceData.CalculateFactoryPerformance(factory);
+            var performance = ReferenceData.CalculateFactoryPerformance(factory);
 
-            Assert.AreEqual((decimal)expected, performnce);
+            Assert.AreEqual((decimal)expected, performance);
         }
 
         [TestMethod]
         public void CalculateWorkerSalary_AnyFactory_WorkerSalaryReturned()
         {
-            var definition = new FactoryDefinition { GenerationLevel = 10 };
-            var factory = new Factory { FactoryDefinition = definition };
+            var definition10 = new FactoryDefinition {GenerationLevel = 10};
+            var factory10 = Factory.CreateFactory(null, definition10);
 
-            var salary = ReferenceData.CalculateWorkerSalary(factory);
+            var salary = ReferenceData.CalculateWorkerSalary(factory10);
 
-            Assert.AreEqual(100, salary);
+            Assert.AreEqual(11.4m, salary);
+
+            var definition1 = new FactoryDefinition {GenerationLevel = 1};
+            var factory1 = Factory.CreateFactory(null, definition1);
+
+            salary = ReferenceData.CalculateWorkerSalary(factory1);
+
+            Assert.AreEqual(ReferenceData.BaseWorkerSalay, salary);
         }
     }
 }

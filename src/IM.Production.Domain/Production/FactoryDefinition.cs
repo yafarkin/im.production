@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
@@ -6,6 +7,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
     /// <summary>
     /// Общее описание фабрики.
     /// </summary>
+    [Serializable]
     public class FactoryDefinition : BaseProduction, IVisibleEntity
     {
         /// <summary>

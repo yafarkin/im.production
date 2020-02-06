@@ -1,4 +1,4 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
 
 namespace Epam.ImitationGames.Production.Domain.Bank
 {
@@ -6,6 +6,7 @@ namespace Epam.ImitationGames.Production.Domain.Bank
     /// Операция закрытия вклада / кредита.
     /// </summary>
     /// <remarks>После этой записи должна следовать запись <see cref="BankFinAction"/> с указанием итоговой выплаты.</remarks>
+    [Serializable]
     public class BankCloseFinOperation : BankFinOperation
     {
         /// <summary>
@@ -15,8 +16,8 @@ namespace Epam.ImitationGames.Production.Domain.Bank
 
         public override string DisplayName => $"Закрытие {(SourceOperation is BankDebit ? "вклада" : "кредита")}, сумма {Sum}";
 
-        public BankCloseFinOperation(GameTime time, Customer customer, string description = null)
-            : base(time, customer, description)
+        public BankCloseFinOperation(Customer customer, string description = null)
+            : base(customer, 0, description)
         {
         }
     }

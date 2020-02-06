@@ -1,6 +1,7 @@
 ﻿using Epam.ImitationGames.Production.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using CalculationEngine;
 
 namespace IM.Production.Domain.Tests
 {
@@ -36,10 +37,12 @@ namespace IM.Production.Domain.Tests
         [DataTestMethod]
         [DataRow(1, 2, true)]
         [DataRow(2, 1, false)]
-        [DataRow(1, 1, false)]
+        [DataRow(1, 1, true)]
         public void ReadyForNextGenerationLevel_CorrectSums_ReadyOrNot(int sum, int spent, bool expected)
         {
-            var customer = new Customer { SumToNextGenerationLevel = sum, SpentSumToNextGenerationLevel = spent };
+            var game = new Game();
+            var customer = new Customer();
+            game.AddActivity(new CustomerRDSpentChange(customer, spent, sum));
 
             var ready = customer.ReadyForNextGenerationLevel;
 

@@ -4,11 +4,14 @@ using System;
 namespace Epam.ImitationGames.Production.Domain.Base
 {
     /// <summary>
-    /// Игоровое время.
+    /// Игровое время.
     /// </summary>
+    [Serializable]
     public class GameTime : BaseEntity
     {
-        public GameTime()
+        public static GameTime GetGameTime => new GameTime();
+
+        internal GameTime()
         {
             Day = CurrentGameProps.GameDay;
             When = DateTime.UtcNow;

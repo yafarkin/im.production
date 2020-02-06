@@ -1,4 +1,4 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
 using Epam.ImitationGames.Production.Domain.Production;
 
 namespace Epam.ImitationGames.Production.Domain
@@ -6,6 +6,7 @@ namespace Epam.ImitationGames.Production.Domain
     /// <summary>
     /// Описание заключенного контракта.
     /// </summary>
+    [Serializable]
     public class Contract : MaterialLogistic
     {
         /// <summary>
@@ -33,9 +34,36 @@ namespace Epam.ImitationGames.Production.Domain
         /// </summary>
         public decimal DestInsuranceAmount { get; set; }
 
-        public Contract(GameTime time, MaterialWithPrice materialWithPrice, string description = null)
-            : base(time, materialWithPrice, description)
+
+        /// <summary>
+        /// Если указано, то контракт действует до указанной даты.
+        /// </summary>
+        public int? TillDate { get; set; }
+
+        /// <summary>
+        /// Если указано, то контракт действует до поставки определенного количества материала.
+        /// </summary>
+        public int? TillCount { get; set; }
+
+        /// <summary>
+        /// Количество материала, уже поставленное по контракту.
+        /// </summary>
+        public int TotalCountCompleted { get; set; }
+
+        /// <summary>
+        /// Общая сумма на закупку/продажу, прошедшую по контракту.
+        /// </summary>
+        public decimal TotalSumm { get; set; }
+
+        /// <summary>
+        /// Общая сумма уплаченных налогов по контракту.
+        /// </summary>
+        public decimal TotalOnTaxes { get; set; }
+
+        public Contract(Customer customer, MaterialWithPrice materialWithPrice, string description = null)
+            : base(materialWithPrice, description)
         {
+            Customer = customer;
         }
     }
 }

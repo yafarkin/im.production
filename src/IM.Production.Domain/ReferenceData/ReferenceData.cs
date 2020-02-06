@@ -6,7 +6,7 @@ using Epam.ImitationGames.Production.Domain.Production;
 namespace Epam.ImitationGames.Production.Domain.ReferenceData
 {
     /// <summary>
-    /// Класс, хранящий справочные данные и расчитывающий разные показатели
+    /// Класс, хранящий справочные данные и рассчитывающий разные показатели
     /// </summary>
     public static class ReferenceData
     {
@@ -46,102 +46,184 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static readonly List<TaxOnFactory> FactoryTaxes = new List<TaxOnFactory>();
 
         /// <summary>
+        /// Начальная сумма на счету команды.
+        /// </summary>
+        public static readonly decimal InitialCustomerBalance = 100000m;
+
+        /// <summary>
+        /// На какое количество дней открывается кредит.
+        /// </summary>
+        public static readonly uint CreditDaysDefault = 25;
+
+        /// <summary>
+        /// Под какой процент (в игровой день) выдается кредит.
+        /// </summary>
+        public static readonly decimal CreditPercentDefault = 0.1m;
+
+        /// <summary>
+        /// На какое количество дней открывается вклад.
+        /// </summary>
+        public static readonly uint DebitDaysDefault = 50;
+
+        /// <summary>
+        /// На какой процент (в игровой день) открывается вклад.
+        /// </summary>
+        public static readonly decimal DebitPercentDefault = 0.03m;
+
+        /// <summary>
         /// Справочные данные по производительности фабрики, если количество рабочих больше чем нужно.
         /// </summary>
         /// <remarks>Key - насколько рабочих больше чем нужно; Value - на сколько измениться общая производительность фабрики.</remarks>
-        public static readonly List<KeyValuePair<decimal, decimal>> FactoryOverPerformance = new List<KeyValuePair<decimal, decimal>>
+        public static readonly IDictionary<decimal, decimal> FactoryOverPerformance = new Dictionary<decimal, decimal>
         {
-            new KeyValuePair<decimal, decimal>(1.1m, 1.1m),
-            new KeyValuePair<decimal, decimal>(1.2m, 1.15m),
-            new KeyValuePair<decimal, decimal>(1.3m, 1.2m),
-            new KeyValuePair<decimal, decimal>(1.4m, 1.25m),
-            new KeyValuePair<decimal, decimal>(1.5m, 1.4m),
-            new KeyValuePair<decimal, decimal>(1.6m, 1.45m),
-            new KeyValuePair<decimal, decimal>(1.8m, 1.5m),
-            new KeyValuePair<decimal, decimal>(2m, 1.55m)
+            {1.1m, 1.1m},
+            {1.2m, 1.15m},
+            {1.3m, 1.2m},
+            {1.4m, 1.25m},
+            {1.5m, 1.4m},
+            {1.6m, 1.45m},
+            {1.8m, 1.5m},
+            {2m, 1.55m}
         };
 
         /// <summary>
         /// Стоимость фабрики по умолчанию.
         /// </summary>
         /// <remarks>Key - уровень поколения фабрики, Value - стоимость фабрики.</remarks>
-        public static readonly List<KeyValuePair<int, decimal>> DefaultFactoryCost =
-            new List<KeyValuePair<int, decimal>>
-            {
-                new KeyValuePair<int, decimal>(1, 10000),
-                new KeyValuePair<int, decimal>(2, 25000),
-                new KeyValuePair<int, decimal>(3, 50000),
-                new KeyValuePair<int, decimal>(4, 75000),
-                new KeyValuePair<int, decimal>(5, 110000),
-                new KeyValuePair<int, decimal>(6, 150000),
-                new KeyValuePair<int, decimal>(7, 200000),
-                new KeyValuePair<int, decimal>(8, 300000),
-                new KeyValuePair<int, decimal>(9, 500000),
-                new KeyValuePair<int, decimal>(10, 1000000)
-            };
+        public static readonly IDictionary<int, decimal> DefaultFactoryCost = new Dictionary<int, decimal>
+        {
+            {1, 1000},
+            {2, 2500},
+            {3, 5000},
+            {4, 7500},
+            {5, 11000},
+            {6, 15000},
+            {7, 20000},
+            {8, 30000},
+            {9, 50000},
+            {10, 100000}
+        };
 
         /// <summary>
         /// Стоимость конкретного типа фабрики.
         /// </summary>
         /// <remarks>Key - ID определения фабрики, Value - стоимость фабрики.</remarks>
-        public static readonly List<KeyValuePair<Guid, decimal>> FactoryCost = new List<KeyValuePair<Guid, decimal>>();
+        public static readonly IDictionary<Guid, decimal> FactoryCost = new Dictionary<Guid, decimal>();
 
         /// <summary>
         /// Стоимость исследования следующего поколения фабрики.
         /// </summary>
         /// <remarks>По умолчанию первое поколение уже исследовано. Key - уровень поколения, Value - стоимость исследования.</remarks>
-        public static readonly List<KeyValuePair<int, decimal>> GenerationFactoryRDCost = new List<KeyValuePair<int, decimal>>
+        public static readonly IDictionary<int, decimal> GenerationFactoryRDCost = new Dictionary<int, decimal>
         {
-            new KeyValuePair<int, decimal>(2, 5000),
-            new KeyValuePair<int, decimal>(3, 15000),
-            new KeyValuePair<int, decimal>(4, 25000),
-            new KeyValuePair<int, decimal>(5, 40000),
-            new KeyValuePair<int, decimal>(6, 60000),
-            new KeyValuePair<int, decimal>(7, 80000),
-            new KeyValuePair<int, decimal>(8, 120000),
-            new KeyValuePair<int, decimal>(9, 200000),
-            new KeyValuePair<int, decimal>(10, 400000)
+            {2, 500},
+            {3, 1500},
+            {4, 2500},
+            {5, 4000},
+            {6, 6000},
+            {7, 8000},
+            {8, 12000},
+            {9, 20000},
+            {10, 40000}
         };
 
         /// <summary>
-        /// Справочные данные по прокачке уровня на конкретной фабрике
+        /// Справочные данные по прокачке уровня на конкретной фабрике.
         /// </summary>
         /// <remarks>По умолчанию первый уровень фабрики уже исследован. Key - уровень поколения, Value - процент от стоимости фабрики.</remarks>
         /// <remarks>Т.е. указано - 5, 1.5. Это означает что что бы исследовать фабирку 5 уровня (находясь на 4), надо будет потратить 1.5 цены стоимости этой фабрики</remarks>
-        public static readonly List<KeyValuePair<int, decimal>> FactoryLevelUpRDCost =
-            new List<KeyValuePair<int, decimal>>
-            {
-                new KeyValuePair<int, decimal>(2, 0.33m),
-                new KeyValuePair<int, decimal>(3, 0.75m),
-                new KeyValuePair<int, decimal>(4, 1m),
-                new KeyValuePair<int, decimal>(5, 1.5m),
-            };
+        public static readonly IDictionary<int, decimal> FactoryLevelUpRDCost = new Dictionary<int, decimal>
+        {
+            {2, 0.33m}, {3, 0.75m}, {4, 1m}, {5, 1.5m}
+        };
+
+        /// <summary>
+        /// Справочные данные, по которой игра покупает фабрику.
+        /// </summary>
+        public static readonly decimal FactorySellDiscount = 0.75m;
+
+        /// <summary>
+        /// Справочные данные надбавки к цене фабрики при продаже, в зависимости от уровня.
+        /// </summary>
+        /// <remarks>Key - уровень поколения фабрики, Value - процент надбавки при продаже.</remarks>
+        public static readonly IDictionary<int, decimal> FactorySellCoeff = new Dictionary<int, decimal>
+        {
+            {1, 0},
+            {2, 20},
+            {3, 25},
+            {4, 30},
+            {5, 40},
+            {6, 50},
+            {7, 100}
+        };
 
         /// <summary>
         /// Базовая зарплата одного рабочего на фабрике.
         /// </summary>
-        public static decimal BaseWorkerSalay = 100m;
+        public static decimal BaseWorkerSalay = 6m;
 
         /// <summary>
         /// Налог на фабрику по умолчанию.
         /// </summary>
-        public static decimal DefaultFactoryTax = 0.1m;
+        public static decimal DefaultFactoryTax = 0.001m;
 
         /// <summary>
         /// Налог на продажу единицы материала по умолчанию.
         /// </summary>
         public static decimal DefaultMaterialTax = 0.01m;
 
+        private static T FindNearest<T>(int key, IDictionary<int, T> source)
+        {
+            if (source.ContainsKey(key))
+            {
+                return source[key];
+            }
+
+            var nearKey = 0;
+            var value = default(T);
+            foreach (var kv in source)
+            {
+                if (0 == nearKey || (key >= kv.Key && key - kv.Key < key - nearKey))
+                {
+                    nearKey = kv.Key;
+                    value = kv.Value;
+                }
+            }
+
+            return value;
+        }
+
+        private static T FindNearest<T>(decimal key, IDictionary<decimal, T> source)
+        {
+            if (source.ContainsKey(key))
+            {
+                return source[key];
+            }
+
+            var nearKey = 0m;
+            var value = default(T);
+            foreach (var kv in source)
+            {
+                if (0 == nearKey || (key >= kv.Key && key - kv.Key < key - nearKey))
+                {
+                    nearKey = kv.Key;
+                    value = kv.Value;
+                }
+            }
+
+            return value;
+        }
+
         /// <summary>
         /// Расчёт общей стоимости для исследования фабрик следующего поколения.
         /// </summary>
         /// <param name="customer">Команда.</param>
         /// <returns>Стоимость исследования фабрик следующего поколения.</returns>
-        public static decimal CalculateRDSummToNextGenerationLevel(Customer customer)
+        public static decimal CalculateRDSummToNextGenerationLevel(Customer customer, int level = 0)
         {
-            var currentGenerationLevel = customer.FactoryGenerationLevel;
-            var cost = GenerationFactoryRDCost.FirstOrDefault(c => c.Key == currentGenerationLevel + 1);
-            return cost.Value;
+            var currentGenerationLevel = 0 == level ? customer.FactoryGenerationLevel : level;
+            var cost = FindNearest(currentGenerationLevel + 1, GenerationFactoryRDCost);
+            return cost;
         }
 
         /// <summary>
@@ -149,43 +231,43 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// </summary>
         /// <param name="factory">Фабрика.</param>
         /// <returns>Стоимость исследования следующего уровня производительности фабрики.</returns>
-        public static decimal CalculateRDSummToNextFactoryLevelUp(Factory factory)
+        public static decimal CalculateRDSummToNextFactoryLevelUp(Factory factory, int level = 0)
         {
-            var currentFactoryLevel = factory.Level;
-            var cost = FactoryLevelUpRDCost.FirstOrDefault(c => c.Key == currentFactoryLevel + 1);
-            return CalculateFactoryCost(factory.FactoryDefinition) * cost.Value;
+            if (null == factory || null == factory.FactoryDefinition)
+            {
+                return 0;
+            }
+
+            var currentFactoryLevel = 0 == level ? factory.Level : level;
+            var cost = FindNearest(currentFactoryLevel + 1, FactoryLevelUpRDCost);
+            return CalculateFactoryCostForBuy(factory.FactoryDefinition) * cost;
         }
 
         /// <summary>
-        /// Расчёт стоимости фабрики, на основе её описания.
+        /// Расчёт стоимости покупки фабрики, на основе её описания.
         /// </summary>
         /// <param name="factoryDefinition">Описание фабрики.</param>
-        /// <returns>Стоимость фабрики.</returns>
-        public static decimal CalculateFactoryCost(FactoryDefinition factoryDefinition)
+        /// <returns>Стоимость фабрики для покупки.</returns>
+        public static decimal CalculateFactoryCostForBuy(FactoryDefinition factoryDefinition)
         {
-            decimal cost;
-            var factoryCost = FactoryCost.FirstOrDefault(f => f.Key == factoryDefinition.Id);
-            if (factoryCost.Key == Guid.Empty)
-            {
-                // считаем что данные по уровням упорядочены уже в определении
-                cost = DefaultFactoryCost.First().Value;
-                foreach (var defaultCost in DefaultFactoryCost)
-                {
-                    if (defaultCost.Key >= factoryDefinition.GenerationLevel)
-                    {
-                        cost = defaultCost.Value;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                cost = factoryCost.Value;
-            }
+            var cost = FactoryCost.ContainsKey(factoryDefinition.Id)
+                ? FactoryCost[factoryDefinition.Id]
+                : FindNearest(factoryDefinition.GenerationLevel, DefaultFactoryCost);
 
+            return cost;
+        }
+
+        /// <summary>
+        /// Расчёт стоимости продажи фабрики.
+        /// </summary>
+        /// <param name="factory">Фабрика.</param>
+        /// <returns>Стоимость фабрики для продажи.</returns>
+        public static decimal CalculateFactoryCostForSell(Factory factory)
+        {
+            var buyCost = CalculateFactoryCostForBuy(factory.FactoryDefinition);
+            var baseCost = buyCost * FactorySellDiscount;
+            var byLevelCost = baseCost * (FindNearest(factory.Level, FactorySellCoeff) / 100);
+            var cost = baseCost + byLevelCost;
             return cost;
         }
 
@@ -197,7 +279,9 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         public static decimal CalculateTaxOnFactory(Factory factory)
         {
             var tax = FactoryTaxes.FirstOrDefault(f => f.FactoryDefinition.Id == factory.FactoryDefinition.Id)?.Percent ?? DefaultFactoryTax;
-            return tax;
+            var factoryCost = CalculateFactoryCostForSell(factory);
+            var taxSumm = factoryCost * tax;
+            return taxSumm;
         }
 
         /// <summary>
@@ -286,14 +370,16 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             const decimal advancedExtraChargePercent = 0.5M;
 
             var maxGeneration = factories.Max(f => f.FactoryDefinition.GenerationLevel);
-            var developed = factory.FactoryDefinition.GenerationLevel > 1 && factory.FactoryDefinition.GenerationLevel == maxGeneration;
+            var isMaxGeneration = factory.FactoryDefinition.GenerationLevel == maxGeneration;
 
-            return developed ? advancedExtraChargePercent : defaultExtraChargePercent;
+            return isMaxGeneration ? advancedExtraChargePercent : defaultExtraChargePercent;
         }
 
         // TODO It might become redundant
-        public static void UpdateGameDemand(IEnumerable<Factory> factories)
+        public static void UpdateGameDemand(IList<Factory> factories)
         {
+            Demand.Materials.Clear();
+
             foreach (var factory in factories)
             {
                 var extraChargePercent = CalculateFactoryExtraChargePercent(factory, factories);
@@ -325,7 +411,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         /// <remarks>Рассчитывается, как 10% от поколения фабрики, умноженные на базовую зарплату.</remarks>
         public static decimal CalculateWorkerSalary(Factory factory)
         {
-            var decile = factory.FactoryDefinition.GenerationLevel * 0.1M;
+            var decile = 1 + (factory.FactoryDefinition.GenerationLevel - 1) * 0.1m;
             var salary = decile * BaseWorkerSalay;
 
             return salary;
@@ -350,23 +436,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
                 if (workers > baseWorkers)
                 {
                     // если же сотрудников больше, то зависимость уже не линейная
-                    var foundPerformance = 1m;
-
-                    foreach (var value in FactoryOverPerformance)
-                    {
-                        if (performance >= value.Key)
-                        {
-                            foundPerformance = value.Value;
-                        }
-                        else
-                        {
-                            // считаем что данные упорядочены уже в определении, поэтому далее будут только
-                            // большие значения и смысла тратить время CPU нет.
-                            break;
-                        }
-                    }
-
-                    performance = foundPerformance;
+                    performance = FindNearest(performance, FactoryOverPerformance);
                 }
             }
 
@@ -408,7 +478,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             {
                 Key = "metall_ruda",
                 ProductionType = GetProductionTypeByKey("metall"),
-                DisplayName = "Металлосодержащая руда",
+                DisplayName = "Металлосодержащая руда"
             });
 
             Materials.Add(new Material
@@ -996,7 +1066,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 10,
+                BaseWorkers = 3,
                 GenerationLevel = 1,
                 Name = "Добыча металлической руды",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1023,7 +1093,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 25,
+                BaseWorkers = 5,
                 GenerationLevel = 3,
                 Name = "Металло-прокатное производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1036,7 +1106,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 25,
+                BaseWorkers = 7,
                 GenerationLevel = 3,
                 Name = "Литейное производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1050,7 +1120,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 30,
+                BaseWorkers = 10,
                 GenerationLevel = 3,
                 Name = "Фрезерное производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1087,7 +1157,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 30,
+                BaseWorkers = 10,
                 GenerationLevel = 4,
                 Name = "Сборочное производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1108,7 +1178,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 50,
+                BaseWorkers = 18,
                 GenerationLevel = 4,
                 Name = "Автомобильное производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1127,7 +1197,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 80,
+                BaseWorkers = 25,
                 GenerationLevel = 5,
                 Name = "Грузовое производство",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1139,7 +1209,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 40,
+                BaseWorkers = 12,
                 GenerationLevel = 5,
                 Name = "Ж/д промышленность",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1151,7 +1221,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             FactoryDefinitions.Add(new FactoryDefinition
             {
                 ProductionType = GetProductionTypeByKey("metall"),
-                BaseWorkers = 100,
+                BaseWorkers = 32,
                 GenerationLevel = 6,
                 Name = "Авиа промышленность",
                 CanProductionMaterials = new Dictionary<int, List<Material>>
@@ -1187,7 +1257,45 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             }
         }
 
-        private static void InitReferences()
+        /// <summary>
+        /// Возвращает список доступных к покупке от игры фабрик.
+        /// </summary>
+        /// <param name="customer">Команда.</param>
+        /// <param name="onlyTopLevel">Только последнего уровня, иначе вообще всех доступных.</param>
+        /// <returns>Список доступных к покупке фабрик.</returns>
+        public static IList<FactoryDefinition> GetAvailFactoryDefenitions(Customer customer, bool onlyTopLevel = true)
+        {
+            var productionType = customer.ProductionType;
+            var factoryDefinitions = FactoryDefinitions.Where(f => f.ProductionType.Id == productionType.Id && f.GenerationLevel <= customer.FactoryGenerationLevel);
+            if (onlyTopLevel)
+            {
+                factoryDefinitions =  factoryDefinitions.Where(f => f.GenerationLevel == customer.FactoryGenerationLevel);
+            }
+
+            return factoryDefinitions.ToList();
+        }
+
+        /// <summary>
+        /// Расчёт процентной ставки страхования для продавца.
+        /// </summary>
+        /// <param name="customer">Команда продавца.</param>
+        /// <returns>Процентная ставка.</returns>
+        public static decimal CalculateInsurancePercentForSeller(Customer customer)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Расчёт процентной ставки страхования для покупателя.
+        /// </summary>
+        /// <param name="customer">Команда покупателя.</param>
+        /// <returns>Процентная ставка.</returns>
+        public static decimal CalculateInsurancePercentForBuyer(Customer customer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void InitReferences()
         {
             InitProductionTypes();
             InitMaterials();

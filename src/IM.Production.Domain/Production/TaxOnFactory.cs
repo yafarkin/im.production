@@ -1,7 +1,12 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 
 namespace Epam.ImitationGames.Production.Domain.Production
 {
+    /// <summary>
+    /// Определение налога на фабрику.
+    /// </summary>
+    [Serializable]
     public class TaxOnFactory : BaseEntity
     {
         /// <summary>

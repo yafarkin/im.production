@@ -1,4 +1,5 @@
-﻿using Epam.ImitationGames.Production.Domain.Base;
+﻿using System;
+using Epam.ImitationGames.Production.Domain.Base;
 using System.Collections.Generic;
 
 namespace Epam.ImitationGames.Production.Domain.Production
@@ -6,6 +7,7 @@ namespace Epam.ImitationGames.Production.Domain.Production
     /// <summary>
     /// Материал.
     /// </summary>
+    [Serializable]
     public class Material : VisibleEntity
     {
         public Material()

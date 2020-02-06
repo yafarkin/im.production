@@ -1,4 +1,5 @@
-﻿using Epam.ImitationGames.Production.Domain;
+﻿using System;
+using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Activity;
 using Epam.ImitationGames.Production.Domain.Base;
 using System.Collections.Generic;
@@ -7,14 +8,14 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
+using Epam.ImitationGames.Production.Domain.Production;
+using Epam.ImitationGames.Production.Domain.Static;
 
 namespace CalculationEngine
 {
     public class Game
     {
         public List<Customer> Customers { get; set; }
-
-        public GameTime Time { get; set; }
 
         public int TotalGameDays { get; set; }
 
@@ -23,7 +24,6 @@ namespace CalculationEngine
         public Game()
         {
             Customers = new List<Customer>();
-            Time = new GameTime();
             TotalGameDays = 0;
             Activity = new List<ActivityLog>();
         }
@@ -67,32 +67,69 @@ namespace CalculationEngine
             }
         }
 
-        protected string GetHashString(byte[] array)
+        protected static string GetHashString(byte[] array)
         {
             var sb = new StringBuilder();
             for (var i = 0; i < array.Length; i++)
             {
                 sb.Append(array[i].ToString("X2"));
             }
+
             return sb.ToString();
+        }
+
+        public static string GetMD5Hash(string str)
+        {
+            return GetMD5Hash(Encoding.ASCII.GetBytes(str));
+        }
+
+        public static string GetMD5Hash(byte[] array)
+        {
+            using (var md5 = MD5.Create())
+            {
+                var hashCode = GetHashString(md5.ComputeHash(array));
+                return hashCode;
+            }
         }
 
         public void AddActivity(BaseChanging changing)
         {
-            // TODO To serialize a class it has to have the Serializable attribute, I will fix it later, once Business Logic is covered
-            //using (var md5 = MD5.Create())
-            //{
-            //    var thisHashCode = GetHashString(md5.ComputeHash(ObjectToByteArray(changing)));
-            //    var prevHashCode = Activity.LastOrDefault()?.HashCode ?? string.Empty;
+            var thisHashCode = GetMD5Hash(ObjectToByteArray(changing));
+            var prevHashCode = Activity.LastOrDefault()?.HashCode ?? string.Empty;
 
-            //    var hashCode = GetHashString(md5.ComputeHash(Encoding.ASCII.GetBytes(thisHashCode + prevHashCode)));
+            var hashCode = GetMD5Hash(thisHashCode + prevHashCode);
 
-            //    Activity.Add(new ActivityLog
-            //    {
-            //        Change = changing,
-            //        HashCode = hashCode
-            //    });
-            //}
+            changing.DoAction();
+
+            Activity.Add(new ActivityLog {Change = changing, HashCode = hashCode});
+        }
+
+        public IList<BaseChanging> FilterActivity(int? gameDay = null, Customer customer = null, Factory factory = null,
+            IList<Type> activityTypes = null)
+        {
+            var result = Activity.Select(x => x.Change);
+
+            if (gameDay.HasValue)
+            {
+                result = result.Where(x => x.Time.Day == (0 == gameDay ? CurrentGameProps.GameDay : gameDay.Value));
+            }
+
+            if (customer != null)
+            {
+                result = result.Where(x => x.Customer.Id == customer.Id);
+            }
+
+            if (factory != null)
+            {
+                result = result.Where(x => x is FactoryChange f && f.Factory.Id == factory.Id);
+            }
+
+            if (activityTypes != null && activityTypes.Any())
+            {
+                result = result.Where(x => activityTypes.Contains(x.GetType()));
+            }
+
+            return result.ToList();
         }
     }
 }
