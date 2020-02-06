@@ -10,7 +10,7 @@ export class ContractsService {
     constructor(private httpClient: HttpClient) {
     }
 
-    getContracts(): Observable<ContractDto[]> {
+    getAllContracts(): Observable<ContractDto[]> {
         return this.httpClient.get<ContractDto[]>(
             "/api/contracts/all");
     }

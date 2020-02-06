@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace IM.Production.WebApp.Controllers
 {
     [ApiController]
-    [Route("api/contracts")] //contracts
+    [Route("api/[controller]")]
     public class ContractsController : ControllerBase
     {
         private readonly IContractsService _service;

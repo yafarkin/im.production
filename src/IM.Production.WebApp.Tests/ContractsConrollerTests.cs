@@ -9,9 +9,6 @@ namespace IM.Production.WebApp.Tests
         [TestMethod]
         public void GetAllContracts()
         {
-            var contractsController = new ContractsController();
-            var allContracts = contractsController.GetContracts();
-            Assert.IsNotNull(allContracts);
         }
     }
 }

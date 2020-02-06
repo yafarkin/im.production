@@ -16,74 +16,101 @@ import { ContractsService } from '../services/contracts.service';
 export class ContractsComponent implements OnInit {
 
     constructor(private contractsService: ContractsService) { }
+    gamePlayerSaleFlag: boolean = false;
+    gamePlayerBuyFlag: boolean = false;
+    playerPlayerFlag: boolean = false;
     displayedColumns: string[] = [
-        'index', 'tillDate', 'tillCount', 'totalSumm'
-        , 'sourceFactoryCustomerLogin', 'destinationFactoryCustomerLogin'
+        'index', 'tillDate', 'tillCount', 'totalSumm', 'sourceFactoryCustomerLogin', 'destinationFactoryCustomerLogin'
     ];
-    arrayData: ContractDto[] = [
-    ];
+    arrayData: ContractDto[] = [];
+    filteredArrayData: ContractDto[] = [];
+    thisArrayDataSource: MatTableDataSource<ContractDto>;
     dataSource: MatTableDataSource<ContractDto> = new MatTableDataSource<ContractDto>(this.arrayData);
-    toggleButtonFlag: string;
 
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-    updateContracts(): void {
-        this.contractsService.getContracts().subscribe(
+    getAllContracts(): void {
+        this.contractsService.getAllContracts().subscribe(
             (contracts) => {
                 this.arrayData = contracts;
-                this.dataSource = new MatTableDataSource<ContractDto>(this.arrayData);
+                this.thisArrayDataSource = new MatTableDataSource<ContractDto>(this.arrayData);
+                this.dataSource = this.thisArrayDataSource;
                 this.dataSource.sort = this.sort;
                 this.dataSource.paginator = this.paginator;
             }
         );
     }
 
-    toggleButtonFlagChanged(): void {
-        if (this.toggleButtonFlag === null || this.toggleButtonFlag.length <= 0) {
-            this.dataSource = new MatTableDataSource<ContractDto>(this.arrayData);
+    gamePlayerSaleFlagChanged(): void {
+        if (this.gamePlayerSaleFlag) {
+            this.gamePlayerSaleFlag = false;
+        }
+        else {
+            this.gamePlayerSaleFlag = true;
+        }
+        this.dataTableFilter();
+    }
+
+    gamePlayerBuyFlagChanged(): void {
+        if (this.gamePlayerBuyFlag) {
+            this.gamePlayerBuyFlag = false;
+        }
+        else {
+            this.gamePlayerBuyFlag = true;
+        }
+        this.dataTableFilter();
+    }
+
+    playerPlayerFlagChanged(): void {
+        if (this.playerPlayerFlag) {
+            this.playerPlayerFlag = false;
+        }
+        else {
+            this.playerPlayerFlag = true;
+        }
+        this.dataTableFilter();
+    }
+
+    dataTableFilter(): void {
+        if (!this.gamePlayerSaleFlag
+            && !this.gamePlayerBuyFlag
+            && !this.playerPlayerFlag) {
+            this.dataSource = this.thisArrayDataSource;
             this.dataSource.sort = this.sort;
             this.dataSource.paginator = this.paginator;
             return;
         }
 
-        let gamePlayerSaleIndex: number = this.toggleButtonFlag.indexOf("GamePlayerSale");
-        let gamePlayerBuyIndex: number = this.toggleButtonFlag.indexOf("GamePlayerBuy");
-        let playerPlayerIndex: number = this.toggleButtonFlag.indexOf("PlayerPlayer");
-
         if (this.arrayData === null || this.arrayData.length <= 0) {
             return;
         }
 
-        let filteredArrayData: ContractDto[] = [];
-        for (let i: number = 0; i < this.arrayData.length; i++) {
-            let data: ContractDto = this.arrayData[i];
-            if (gamePlayerSaleIndex != -1
+        for (let data of this.arrayData) {
+            if (this.gamePlayerSaleFlag
                 && data.sourceFactoryCustomerLogin === "Game"
                 && data.destinationFactoryCustomerLogin !== "Game") {
-                filteredArrayData.push(data);
-            }
-
-            if (gamePlayerBuyIndex != -1
+                this.filteredArrayData.push(data);
+            } else if (this.gamePlayerBuyFlag
                 && data.sourceFactoryCustomerLogin !== "Game"
                 && data.destinationFactoryCustomerLogin === "Game") {
-                filteredArrayData.push(data);
-            }
-
-            if (playerPlayerIndex != -1
+                this.filteredArrayData.push(data);
+            } else if (this.playerPlayerFlag
                 && data.sourceFactoryCustomerLogin !== "Game"
                 && data.destinationFactoryCustomerLogin !== "Game") {
-                filteredArrayData.push(data);
+                this.filteredArrayData.push(data);
             }
         }
 
-        this.dataSource = new MatTableDataSource<ContractDto>(filteredArrayData);
+        this.dataSource = new MatTableDataSource<ContractDto>(this.filteredArrayData);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
+        this.filteredArrayData = [];
     }
 
     ngOnInit() {
-        this.updateContracts();
+
+        this.getAllContracts();
     }
 
 }

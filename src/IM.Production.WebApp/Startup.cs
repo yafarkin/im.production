@@ -18,7 +18,7 @@ namespace IM.Production.WebApp
         {
             services.AddControllers();
             /// <summary>
-            /// Test data for cheking displaying information about teams.
+            /// Test data for cheking displaying information about contracts.
             /// </summary>>
             var game = FakeGameInitializer.CreateGame(15);
             services.AddSingleton<Game>(game);

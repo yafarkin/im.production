@@ -1,16 +1,15 @@
-<mat-toolbar class="contract-main-text">Информация по контрактам</mat-toolbar>
+<mat-toolbar class="contracts-main-text">Информация по контрактам</mat-toolbar>
 
-<mat-button-toggle-group [(ngModel)]="toggleButtonFlag" (change)="toggleButtonFlagChanged()" multiple name="fontStyle"
-    aria-label="Font Style">
-    <mat-button-toggle value="GamePlayerSale">Игра продает игроку</mat-button-toggle>
-    <mat-button-toggle value="GamePlayerBuy">Игра покупает у игрока</mat-button-toggle>
-    <mat-button-toggle value="PlayerPlayer">Все контракты между игроками</mat-button-toggle>
+<mat-button-toggle-group multiple aria-label="Font Style">
+    <mat-button-toggle (change)="gamePlayerSaleFlagChanged()">Игра продает игроку</mat-button-toggle>
+    <mat-button-toggle (change)="gamePlayerBuyFlagChanged()">Игра покупает у игрока</mat-button-toggle>
+    <mat-button-toggle (change)="playerPlayerFlagChanged()">Все контракты между игроками</mat-button-toggle>
 </mat-button-toggle-group>
 
-<button (click)="updateContracts()" mat-button>Update</button>
+<button (click)="getAllContracts()" mat-button>Update</button>
 
 <div class="mat-elevation-z8" matSort>
-    <table class="contract-table" mat-table [dataSource]="dataSource">
+    <table class="contracts-table" mat-table [dataSource]="dataSource">
         <!-- Index Column -->
         <ng-container matColumnDef="index">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Index </th>
