@@ -1,20 +1,24 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
-import { OldAppComponent } from './old-app/app.component';
 import { AppComponent } from './app/app.component';
-import { LoginComponent } from './login/login.component';
+import { TeamsComponent } from '../teams/teams.component';
+import { TeamsService } from '../services/teams.service';
+import { MatTableModule } from '@angular/material/table';
+import { HttpClientModule } from '@angular/common/http';
+import { OldAppComponent } from './old-app/app.component';
 
 @NgModule({
     declarations: [
-        OldAppComponent,
         AppComponent,
-        LoginComponent
+        OldAppComponent,
+        TeamsComponent
     ],
     imports: [
-        BrowserModule
+        BrowserModule,
+        MatTableModule,
+        HttpClientModule
     ],
-    providers: [],
+    providers: [TeamsService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
