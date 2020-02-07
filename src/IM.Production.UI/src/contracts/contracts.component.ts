@@ -35,9 +35,7 @@ export class ContractsComponent implements OnInit {
             (contracts) => {
                 this.arrayData = contracts;
                 this.thisArrayDataSource = new MatTableDataSource<ContractDto>(this.arrayData);
-                this.dataSource = this.thisArrayDataSource;
-                this.dataSource.sort = this.sort;
-                this.dataSource.paginator = this.paginator;
+                this.dataTableFilter();
             }
         );
     }
@@ -109,7 +107,6 @@ export class ContractsComponent implements OnInit {
     }
 
     ngOnInit() {
-
         this.getAllContracts();
     }
 
