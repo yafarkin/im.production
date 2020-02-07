@@ -1,1 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
+// За более подробной информацие проследуйте по ссылке:
+// https://material.angular.io/guide/theming
+
+// Импортируем Angular Material
+@import '~@angular/material/theming';
+
+// Подключаем базовые стили для Angular Material.
+@include mat-core();
+
+// Настраиваем тему для mat-компонентов
+$IM-Production-UI-primary: mat-palette($mat-indigo);
+$IM-Production-UI-accent: mat-palette($mat-pink, A200, A100, A400);
+$IM-Production-UI-warn: mat-palette($mat-red);
+$IM-Production-UI-theme: mat-light-theme($IM-Production-UI-primary,$IM-Production-UI-accent,$IM-Production-UI-warn);
+
+// Подключаем стиль для темы для всех mat-компонентов, которые используются в приложении
+// Можно также подключить стили для каждого компонента отдельно,
+// например, подключение стиля для кнопки будет следующим:
+// @include mat-button-theme($IM-Production-UI-theme);
+// Здесь все расписывается оочень подробно [самая полезная ссылка]:
+// https://blog.thoughtram.io/angular/2017/05/23/custom-themes-with-angular-material.html
+@include angular-material-theme($IM-Production-UI-theme);
+@include mat-button-theme($IM-Production-UI-theme);

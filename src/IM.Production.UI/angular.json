@@ -68,6 +68,7 @@
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
                         "browserTarget": "IM-Production-UI:build",
+                        "proxyConfig": "proxy.conf.json"
                     },
                     "configurations": {
                         "production": {
