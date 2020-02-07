@@ -6,13 +6,17 @@ import { ContractDto } from '../models/dtos/contract.dto';
 
 @Injectable()
 export class ContractsService {
-    private url: string = "/api/contracts/all";
+    private contractUrl: string = "/api/contracts/single";
+    private allUrl: string = "/api/contracts/all";
 
     constructor(private httpClient: HttpClient) {
     }
 
-    getAllContracts(): Observable<ContractDto[]> {
-        return this.httpClient.get<ContractDto[]>(this.url);
+    getContract(): Observable<ContractDto> {
+        return this.httpClient.get<ContractDto>(this.contractUrl);
     }
 
+    getAllContracts(): Observable<ContractDto[]> {
+        return this.httpClient.get<ContractDto[]>(this.allUrl);
+    }
 }

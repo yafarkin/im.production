@@ -20,7 +20,7 @@ export class ContractsComponent implements OnInit {
     gamePlayerBuyFlag: boolean = false;
     playerPlayerFlag: boolean = false;
     displayedColumns: string[] = [
-        'index', 'tillDate', 'tillCount', 'totalSumm', 'sourceFactoryCustomerLogin', 'destinationFactoryCustomerLogin'
+        'index', 'tillDate', 'tillCount', 'totalSumm', 'sourceCustomerLogin', 'sourceFactoryName', 'sourceGenerationLevel', 'sourceWorkers', 'destinationCustomerLogin', 'destinationFactoryName', 'destinationGenerationLevel', 'destinationWorkers'
     ];
     arrayData: ContractDto[] = [];
     filteredArrayData: ContractDto[] = [];
@@ -86,16 +86,16 @@ export class ContractsComponent implements OnInit {
 
         for (let data of this.arrayData) {
             if (this.gamePlayerSaleFlag
-                && data.sourceFactoryCustomerLogin === "Game"
-                && data.destinationFactoryCustomerLogin !== "Game") {
+                && data.sourceCustomerLogin === "Game"
+                && data.destinationCustomerLogin !== "Game") {
                 this.filteredArrayData.push(data);
             } else if (this.gamePlayerBuyFlag
-                && data.sourceFactoryCustomerLogin !== "Game"
-                && data.destinationFactoryCustomerLogin === "Game") {
+                && data.sourceCustomerLogin !== "Game"
+                && data.destinationCustomerLogin === "Game") {
                 this.filteredArrayData.push(data);
             } else if (this.playerPlayerFlag
-                && data.sourceFactoryCustomerLogin !== "Game"
-                && data.destinationFactoryCustomerLogin !== "Game") {
+                && data.sourceCustomerLogin !== "Game"
+                && data.destinationCustomerLogin !== "Game") {
                 this.filteredArrayData.push(data);
             }
         }

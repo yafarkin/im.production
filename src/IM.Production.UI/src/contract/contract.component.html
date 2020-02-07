@@ -1,0 +1,40 @@
+<div class="contract-info">
+    <div class="contract-label">Котракт</div>
+    <mat-divider></mat-divider>
+    <mat-list class="contract-info-base-list">
+        <div> TotalSumm {{contract?.totalSumm}} / {{contract?.totalCountComplete}} </div>
+        <div> TillCount {{contract?.tillCount}} </div>
+        <div> TillDate {{contract?.tillDate}} </div>
+    </mat-list>
+
+    <mat-grid-list cols="2" rowHeight="6:1">
+        <mat-grid-tile>
+            <div>Source</div>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+            <div>Destination</div>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+            <mat-list class="contract-info-list">
+                <div> CustomerLogin {{contract?.sourceCustomerLogin}} </div>
+                <div> FactoryName {{contract?.sourceFactoryName}} </div>
+                <div> GenerationLevel {{contract?.sourceGenerationLevel}} </div>
+                <div> Workers {{contract?.sourceWorkers}} </div>
+            </mat-list>
+        </mat-grid-tile>
+
+
+        <mat-grid-tile>
+            <mat-list class="contract-info-list">
+                <div> CustomerLogin {{contract?.destinationCustomerLogin}} </div>
+                <div> FactoryName {{contract?.destinationFactoryName}} </div>
+                <div> GenerationLevel {{contract?.destinationGenerationLevel}} </div>
+                <div> Workers {{contract?.destinationWorkers}} </div>
+            </mat-list>
+        </mat-grid-tile>
+    </mat-grid-list>
+
+    <mat-divider></mat-divider>
+</div>
