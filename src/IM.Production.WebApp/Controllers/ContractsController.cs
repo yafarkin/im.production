@@ -38,19 +38,10 @@ namespace IM.Production.WebApp.Controllers
             foreach (var element in customerContracts)
             {
                 var dto = _mapper?.Map<ContractDto>(element);
-               
-                if (dto != null)
-                {
-                    if (dto.DestinationFactoryCustomerLogin == null || dto.SourceFactoryCustomerLogin == null)
-                    {
-                        continue;
-                    }
-                    result.Add(dto);
-                }
+                result.Add(dto);
             }
 
             return result;
         }
-
     }
 }
