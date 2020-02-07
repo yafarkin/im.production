@@ -10,7 +10,11 @@
   </ItemGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
     <ProjectReference Include="..\IM.Production.CalculationEngine\IM.Production.CalculationEngine.csproj" />
+=======
+    <ProjectReference Include="..\IM.Production.Domain\IM.Production.Domain.csproj" />
+>>>>>>> d2f996465694edb0ccf1f595191be1d3e642e6e7
     <ProjectReference Include="..\IM.Production.Services\IM.Production.Services.csproj" />
   </ItemGroup>
 
