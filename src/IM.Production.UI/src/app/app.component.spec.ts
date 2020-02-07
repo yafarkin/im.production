@@ -8,10 +8,6 @@ describe('AppComponent', () => {
             declarations: [
                 AppComponent
             ],
-<<<<<<< HEAD
-=======
-            schemas: [NO_ERRORS_SCHEMA]
->>>>>>> d2f996465694edb0ccf1f595191be1d3e642e6e7
         }).compileComponents();
     }));
 
