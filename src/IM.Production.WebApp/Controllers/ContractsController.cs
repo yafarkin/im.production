@@ -29,12 +29,21 @@ namespace IM.Production.WebApp.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("single")]
-        public ContractDto GetContract()
+        public ContractDto GetContract([FromBody] ContractDto contractId)
         {
-            var customerContracts = _service.GetContracts().ToArray();
-            return _mapper?.Map<ContractDto>(customerContracts[10]);
+            var guid = new Guid();
+            Guid.TryParse(contractId.Id, out guid);
+            var customerContracts = _service.GetContracts();
+            foreach (var contract in customerContracts)
+            {
+                if (contract.Id.Equals(guid))
+                {
+                    return _mapper?.Map<ContractDto>(contract);
+                }
+            }
+            return null;
         }
 
         [HttpGet]

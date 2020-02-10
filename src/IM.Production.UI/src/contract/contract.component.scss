@@ -1,5 +1,4 @@
 .contract-info {
-    background: yellow;
     font-size: 16px;
     margin-top: 5%;
     margin-left: auto;
@@ -7,16 +6,12 @@
     width: 900px;
 }
 
-.contract-label {
-    background: rgb(11, 80, 104);
-    width: 100px;
-    font-size: 20px;
-    margin-left: auto;
-    margin-right: auto;
+.contract-header-image {
+    background-image: url('../assets/images/contract/mi_contract.svg');
+    background-size: cover;
 }
 
 .contract-info-base-list {
-    background: rgb(94, 204, 241);
     width: 300px;
     margin-top: 1%;
     margin-left: 35%;
