@@ -1,40 +1,48 @@
-<div class="contract-info">
-    <div class="contract-label">Котракт</div>
+<mat-card class="contract-info">
+    <mat-card-header>
+        <div mat-card-avatar class="contract-header-image"></div>
+        <mat-card-title>Контракт</mat-card-title>
+        <mat-card-subtitle>{{contract?.id}}</mat-card-subtitle>
+    </mat-card-header>
     <mat-divider></mat-divider>
     <mat-list class="contract-info-base-list">
-        <div> TotalSumm {{contract?.totalSumm}} / {{contract?.totalCountComplete}} </div>
-        <div> TillCount {{contract?.tillCount}} </div>
-        <div> TillDate {{contract?.tillDate}} </div>
+        <div> Поставлено материала: {{contract?.totalCountCompleted | number}} / {{contract?.tillCount | number}} шт. </div>
+        <div> Общая сумма: {{contract?.totalSumm | number}} </div>
+        <div> До даты: {{contract?.tillDate}} </div>
     </mat-list>
 
-    <mat-grid-list cols="2" rowHeight="6:1">
-        <mat-grid-tile>
-            <div>Source</div>
-        </mat-grid-tile>
+    <mat-card-content>
+        <mat-grid-list cols="2" rowHeight="6:1">
+            <mat-grid-tile>
+                <div>Поставщик</div>
+            </mat-grid-tile>
 
-        <mat-grid-tile>
-            <div>Destination</div>
-        </mat-grid-tile>
+            <mat-grid-tile>
+                <div>Покупатель</div>
+            </mat-grid-tile>
 
-        <mat-grid-tile>
-            <mat-list class="contract-info-list">
-                <div> CustomerLogin {{contract?.sourceCustomerLogin}} </div>
-                <div> FactoryName {{contract?.sourceFactoryName}} </div>
-                <div> GenerationLevel {{contract?.sourceGenerationLevel}} </div>
-                <div> Workers {{contract?.sourceWorkers}} </div>
-            </mat-list>
-        </mat-grid-tile>
+            <mat-grid-tile>
+                <mat-list class="contract-info-list">
+                    <div> Логин: {{contract?.sourceCustomerLogin}} </div>
+                    <div> Имя фабрики: {{contract?.sourceFactoryName}} </div>
+                    <div> Уровень поколения: {{contract?.sourceGenerationLevel}} </div>
+                    <div> Кол-во рабочих: {{contract?.sourceWorkers}} </div>
+                </mat-list>
+            </mat-grid-tile>
 
 
-        <mat-grid-tile>
-            <mat-list class="contract-info-list">
-                <div> CustomerLogin {{contract?.destinationCustomerLogin}} </div>
-                <div> FactoryName {{contract?.destinationFactoryName}} </div>
-                <div> GenerationLevel {{contract?.destinationGenerationLevel}} </div>
-                <div> Workers {{contract?.destinationWorkers}} </div>
-            </mat-list>
-        </mat-grid-tile>
-    </mat-grid-list>
+            <mat-grid-tile>
+                <mat-list class="contract-info-list">
+                    <div> Логин: {{contract?.destinationCustomerLogin}} </div>
+                    <div> Имя фабрики: {{contract?.destinationFactoryName}} </div>
+                    <div> Уровень поколения: {{contract?.destinationGenerationLevel}} </div>
+                    <div> Кол-во рабочих: {{contract?.destinationWorkers}} </div>
+                </mat-list>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </mat-card-content>
 
-    <mat-divider></mat-divider>
-</div>
+    <mat-card-actions>
+        <button mat-button (click)="backToContractsClick()">Вернуться к таблице</button>
+    </mat-card-actions>
+</mat-card>

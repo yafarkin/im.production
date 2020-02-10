@@ -80,6 +80,7 @@ namespace IM.Production.WebApp.Helpers
                         logic.TakeDebitOrCredit(customer, bfo);
 
                         var factoryDefinition = new FactoryDefinition();
+                        factoryDefinition.Name = "Factory" + new System.Random().Next(100, 1000).ToString();
                         factoryDefinition.BaseWorkers = 50;
                         factoryDefinition.ProductionType = new ProductionType();
                         factoryDefinition.ProductionType.Id = customer.ProductionType.Id;
@@ -94,12 +95,10 @@ namespace IM.Production.WebApp.Helpers
 
                         #region CreateContract
                         contract.SourceFactory = GetFirstFactory(customer.Factories);
-                        contract.TillCount =
-                            (int?)((r * materialNumber + c * System.DateTime.Now.Ticks + 1) / (System.DateTime.Now.Second + 1) % 10_000_000);
-                        contract.TillDate =
-                            (int?)(System.DateTime.Now.Ticks % 10_000_000);
-                        contract.TotalSumm =
-                            (decimal)(contract.TillCount * contract.TillDate + 1) % 10_000_000;
+                        contract.TotalSumm = 500_000;
+                        contract.TotalCountCompleted = 137;
+                        contract.TillCount = 1_201;
+                        contract.TillDate = 12_04_20;
                         contract.DestinationFactory = (c >= 1) ? GetFirstFactory(customerList[c - 1].Factories) : new Factory();
 
                         if (contract?.DestinationFactory != null && contract?.SourceFactory != null)

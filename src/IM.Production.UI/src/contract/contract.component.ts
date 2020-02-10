@@ -1,6 +1,8 @@
+import { Input } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { ContractsService } from '../services/contracts.service';
 import { ContractDto } from '../models/dtos/contract.dto';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-contract',
@@ -9,16 +11,24 @@ import { ContractDto } from '../models/dtos/contract.dto';
     providers: [ContractsService]
 })
 export class ContractComponent implements OnInit {
+    contractId: string;
     contract: ContractDto;
 
-    constructor(private contractsService: ContractsService) { }
+    constructor(private router: Router, private activateRoute: ActivatedRoute, private contractsService: ContractsService){
+        this.contractId = activateRoute.snapshot.params['id'];
+    }
 
     ngOnInit() {
-        this.contractsService.getContract().subscribe(
+        this.contractsService.getContract(this.contractId).subscribe(
             contract => {
                 console.log("[success]");
                 this.contract = contract;
-            }
+            },
+            error => { console.log("[ERROR]"); }
         )
+    }
+
+    backToContractsClick(): void {
+        this.router.navigateByUrl("/contracts");
     }
 }

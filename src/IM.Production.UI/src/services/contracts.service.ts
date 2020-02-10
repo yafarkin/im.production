@@ -12,8 +12,10 @@ export class ContractsService {
     constructor(private httpClient: HttpClient) {
     }
 
-    getContract(): Observable<ContractDto> {
-        return this.httpClient.get<ContractDto>(this.contractUrl);
+    getContract(id: string): Observable<ContractDto> {
+        let toPost: ContractDto = new ContractDto();
+        toPost.id = id;
+        return this.httpClient.post<ContractDto>(this.contractUrl, toPost);
     }
 
     getAllContracts(): Observable<ContractDto[]> {

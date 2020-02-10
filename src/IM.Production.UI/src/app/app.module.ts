@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Routes, RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -14,11 +15,20 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCardModule } from '@angular/material/card';
 
 import { AppComponent } from './app.component';
 import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
+
+const appRoutes: Routes = [
+    { path: 'contracts', component: ContractsComponent },
+    { path: 'contracts/:id', component: ContractComponent }
+    // ,
+    // { path: '**', redirectTo: 'contracts'}
+];
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -29,11 +39,12 @@ import { ContractsComponent } from '../contracts/contracts.component';
     imports: [
         CommonModule,
         BrowserModule,
+        RouterModule.forRoot(appRoutes),
         FormsModule,
         HttpClientModule,
         BrowserAnimationsModule,
         MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatButtonToggleModule,
-        MatToolbarModule, MatDividerModule, MatListModule, MatGridListModule
+        MatToolbarModule, MatDividerModule, MatListModule, MatGridListModule, MatCardModule
     ],
     providers: [],
     bootstrap: [
