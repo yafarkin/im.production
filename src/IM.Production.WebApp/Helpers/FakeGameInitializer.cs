@@ -96,6 +96,7 @@ namespace IM.Production.WebApp.Helpers
                         contract.SourceFactory = GetFirstFactory(customer.Factories);
                         contract.TillCount =
                             (int?)((r * materialNumber + c * System.DateTime.Now.Ticks + 1) / (System.DateTime.Now.Second + 1) % 10_000_000);
+                        contract.TotalCountCompleted = 50;
                         contract.TillDate =
                             (int?)(System.DateTime.Now.Ticks % 10_000_000);
                         contract.TotalSumm =

@@ -8,6 +8,8 @@ namespace IM.Production.WebApp.Dtos
         public FactoryProfile()
         {
             CreateMap<Contract, ContractDto>()
+            .ForMember(source => source.Id,
+                        opt => opt.MapFrom(dest => dest.Id))
             .ForMember(source => source.SourceCustomerLogin,
                         opt => opt.MapFrom(dest => dest.SourceFactory.Customer.Login))
             .ForMember(source => source.SourceFactoryName,

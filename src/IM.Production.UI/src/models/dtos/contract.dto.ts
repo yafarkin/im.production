@@ -4,7 +4,7 @@ export class ContractDto {
     /// Общая сумма на закупку/продажу, прошедшую по контракту.
     public totalSumm: number;
     /// Количество материала, уже поставленное по контракту.
-    public totalCountComplete: number;
+    public totalCountCompleted: number;
     /// Если указано, то контракт действует до поставки определенного количества материала.
     public tillCount: number;
     /// Если указано, то контракт действует до указанной даты.

@@ -19,7 +19,7 @@ namespace IM.Production.WebApp.Dtos
         /// <summary>
         /// Количество материала, уже поставленное по контракту.
         /// </summary>
-        public int TotalCountComplete { get; set; }
+        public int TotalCountCompleted { get; set; }
 
         /// <summary>
         /// Если указано, то контракт действует до поставки определенного количества материала.
