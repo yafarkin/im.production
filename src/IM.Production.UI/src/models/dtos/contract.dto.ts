@@ -1,10 +1,10 @@
 export class ContractDto {
-    // Уникальный Идентификатор объекта
+    // Уникальны id объекта
     public id: string;
     /// Общая сумма на закупку/продажу, прошедшую по контракту.
     public totalSumm: number;
     /// Количество материала, уже поставленное по контракту.
-    public totalCountCompleted: number;
+    public totalCountComplete: number;
     /// Если указано, то контракт действует до поставки определенного количества материала.
     public tillCount: number;
     /// Если указано, то контракт действует до указанной даты.

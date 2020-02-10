@@ -23,8 +23,7 @@ export class ContractComponent implements OnInit {
             contract => {
                 console.log("[success]");
                 this.contract = contract;
-            },
-            error => { console.log("[ERROR]"); }
+            }
         )
     }
 

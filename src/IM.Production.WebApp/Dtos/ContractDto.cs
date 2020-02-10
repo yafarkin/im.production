@@ -8,10 +8,6 @@ namespace IM.Production.WebApp.Dtos
     public class ContractDto
     {
         /// <summary>
-        /// Уникальный Идентификатор объекта
-        /// </summary>
-        public string Id { get; set; }
-        /// <summary>
         /// Общая сумма на закупку/продажу, прошедшую по контракту.
         /// </summary>
         public decimal TotalSumm { get; set; }
