@@ -4,7 +4,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Routes, RouterModule } from '@angular/router';
 
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -14,21 +16,34 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { AppComponent } from './app.component';
 import { ContractsComponent } from '../contracts/contracts.component';
 import { TeamsComponent } from '../teams/teams.component';
+import { TeamsService } from '../services/teams.service';
+import { TeamDetailsComponent } from '../team-details/team-details.component';
+
+// определение маршрутов
+const appRoutes: Routes = [
+    { path: '', component: TeamsComponent },
+    { path: 'teamDetails', component: TeamDetailsComponent }
+];
 
 @NgModule({
     declarations: [
         AppComponent,
         ContractsComponent,
-        TeamsComponent
+        TeamsComponent,
+        TeamDetailsComponent
     ],
     imports: [
         CommonModule, BrowserModule, FormsModule,
         MatTableModule, MatPaginatorModule, MatSortModule,
         MatButtonModule, MatButtonToggleModule, MatToolbarModule,
+        MatTabsModule,
         HttpClientModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        BrowserModule, RouterModule.forRoot(appRoutes)
     ],
-    providers: [],
+    providers: [
+        TeamsService
+    ],
     bootstrap: [
         AppComponent
     ]
