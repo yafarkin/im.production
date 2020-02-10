@@ -5,40 +5,111 @@
         <mat-card-subtitle>{{contract?.id}}</mat-card-subtitle>
     </mat-card-header>
     <mat-divider></mat-divider>
-    <mat-list class="contract-info-base-list">
-        <div> Поставлено материала: {{contract?.totalCountCompleted | number}} / {{contract?.tillCount | number}} шт. </div>
-        <div> Общая сумма: {{contract?.totalSumm | number}} </div>
-        <div> До даты: {{contract?.tillDate}} </div>
-    </mat-list>
+    <mat-card-content class="contract-card-content">
 
-    <mat-card-content>
-        <mat-grid-list cols="2" rowHeight="6:1">
-            <mat-grid-tile>
-                <div>Поставщик</div>
+        <mat-grid-list cols="2" rowHeight="2:1">
+
+            <mat-grid-tile colspan="2">
+                <mat-card class="contract-base-info">
+                    <mat-card-header>
+                        <mat-card-title>Общая информация</mat-card-title>
+                    </mat-card-header>
+                    <mat-divider></mat-divider>
+
+                    <mat-card-content>
+                        <mat-grid-list cols="2" rowHeight="8:1">
+
+                            <mat-grid-tile>Поставлено материала:</mat-grid-tile>
+                            <mat-grid-tile>{{contract?.totalCountCompleted | number}} / {{contract?.tillCount | number}} шт.</mat-grid-tile>
+                            <mat-grid-tile>Общая сумма:</mat-grid-tile>
+                            <mat-grid-tile>{{contract?.totalSumm | number}}</mat-grid-tile>
+                            <mat-grid-tile>До даты:</mat-grid-tile>
+                            <mat-grid-tile>{{contract?.tillDate}}</mat-grid-tile>
+
+                        </mat-grid-list>
+                    </mat-card-content>
+                </mat-card>
             </mat-grid-tile>
 
             <mat-grid-tile>
-                <div>Покупатель</div>
+                <mat-card>
+
+                    <mat-card-title>Покупатель</mat-card-title>
+                    <mat-divider></mat-divider>
+                    <mat-card-content>
+                        <mat-grid-list cols="2" rowHeight="4:1" class="contract-info-list">
+                            <mat-grid-tile>
+                                Логин:
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                {{contract?.sourceCustomerLogin}}
+                            </mat-grid-tile>
+
+                            <mat-grid-tile>
+                                Имя фабрики:
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                {{contract?.sourceFactoryName}}
+                            </mat-grid-tile>
+
+                            <mat-grid-tile>
+                                Уровень поколения:
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                {{contract?.sourceGenerationLevel}}
+                            </mat-grid-tile>
+
+                            <mat-grid-tile>
+                                Кол-во рабочих:
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                {{contract?.sourceWorkers}}
+                            </mat-grid-tile>
+
+                        </mat-grid-list>
+                    </mat-card-content>
+                </mat-card>
             </mat-grid-tile>
 
             <mat-grid-tile>
-                <mat-list class="contract-info-list">
-                    <div> Логин: {{contract?.sourceCustomerLogin}} </div>
-                    <div> Имя фабрики: {{contract?.sourceFactoryName}} </div>
-                    <div> Уровень поколения: {{contract?.sourceGenerationLevel}} </div>
-                    <div> Кол-во рабочих: {{contract?.sourceWorkers}} </div>
-                </mat-list>
+                <mat-card>
+                    <mat-card-title>Покупатель</mat-card-title>
+                    <mat-divider></mat-divider>
+                    <mat-card-content>
+                        <mat-grid-list cols="2" rowHeight="4:1" class="contract-info-list">
+                            <mat-grid-tile>
+                                Логин:
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                {{contract?.destinationCustomerLogin}}
+                            </mat-grid-tile>
+
+                            <mat-grid-tile>
+                                Имя фабрики:
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                {{contract?.destinationFactoryName}}
+                            </mat-grid-tile>
+
+                            <mat-grid-tile>
+                                Уровень поколения:
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                {{contract?.destinationGenerationLevel}}
+                            </mat-grid-tile>
+
+                            <mat-grid-tile>
+                                Кол-во рабочих:
+                            </mat-grid-tile>
+                            <mat-grid-tile>
+                                {{contract?.destinationWorkers}}
+                            </mat-grid-tile>
+
+                        </mat-grid-list>
+                    </mat-card-content>
+                </mat-card>
             </mat-grid-tile>
 
-
-            <mat-grid-tile>
-                <mat-list class="contract-info-list">
-                    <div> Логин: {{contract?.destinationCustomerLogin}} </div>
-                    <div> Имя фабрики: {{contract?.destinationFactoryName}} </div>
-                    <div> Уровень поколения: {{contract?.destinationGenerationLevel}} </div>
-                    <div> Кол-во рабочих: {{contract?.destinationWorkers}} </div>
-                </mat-list>
-            </mat-grid-tile>
         </mat-grid-list>
     </mat-card-content>
 
