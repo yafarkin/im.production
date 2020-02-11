@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Routes, RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Routes, RouterModule } from '@angular/router';
 
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -21,12 +22,16 @@ import { AppComponent } from './app.component';
 import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
+import { TeamsService } from '../services/teams.service';
+import { TeamDetailsComponent } from '../team-details/team-details.component';
+import { ContractsService } from '../services/contracts.service';
 
+// определение маршрутов
 const appRoutes: Routes = [
+    { path: '', component: TeamsComponent },
+    { path: 'teamDetails', component: TeamDetailsComponent },
     { path: 'contracts', component: ContractsComponent },
     { path: 'contracts/:id', component: ContractComponent }
-    // ,
-    // { path: '**', redirectTo: 'contracts'}
 ];
 
 @NgModule({
@@ -44,9 +49,16 @@ const appRoutes: Routes = [
         HttpClientModule,
         BrowserAnimationsModule,
         MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatButtonToggleModule,
-        MatToolbarModule, MatDividerModule, MatListModule, MatGridListModule, MatCardModule
+        MatToolbarModule, MatDividerModule, MatListModule, MatGridListModule, MatCardModule,
+        MatTabsModule,
+        ContractsComponent,
+        TeamsComponent,
+        TeamDetailsComponent
     ],
-    providers: [],
+    providers: [
+        ContractsService,
+        TeamsService
+    ],
     bootstrap: [
         AppComponent
     ]
