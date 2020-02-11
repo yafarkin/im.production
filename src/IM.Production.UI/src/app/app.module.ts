@@ -7,7 +7,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Routes, RouterModule } from '@angular/router';
 
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,13 +17,14 @@ import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 
-import { AppComponent } from './app.component';
 import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
 import { TeamsService } from '../services/teams.service';
 import { TeamDetailsComponent } from '../team-details/team-details.component';
 import { ContractsService } from '../services/contracts.service';
+import { MatTableModule } from '@angular/material/table';
+import { AppComponent } from './app/app.component';
 
 // определение маршрутов
 const appRoutes: Routes = [
