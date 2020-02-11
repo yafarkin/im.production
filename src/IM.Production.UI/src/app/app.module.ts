@@ -5,15 +5,15 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { AppComponent } from './app.component';
 import { ContractsComponent } from '../contracts/contracts.component';
 import { TeamsComponent } from '../teams/teams.component';
+import { MatTableModule } from '@angular/material/table';
+import { AppComponent } from './app/app.component';
 
 @NgModule({
     declarations: [
