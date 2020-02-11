@@ -12,36 +12,51 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { ContractsComponent } from '../contracts/contracts.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCardModule } from '@angular/material/card';
+
 import { TeamsComponent } from '../teams/teams.component';
+import { ContractComponent } from '../contract/contract.component';
+import { ContractsComponent } from '../contracts/contracts.component';
 import { TeamsService } from '../services/teams.service';
 import { TeamDetailsComponent } from '../team-details/team-details.component';
+import { ContractsService } from '../services/contracts.service';
 import { MatTableModule } from '@angular/material/table';
 import { AppComponent } from './app/app.component';
 
 // определение маршрутов
 const appRoutes: Routes = [
     { path: '', component: TeamsComponent },
-    { path: 'teamDetails', component: TeamDetailsComponent }
+    { path: 'teamDetails', component: TeamDetailsComponent },
+    { path: 'contracts', component: ContractsComponent },
+    { path: 'contracts/:id', component: ContractComponent }
 ];
 
 @NgModule({
     declarations: [
         AppComponent,
+        TeamsComponent,
+        ContractComponent,
+        ContractsComponent
+    ],
+    imports: [
+        CommonModule,
+        BrowserModule,
+        RouterModule.forRoot(appRoutes),
+        FormsModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatButtonToggleModule,
+        MatToolbarModule, MatDividerModule, MatListModule, MatGridListModule, MatCardModule,
+        MatTabsModule,
         ContractsComponent,
         TeamsComponent,
         TeamDetailsComponent
     ],
-    imports: [
-        CommonModule, BrowserModule, FormsModule,
-        MatTableModule, MatPaginatorModule, MatSortModule,
-        MatButtonModule, MatButtonToggleModule, MatToolbarModule,
-        MatTabsModule,
-        HttpClientModule,
-        BrowserAnimationsModule,
-        BrowserModule, RouterModule.forRoot(appRoutes)
-    ],
     providers: [
+        ContractsService,
         TeamsService
     ],
     bootstrap: [

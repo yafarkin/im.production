@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -15,12 +16,12 @@ import { ContractsService } from '../services/contracts.service';
 })
 export class ContractsComponent implements OnInit {
 
-    constructor(private contractsService: ContractsService) { }
+    constructor(private contractsService: ContractsService, private router: Router) { }
     gamePlayerSaleFlag: boolean = false;
     gamePlayerBuyFlag: boolean = false;
     playerPlayerFlag: boolean = false;
     displayedColumns: string[] = [
-        'index', 'tillDate', 'tillCount', 'totalSumm', 'sourceFactoryCustomerLogin', 'destinationFactoryCustomerLogin'
+        'index', 'tillDate', 'tillCount', 'totalSumm', 'sourceCustomerLogin', 'sourceFactoryName', 'sourceGenerationLevel', 'sourceWorkers', 'destinationCustomerLogin', 'destinationFactoryName', 'destinationGenerationLevel', 'destinationWorkers'
     ];
     arrayData: ContractDto[] = [];
     filteredArrayData: ContractDto[] = [];
@@ -29,6 +30,10 @@ export class ContractsComponent implements OnInit {
 
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+    routSwitchClick(contract: ContractDto): void {
+        this.router.navigateByUrl('/contracts/' + contract.id);
+    }
 
     getAllContracts(): void {
         this.contractsService.getAllContracts().subscribe(
@@ -86,16 +91,16 @@ export class ContractsComponent implements OnInit {
 
         for (let data of this.arrayData) {
             if (this.gamePlayerSaleFlag
-                && data.sourceFactoryCustomerLogin === "Game"
-                && data.destinationFactoryCustomerLogin !== "Game") {
+                && data.sourceCustomerLogin === "Game"
+                && data.destinationCustomerLogin !== "Game") {
                 this.filteredArrayData.push(data);
             } else if (this.gamePlayerBuyFlag
-                && data.sourceFactoryCustomerLogin !== "Game"
-                && data.destinationFactoryCustomerLogin === "Game") {
+                && data.sourceCustomerLogin !== "Game"
+                && data.destinationCustomerLogin === "Game") {
                 this.filteredArrayData.push(data);
             } else if (this.playerPlayerFlag
-                && data.sourceFactoryCustomerLogin !== "Game"
-                && data.destinationFactoryCustomerLogin !== "Game") {
+                && data.sourceCustomerLogin !== "Game"
+                && data.destinationCustomerLogin !== "Game") {
                 this.filteredArrayData.push(data);
             }
         }

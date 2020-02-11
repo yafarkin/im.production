@@ -8,28 +8,43 @@ namespace IM.Production.WebApp.Dtos
     public class ContractDto
     {
         /// <summary>
-        /// Если указано, то контракт действует до указанной даты.
+        /// Уникальный Идентификатор объекта
         /// </summary>
-        public int TillDate { get; set; }
-
-        /// <summary>
-        /// Если указано, то контракт действует до поставки определенного количества материала.
-        /// </summary>
-        public int TillCount { get; set; }
-        
+        public string Id { get; set; }
         /// <summary>
         /// Общая сумма на закупку/продажу, прошедшую по контракту.
         /// </summary>
         public decimal TotalSumm { get; set; }
 
         /// <summary>
-        /// Исходная фабрика, если не задано - поставляется игрой.
+        /// Количество материала, уже поставленное по контракту.
         /// </summary>
-        public string SourceFactoryCustomerLogin { get; set; }
+        public int TotalCountCompleted { get; set; }
 
         /// <summary>
-        /// Фабрика назначения, если не задано - продается игре.
+        /// Если указано, то контракт действует до поставки определенного количества материала.
         /// </summary>
-        public string DestinationFactoryCustomerLogin { get; set; }
+        public int TillCount { get; set; }
+
+        /// <summary>
+        /// Если указано, то контракт действует до указанной даты.
+        /// </summary>
+        public int TillDate { get; set; }
+
+        /// <summary>
+        /// Source Cusomer info
+        /// </summary>
+        public string SourceCustomerLogin { get; set; }
+        public string SourceFactoryName { get; set; }
+        public int SourceGenerationLevel { get; set; }
+        public int SourceWorkers { get; set; }
+
+        /// <summary>
+        /// Destination Cusomer info
+        /// </summary>
+        public string DestinationCustomerLogin { get; set; }
+        public string DestinationFactoryName { get; set; }
+        public int DestinationGenerationLevel { get; set; }
+        public int DestinationWorkers { get; set; }
     }
 }

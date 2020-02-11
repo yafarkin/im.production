@@ -28,7 +28,23 @@ namespace IM.Production.WebApp.Controllers
             _service = service;
             _mapper = mapper;
         }
-        
+
+        [HttpGet]
+        [Route("single")]
+        public ContractDto GetContract(string id)
+        {
+            var guid = Guid.Parse(id);
+            var customerContracts = _service.GetContracts();
+            foreach (var contract in customerContracts)
+            {
+                if (contract.Id.Equals(guid))
+                {
+                    return _mapper?.Map<ContractDto>(contract);
+                }
+            }
+            return null;
+        }
+
         [HttpGet]
         [Route("all")]
         public IEnumerable<ContractDto> GetContracts()
