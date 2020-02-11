@@ -14,17 +14,16 @@ export class ContractComponent implements OnInit {
     contractId: string;
     contract: ContractDto;
 
-    constructor(private router: Router, private activateRoute: ActivatedRoute, private contractsService: ContractsService){
+    constructor(private router: Router, private activateRoute: ActivatedRoute, private contractsService: ContractsService) {
         this.contractId = activateRoute.snapshot.params['id'];
     }
 
     ngOnInit() {
         this.contractsService.getContract(this.contractId).subscribe(
             contract => {
-                console.log("[success]");
                 this.contract = contract;
             }
-        )
+        );
     }
 
     backToContractsClick(): void {

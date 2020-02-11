@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { ContractDto } from '../models/dtos/contract.dto';
@@ -13,9 +13,10 @@ export class ContractsService {
     }
 
     getContract(id: string): Observable<ContractDto> {
-        let toPost: ContractDto = new ContractDto();
-        toPost.id = id;
-        return this.httpClient.post<ContractDto>(this.contractUrl, toPost);
+        let params = new HttpParams().set('id', id);
+        return this.httpClient.get<ContractDto>(this.contractUrl, {
+            params: params
+        });
     }
 
     getAllContracts(): Observable<ContractDto[]> {
