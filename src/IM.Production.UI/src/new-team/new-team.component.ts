@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { CustomerDto } from '../models/dtos/customer.dto';
+import { NewTeamDto } from '../models/dtos/newteam.dto';
 import { TeamsService } from '../services/teams.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class NewTeamComponent implements OnInit {
 
     addNewTeam(): void {
         console.log("Add new team!");
-        let team: CustomerDto = new CustomerDto();
+        let team: NewTeamDto = new NewTeamDto();
         team.name = this.gameGroup.value.teamName;
         team.login = this.gameGroup.value.teamLogin;
         team.password = this.gameGroup.value.teamPassword;

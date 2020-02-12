@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Team } from '../models/team';
 import { Observable } from 'rxjs';
 
-import { CustomerDto } from '../models/dtos/customer.dto';
+import { NewTeamDto } from '../models/dtos/newteam.dto';
 
 @Injectable()
 export class TeamsService {
@@ -16,7 +16,7 @@ export class TeamsService {
         return this.http.get<Team[]>(this.url);
     }
 
-    addTeam(team: CustomerDto):  Observable<any> {
+    addTeam(team: NewTeamDto):  Observable<any> {
         return this.http.post(this.addNewTeamUrl, team);
     }
 }
