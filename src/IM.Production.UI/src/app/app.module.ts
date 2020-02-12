@@ -31,6 +31,7 @@ import { AppComponent } from './app/app.component';
 @NgModule({
     declarations: [
         AppComponent,
+        TeamDetailsComponent,
         TeamsComponent,
         ContractComponent,
         ContractsComponent,
@@ -47,10 +48,7 @@ import { AppComponent } from './app/app.component';
         BrowserAnimationsModule,
         MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatButtonToggleModule,
         MatToolbarModule, MatDividerModule, MatListModule, MatGridListModule, MatCardModule,
-        MatTabsModule,
-        ContractsComponent,
-        TeamsComponent,
-        TeamDetailsComponent
+        MatTabsModule
     ],
     providers: [
         ContractsService,
