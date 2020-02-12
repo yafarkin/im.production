@@ -37,6 +37,7 @@ const appRoutes: Routes = [
 @NgModule({
     declarations: [
         AppComponent,
+        TeamDetailsComponent,
         TeamsComponent,
         ContractComponent,
         ContractsComponent
@@ -50,10 +51,7 @@ const appRoutes: Routes = [
         BrowserAnimationsModule,
         MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatButtonToggleModule,
         MatToolbarModule, MatDividerModule, MatListModule, MatGridListModule, MatCardModule,
-        MatTabsModule,
-        ContractsComponent,
-        TeamsComponent,
-        TeamDetailsComponent
+        MatTabsModule
     ],
     providers: [
         ContractsService,
