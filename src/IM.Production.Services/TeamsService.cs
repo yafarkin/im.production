@@ -18,5 +18,10 @@ namespace IM.Production.Services
         {
             return _game.Customers;
         }
+
+        public void AddTeam(Customer team)
+        {
+            _game.Customers.Add(team);
+        }
     }
 }

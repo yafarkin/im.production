@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
-using Epam.ImitationGames.Production.Domain.Services;
-using IM.Production.WebApp.Dtos;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
+using IM.Production.WebApp.Dtos;
+using System.Collections.Generic;
+using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Services;
+using IM.Production.CalculationEngine;
 
 namespace IM.Production.WebApp.Controllers
 {
@@ -25,6 +27,13 @@ namespace IM.Production.WebApp.Controllers
             var teams = _service.GetTeams();
             var teamsDtos = _mapper.Map<IEnumerable<TeamDto>>(teams);
             return teamsDtos;
+        }
+
+        [HttpPost]
+        [Route("addteam")]
+        public void AddTeam(CustomerDto team)
+        {
+            _service.AddTeam(new Customer());
         }
     }
 }
