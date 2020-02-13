@@ -2,8 +2,8 @@
 {
     public class NewTeamDto
     {
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
         public string Login { get; set; }
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
     }
 }

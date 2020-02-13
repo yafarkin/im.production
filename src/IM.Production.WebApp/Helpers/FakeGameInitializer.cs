@@ -36,17 +36,39 @@ namespace IM.Production.WebApp.Helpers
                 productionType.Key = "GameProductionTypeKey";
                 productionType.DisplayName = "GameProductionTypeDisplayName";
                 var customer = logic.AddCustomer("Game", "GamePassword", "GameName", productionType);
+                customer.DisplayName = "Game";
                 customerList.Add(customer);
             }
             #endregion
+
+            /*
+                ProductionType:
+                * Metallurgical industry
+                * Oil and gas and chemical industry
+                * Electronic industry
+             */
 
             for (var c = 0; c < customersCount; c++)
             {
                 var productionType = new ProductionType();
                 productionType.Key = "key";
-                productionType.DisplayName = "DisplayName";
+                var randNumber = rand.Next(0, 100);
+                if (randNumber < 30)
+                {
+                    productionType.DisplayName = "Metallurgical";
+                }
+                else if (randNumber >= 30 && randNumber < 60)
+                {
+                    productionType.DisplayName = "Oil and gas and chemical";
+                }
+                else
+                {
+                    productionType.DisplayName = "Electronic";
+                }
+
                 var customer = logic.AddCustomer("CustomerLogin" + c, "CustomerPassword" + c,
                     "CustomerName" + c, productionType);
+                customer.DisplayName = "Customer" + c + (char)((rand.Next(0, 100) < 50) ? rand.Next('A', 'Z') : rand.Next('a', 'z')); 
                 customerList.Add(customer);
             }
             #endregion
@@ -66,7 +88,7 @@ namespace IM.Production.WebApp.Helpers
             for (var c = 0; c < customerList.Count; c++)
             {
                 var customer = customerList[c];
-                var contractsNumber = rand.Next(3, 10);
+                var contractsNumber = rand.Next(3, 7);
                 for (var r = 0; r < contractsNumber; r++)
                 {
                     var materialNumber = rand.Next(1, 99);

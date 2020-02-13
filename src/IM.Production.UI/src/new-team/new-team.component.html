@@ -1,6 +1,6 @@
-<div [formGroup]="gameGroup" class="main-form">
+<div mat-dialog-title>Создание новой команды</div>
+<div mat-dialog-content [formGroup]="gameGroup" class="main-form">
     <mat-grid-list cols="1" rowHeight="7:1">
-
         <mat-grid-tile>
             <form [formGroup]="gameGroup" class="example-form">
                 <mat-form-field class="example-full-width">
@@ -32,6 +32,10 @@
         </mat-grid-tile>
     </mat-grid-list>
 
-    <button mat-button class="add-button" [disabled]="!gameGroup.valid" type="submit"
-        (click)="addNewTeam()">Добавить</button>
+    <button mat-button class="add-button"
+        [disabled]="!gameGroup.valid" type="submit"
+        (click)="addNewTeam()"
+        mat-dialog-close>
+        Добавить
+    </button>
 </div>

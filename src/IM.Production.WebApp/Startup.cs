@@ -21,7 +21,7 @@ namespace IM.Production.WebApp
             /// <summary>
             /// Test data for cheking displaying information about contracts.
             /// </summary>>
-            var game = FakeGameInitializer.CreateGame(15);
+            var game = FakeGameInitializer.CreateGame(30);
             var logic = new Logic(game);
             services.AddSingleton<Game>(game);
             services.AddSingleton<Logic>(logic);

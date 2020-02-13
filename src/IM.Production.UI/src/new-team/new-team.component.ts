@@ -3,6 +3,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { NewTeamDto } from '../models/dtos/newteam.dto';
 import { TeamsService } from '../services/teams.service';
 
+import { Md5 } from 'ts-md5/dist/md5';
+
 @Component({
     selector: 'app-new-team',
     templateUrl: './new-team.component.html',
@@ -30,12 +32,12 @@ export class NewTeamComponent implements OnInit {
     addNewTeam(): void {
         console.log("Add new team!");
         let team: NewTeamDto = new NewTeamDto();
-        team.name = this.gameGroup.value.teamName;
+        team.displayName = this.gameGroup.value.teamName;
         team.login = this.gameGroup.value.teamLogin;
-        team.password = this.gameGroup.value.teamPassword;
-        console.log("team.name: " + team.name);
+        team.passwordHash = Md5.hashStr(this.gameGroup.value.teamPassword, false).toString();
+        console.log("team.displayName: " + team.displayName);
         console.log("team.login: " + team.login);
-        console.log("team.passwordHash: " + team.password);
+        console.log("team.passwordHash: " + team.passwordHash);
         this.teamsService.addTeam(team).subscribe(
             success => {
                 console.log("[success]");

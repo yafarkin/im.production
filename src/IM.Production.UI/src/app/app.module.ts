@@ -17,6 +17,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule } from '@angular/material/dialog';
+
+import { Md5 } from 'ts-md5/dist/md5';
 
 import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
@@ -30,7 +33,7 @@ import { NewTeamComponent } from '../new-team/new-team.component';
 
 // определение маршрутов
 const appRoutes: Routes = [
-    { path: '', component: TeamsComponent },
+    { path: 'teams', component: TeamsComponent },
     { path: 'teamDetails', component: TeamDetailsComponent },
     { path: 'contracts', component: ContractsComponent },
     { path: 'contracts/:id', component: ContractComponent },
@@ -65,11 +68,13 @@ const appRoutes: Routes = [
         MatGridListModule,
         MatCardModule,
         MatTabsModule,
-        MatInputModule
+        MatInputModule,
+        MatDialogModule
     ],
     providers: [
         ContractsService,
-        TeamsService
+        TeamsService,
+        Md5
     ],
     bootstrap: [
         AppComponent

@@ -1,5 +1,5 @@
 export class NewTeamDto {
-    public name: string;
+    public displayName: string;
     public login: string;
-    public password: string;
+    public passwordHash: string;
 }

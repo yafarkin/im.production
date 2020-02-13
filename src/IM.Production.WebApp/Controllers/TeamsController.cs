@@ -33,8 +33,7 @@ namespace IM.Production.WebApp.Controllers
         [Route("addteam")]
         public void AddTeam(NewTeamDto team)
         {
-            // Выполняем сопоставление
-            Customer customer = _mapper.Map<NewTeamDto, Customer>(team);
+            var customer = _mapper.Map<NewTeamDto, Customer>(team);
             _service.AddTeam(customer);
         }
     }

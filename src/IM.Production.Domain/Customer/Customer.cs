@@ -20,11 +20,6 @@ namespace Epam.ImitationGames.Production.Domain
             FactoryGenerationLevel = 1;
         }
 
-        ///<summary>
-        /// Имя покупателя/Имя команды
-        ///</summary>
-        public string Name { get; set; }
-        
         /// <summary>
         /// Логин.
         /// </summary>
