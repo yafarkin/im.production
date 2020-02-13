@@ -25,7 +25,6 @@ import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
 import { TeamsService } from '../services/teams.service';
-import { TeamDetailsComponent } from '../team-details/team-details.component';
 import { ContractsService } from '../services/contracts.service';
 import { MatTableModule } from '@angular/material/table';
 import { AppComponent } from './app/app.component';
@@ -34,7 +33,6 @@ import { NewTeamComponent } from '../new-team/new-team.component';
 // определение маршрутов
 const appRoutes: Routes = [
     { path: 'teams', component: TeamsComponent },
-    { path: 'teamDetails', component: TeamDetailsComponent },
     { path: 'contracts', component: ContractsComponent },
     { path: 'contracts/:id', component: ContractComponent },
     { path: 'new-team', component: NewTeamComponent }
@@ -43,7 +41,6 @@ const appRoutes: Routes = [
 @NgModule({
     declarations: [
         AppComponent,
-        TeamDetailsComponent,
         TeamsComponent,
         ContractComponent,
         ContractsComponent,
