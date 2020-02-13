@@ -6,23 +6,23 @@ import { DebugElement } from '@angular/core';
 import { NewTeamComponent } from './new-team.component';
 
 describe('NewTeamComponent', () => {
-  let component: NewTeamComponent;
-  let fixture: ComponentFixture<NewTeamComponent>;
+    let component: NewTeamComponent;
+    let fixture: ComponentFixture<NewTeamComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ NewTeamComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [NewTeamComponent]
+        })
+            .compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(NewTeamComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(NewTeamComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

@@ -30,19 +30,11 @@ export class NewTeamComponent implements OnInit {
     }
 
     addNewTeam(): void {
-        console.log("Add new team!");
         let team: NewTeamDto = new NewTeamDto();
         team.displayName = this.gameGroup.value.teamName;
         team.login = this.gameGroup.value.teamLogin;
         team.passwordHash = Md5.hashStr(this.gameGroup.value.teamPassword, false).toString();
-        console.log("team.displayName: " + team.displayName);
-        console.log("team.login: " + team.login);
-        console.log("team.passwordHash: " + team.passwordHash);
-        this.teamsService.addTeam(team).subscribe(
-            success => {
-                console.log("[success]");
-            }
-        );
+        this.teamsService.addTeam(team).subscribe();
     }
 
 }

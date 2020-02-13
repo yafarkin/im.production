@@ -5,8 +5,7 @@
             <form [formGroup]="gameGroup" class="example-form">
                 <mat-form-field class="example-full-width">
                     <mat-label>Название команды</mat-label>
-                    <input matInput formControlName="teamName" placeholder="Название команды"
-                        type="text">
+                    <input matInput formControlName="teamName" placeholder="Название команды" type="text">
                 </mat-form-field>
             </form>
         </mat-grid-tile>
@@ -15,8 +14,7 @@
             <form [formGroup]="gameGroup" class="example-form">
                 <mat-form-field class="example-full-width">
                     <mat-label>Логин команды</mat-label>
-                    <input matInput formControlName="teamLogin" placeholder="Логин команды"
-                        type="text">
+                    <input matInput formControlName="teamLogin" placeholder="Логин команды" type="text">
                 </mat-form-field>
             </form>
         </mat-grid-tile>
@@ -25,16 +23,13 @@
             <form [formGroup]="gameGroup" class="example-form">
                 <mat-form-field class="example-full-width">
                     <mat-label>Пароль</mat-label>
-                    <input matInput formControlName="teamPassword" placeholder="123"
-                        type="text">
+                    <input matInput formControlName="teamPassword" placeholder="123" type="text">
                 </mat-form-field>
             </form>
         </mat-grid-tile>
     </mat-grid-list>
 
-    <button mat-button class="add-button"
-        [disabled]="!gameGroup.valid" type="submit"
-        (click)="addNewTeam()"
+    <button mat-button class="add-button" [disabled]="!gameGroup.valid" type="submit" (click)="addNewTeam()"
         mat-dialog-close>
         Добавить
     </button>
