@@ -20,3 +20,14 @@
 ![Alt](Customer.svg)
 
 [Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmaster%2Fdocs%2Fmockups%2FCustomer.svg)
+
+## Покупка фабрики
+![Alt](BuyFactory.svg)
+
+[Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmockups-folder%2Fdocs%2Fmockups%2FBuyFactory.svg)
+
+## Склад
+![Alt](Warehouse.svg)
+
+[Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmockups-folder%2Fdocs%2Fmockups%2FWarehouse.svg)
+
