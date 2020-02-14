@@ -18,17 +18,19 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { MatTableModule } from '@angular/material/table';
+import { MatSnackBar, MatSnackBarModule, MatSnackBarContainer } from '@angular/material';
 import { Md5 } from 'ts-md5/dist/md5';
 
+import { TeamsService } from '../services/teams.service';
+import { ContractsService } from '../services/contracts.service';
+import { AppComponent } from './app/app.component';
 import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
-import { TeamsService } from '../services/teams.service';
-import { ContractsService } from '../services/contracts.service';
-import { MatTableModule } from '@angular/material/table';
-import { AppComponent } from './app/app.component';
 import { NewTeamComponent } from '../new-team/new-team.component';
+import { SnackBarTeamAddSuccessComponent } from '../snack-bars/snack-bar-team-add-success/snack-bar-team-add-success.component';
+import { SnackBarTeamAddErrorComponent } from '../snack-bars/snack-bar-team-add-error/snack-bar-team-add-error.component';
 
 // определение маршрутов
 const appRoutes: Routes = [
@@ -44,7 +46,9 @@ const appRoutes: Routes = [
         TeamsComponent,
         ContractComponent,
         ContractsComponent,
-        NewTeamComponent
+        NewTeamComponent,
+        SnackBarTeamAddSuccessComponent,
+        SnackBarTeamAddErrorComponent
     ],
     imports: [
         CommonModule,
@@ -66,15 +70,23 @@ const appRoutes: Routes = [
         MatCardModule,
         MatTabsModule,
         MatInputModule,
-        MatDialogModule
+        MatDialogModule,
+        MatSnackBarModule
     ],
     providers: [
         ContractsService,
         TeamsService,
+        MatSnackBar,
         Md5
     ],
     bootstrap: [
         AppComponent
+    ],
+    entryComponents: [
+        NewTeamComponent,
+        SnackBarTeamAddSuccessComponent,
+        SnackBarTeamAddErrorComponent,
+        MatSnackBarContainer
     ]
 })
 export class AppModule { }

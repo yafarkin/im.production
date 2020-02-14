@@ -30,9 +30,7 @@ namespace IM.Production.WebApp.Dtos
                         opt => opt.MapFrom(dest => dest.DestinationFactory.Workers));
 
             CreateMap<NewTeamDto, Customer>()
-                .ForMember(source => source.Login, opt => opt.MapFrom(dest => dest.Login))
-                .ForMember(source => source.DisplayName, opt => opt.MapFrom(dest => dest.DisplayName))
-                .ForMember(source => source.PasswordHash, opt => opt.MapFrom(dest => dest.PasswordHash));
+                .ForMember(source => source.DisplayName, opt => opt.MapFrom(dest => dest.Name));
 
             CreateMap<Customer, TeamDto>()
              .ForMember(dest => dest.Name,

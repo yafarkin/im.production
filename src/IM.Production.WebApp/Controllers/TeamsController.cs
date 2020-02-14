@@ -30,11 +30,11 @@ namespace IM.Production.WebApp.Controllers
         }
 
         [HttpPost]
-        [Route("addteam")]
-        public void AddTeam(NewTeamDto team)
+        [Route("add-team")]
+        public bool AddTeam(NewTeamDto team)
         {
             var customer = _mapper.Map<NewTeamDto, Customer>(team);
-            _service.AddTeam(customer);
+            return _service.AddTeam(customer);
         }
     }
 }

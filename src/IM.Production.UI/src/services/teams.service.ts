@@ -8,7 +8,7 @@ import { NewTeamDto } from '../models/dtos/newteam.dto';
 @Injectable()
 export class TeamsService {
     private url = "/api/teams";
-    private addNewTeamUrl = "/api/teams/addteam";
+    private addNewTeamUrl = "/api/teams/add-team";
 
     constructor(private http: HttpClient) { }
 

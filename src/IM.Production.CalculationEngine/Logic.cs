@@ -24,17 +24,72 @@ namespace IM.Production.CalculationEngine
             _game = game ?? throw new ArgumentNullException(nameof(game));
         }
 
-        public Customer AddCustomer(string login, string password, string name, ProductionType productionType, decimal? initialBalance = null)
+        public Customer AddCustomer(string login, string passwordHash, string name, decimal? initialBalance = null)
         {
             lock (_lockObj)
             {
-                var customer = Customer.CreateCustomer(login, Game.GetMD5Hash(password), name, productionType);
-                _game.Customers.Add(customer);
+                /*
+                ProductionType:
+                * Metallurgical industry
+                * Oil and gas and chemical industry
+                * Electronic industry
+                */
+                var alreadyExists = false;
+                var metallurgicalCount = 0;
+                var oilAndGasAndChemicalCount = 0;
+                var electronicCount = 0;
+                foreach (var customerInstance in _game.Customers)
+                {
+                    if (customerInstance.DisplayName.ToLower().Equals(name.ToLower()) ||
+                        customerInstance.Login.ToLower().Equals(login.ToLower()))
+                    {
+                        alreadyExists = true;
+                        break;
+                    }
 
-                _game.AddActivity(new InfoChanging(customer, "Добавление новой команды"));
-                _game.AddActivity(new FinanceCustomerChange(customer, initialBalance ?? ReferenceData.InitialCustomerBalance,  "Установка начальной суммы на счёте"));
+                    if (customerInstance.ProductionType.DisplayName.Equals("Metallurgical"))
+                    {
+                        ++metallurgicalCount;
+                    }
+                    else if (customerInstance.ProductionType.DisplayName.Equals("Oil and gas and chemical"))
+                    {
+                        ++oilAndGasAndChemicalCount;
+                    }
+                    else if (customerInstance.ProductionType.DisplayName.Equals("Electronic"))
+                    {
+                        ++electronicCount;
+                    }
+                }
+
+                string displayName;
+                if (metallurgicalCount < oilAndGasAndChemicalCount && metallurgicalCount < electronicCount)
+                {
+                    displayName = "Metallurgical";
+                }
+                else if (oilAndGasAndChemicalCount < metallurgicalCount && metallurgicalCount < electronicCount)
+                {
+                    displayName = "Oil and gas and chemical";
+                }
+                else
+                {
+                    displayName = "Electronic";
+                }
+
+                var productionType = new ProductionType();
+                productionType.DisplayName = displayName;
+                productionType.Key = "Key";
+
+                if (!alreadyExists)
+                {
+                    var customer = Customer.CreateCustomer(login, passwordHash, name, productionType);
+                    _game.Customers.Add(customer);
+
+                    _game.AddActivity(new InfoChanging(customer, "Добавление новой команды"));
+                    _game.AddActivity(new FinanceCustomerChange(customer, initialBalance ?? ReferenceData.InitialCustomerBalance,  "Установка начальной суммы на счёте"));
                 
-                return customer;
+                    return customer;
+                }
+                return null;
             }
         }
 
