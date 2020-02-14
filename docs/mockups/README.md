@@ -21,7 +21,7 @@
 
 [Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmaster%2Fdocs%2Fmockups%2FCustomer.svg)
 
-## Покупка фабрики
+## Покупка фабрики  
 ![Alt](BuyFactory.svg)
 
 [Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmockups-folder%2Fdocs%2Fmockups%2FBuyFactory.svg)
