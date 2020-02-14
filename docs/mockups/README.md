@@ -15,3 +15,8 @@
 ![Alt](NewTeam.svg)
 
 [Редактировать](https://www.draw.io/?mode=github#Hyafarkin%2Fim.production%2Fmockups-folder%2Fdocs%2Fmockups%2FNewTeam.svg)
+
+## Команда
+![Alt](Customer.svg)
+
+[Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmaster%2Fdocs%2Fmockups%2FCustomer.svg)
