@@ -1,0 +1,22 @@
+<mat-card class="manage-game-card">
+    <mat-card-header>
+        <i mat-card-avatar class="material-icons md-48">games</i>
+        <mat-card-title>Управление игрой</mat-card-title>
+        <mat-card-subtitle>День: {{currentDay}}/{{gameConfig?.maxDays}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-progress-bar mode="determinate" [value]="progressBarValue">
+        </mat-progress-bar>
+        <div class="manage-game-buttons">
+            <button mat-button (click)="stopGame()">
+                <i class="material-icons md-48">pause</i>
+            </button>
+            <button mat-button (click)="playGame()">
+                <i class="material-icons md-48">play_arrow</i>
+            </button>
+            <button mat-button (click)="restartGame()">
+                <i class="material-icons md-48">replay</i>
+            </button>
+        </div>
+    </mat-card-content>
+</mat-card>

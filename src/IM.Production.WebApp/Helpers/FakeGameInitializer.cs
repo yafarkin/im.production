@@ -27,6 +27,11 @@ namespace IM.Production.WebApp.Helpers
             }
             #endregion
 
+            var canProduceMaterials = new List<Material>();
+            canProduceMaterials.Add(new Material());
+            canProduceMaterials.Add(new Material());
+            canProduceMaterials.Add(new Material());
+
             #region CreateCustomers
             var customerList = new List<Customer>();
 
@@ -87,11 +92,12 @@ namespace IM.Production.WebApp.Helpers
                         factoryDefinition.ProductionType.DisplayName = "display name";
                         factoryDefinition.GenerationLevel = 1;
                         var d = new Dictionary<int, List<Material>>();
+                        d.Add(1, canProduceMaterials);
                         factoryDefinition.CanProductionMaterials = d;
                         logic.BuyFactoryFromGame(customer, factoryDefinition, 30);
                         logic.BuyFactoryFromGame(customer, factoryDefinition, 30);
                         #endregion
-
+                        
                         #region CreateContract
                         contract.SourceFactory = GetFirstFactory(customer.Factories);
                         contract.TillCount =

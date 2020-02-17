@@ -23,6 +23,11 @@ namespace CalculationEngine
 
         public Game()
         {
+            Reset();
+        }
+
+        public void Reset()
+        {
             Customers = new List<Customer>();
             TotalGameDays = 0;
             Activity = new List<ActivityLog>();

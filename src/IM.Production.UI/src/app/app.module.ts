@@ -16,6 +16,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
@@ -25,13 +26,16 @@ import { TeamDetailsComponent } from '../team-details/team-details.component';
 import { ContractsService } from '../services/contracts.service';
 import { MatTableModule } from '@angular/material/table';
 import { AppComponent } from './app/app.component';
+import { ManageGameComponent } from '../manage-game/manage-game.component';
+import { ManageGameService } from '../services/manage-game.service';
 
 // определение маршрутов
 const appRoutes: Routes = [
     { path: '', component: TeamsComponent },
     { path: 'teamDetails', component: TeamDetailsComponent },
     { path: 'contracts', component: ContractsComponent },
-    { path: 'contracts/:id', component: ContractComponent }
+    { path: 'contracts/:id', component: ContractComponent },
+    { path: 'manage-game', component: ManageGameComponent }
 ];
 
 @NgModule({
@@ -40,7 +44,8 @@ const appRoutes: Routes = [
         TeamDetailsComponent,
         TeamsComponent,
         ContractComponent,
-        ContractsComponent
+        ContractsComponent,
+        ManageGameComponent
     ],
     imports: [
         CommonModule,
@@ -49,13 +54,23 @@ const appRoutes: Routes = [
         FormsModule,
         HttpClientModule,
         BrowserAnimationsModule,
-        MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatButtonToggleModule,
-        MatToolbarModule, MatDividerModule, MatListModule, MatGridListModule, MatCardModule,
-        MatTabsModule
+        MatTableModule,
+        MatPaginatorModule,
+        MatSortModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatToolbarModule,
+        MatDividerModule,
+        MatListModule,
+        MatGridListModule,
+        MatCardModule,
+        MatTabsModule,
+        MatProgressBarModule
     ],
     providers: [
         ContractsService,
-        TeamsService
+        TeamsService,
+        ManageGameService
     ],
     bootstrap: [
         AppComponent
