@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using IM.Production.WebApp.Dtos;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace IM.Production.WebApp.Controllers
 
         [HttpGet]
         public IEnumerable<TeamDto> GetTeams()
-        {
+       {
             var teams = _service.GetTeams();
             var teamsDtos = _mapper.Map<IEnumerable<TeamDto>>(teams);
             return teamsDtos;

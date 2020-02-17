@@ -40,12 +40,12 @@ export class NewTeamComponent implements OnInit {
             success => {
                 if (success) {
                     this.snackBar.openFromComponent(SnackBarTeamAddSuccessComponent, {
-                        duration: 7 * 1000 // 10 sec
+                        duration: 3 * 1000 // 10 sec
                     });
                 }
                 else {
                     this.snackBar.openFromComponent(SnackBarTeamAddErrorComponent, {
-                        duration: 7 * 1000 // 10 sec
+                        duration: 3 * 1000 // 10 sec
                     });
                 }
             }

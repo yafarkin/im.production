@@ -24,11 +24,11 @@ export class TeamsComponent implements OnInit {
     }
 
     addNewTeam(): void {
-        this.dialog.open(NewTeamComponent);
-        this.dialog.afterAllClosed.subscribe(
+        const dialog = this.dialog.open(NewTeamComponent);
+        dialog.afterClosed().subscribe(
             success => {
                 this.loadTeams();
             }
-        )
+        );
     }
 }
