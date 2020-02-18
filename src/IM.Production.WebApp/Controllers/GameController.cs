@@ -24,6 +24,7 @@ namespace IM.Production.WebApp.Controllers
         {
             var result = new GameConfigDto();
             _config.GetSection("GameConfig").Bind(result);
+            _service.SetGameMaxDays(result.MaxDays);
             return result;
         }
 

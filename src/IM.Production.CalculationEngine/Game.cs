@@ -23,14 +23,15 @@ namespace CalculationEngine
 
         public Game()
         {
-            Reset();
+            Activity = new List<ActivityLog>();
+            Customers = new List<Customer>();
         }
 
         public void Reset()
         {
-            Customers = new List<Customer>();
-            TotalGameDays = 0;
-            Activity = new List<ActivityLog>();
+            CurrentGameProps.GameDay = 0;
+            Activity.Clear();
+            Customers.ForEach(obj => obj.ResetProgress());
         }
 
         public void Save(string filename)

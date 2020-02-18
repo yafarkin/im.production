@@ -17,10 +17,17 @@ namespace IM.Production.Services
             _calculationEngine = calculationEngine;
         }
 
+        public void SetGameMaxDays(int maxDays)
+        {
+            _game.TotalGameDays = maxDays;
+        }
+
         public int CalculateDay()
         {
-            //start game
-            _calculationEngine.Calculate();
+            if (CurrentGameProps.GameDay < _game.TotalGameDays)
+            {
+                _calculationEngine.Calculate();
+            }
             return CurrentGameProps.GameDay;
         }
 
