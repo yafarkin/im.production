@@ -3,6 +3,7 @@ using CalculationEngine;
 using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Bank;
 using Epam.ImitationGames.Production.Domain.Production;
+using Epam.ImitationGames.Production.Domain.ReferenceData;
 using IM.Production.CalculationEngine;
 
 namespace IM.Production.WebApp.Helpers
@@ -103,11 +104,9 @@ namespace IM.Production.WebApp.Helpers
 
                         var factoryDefinition = new FactoryDefinition();
                         factoryDefinition.BaseWorkers = 50;
-                        factoryDefinition.ProductionType = new ProductionType();
-                        factoryDefinition.ProductionType.Id = customer.ProductionType.Id;
-                        factoryDefinition.ProductionType.Key = "key";
-                        factoryDefinition.ProductionType.DisplayName = "display name";
+                        factoryDefinition.ProductionType = ReferenceData.GetProductionTypeByKey(customer.ProductionType.Key);
                         factoryDefinition.GenerationLevel = 1;
+                        
                         var d = new Dictionary<int, List<Material>>();
                         factoryDefinition.CanProductionMaterials = d;
                         logic.BuyFactoryFromGame(customer, factoryDefinition, 30);

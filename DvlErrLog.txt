@@ -1,5 +1,0 @@
-System.ArgumentException: Parameter "projectFile" cannot have zero length.
-   at Microsoft.Build.Shared.ErrorUtilities.VerifyThrowArgumentLength(String parameter, String parameterName)
-   at Microsoft.Build.Execution.ProjectInstance..ctor(String projectFile, IDictionary`2 globalProperties, String toolsVersion, String subToolsetVersion, ProjectCollection projectCollection)
-   at Microsoft.SdvMenuCommand.DriverVerificationLicense..ctor()
-   at Microsoft.SdvMenuCommand.SdvMenuCommandPackage.StaticToolsLogoMenuItemCallback(Object sender, EventArgs e)
