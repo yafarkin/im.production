@@ -2,19 +2,28 @@
     <mat-card-header>
         <i mat-card-avatar class="material-icons md-48">games</i>
         <mat-card-title>Управление игрой</mat-card-title>
-        <mat-card-subtitle>День: {{currentDay}}/{{gameConfig?.maxDays}}</mat-card-subtitle>
+        <mat-card-subtitle *ngIf="isAlreadyStarted">Статус: запущена</mat-card-subtitle>
+        <mat-card-subtitle *ngIf="!isAlreadyStarted">Статус: приостановлена</mat-card-subtitle>
     </mat-card-header>
+
+    <div *ngIf="!isFirstTime" class="manage-game-day-timer">
+        День: {{currentDay}}/{{gameConfig?.maxDays}}
+    </div>
+    <div *ngIf="!isFirstTime" class="manage-game-timer">
+        До следующего дня: {{(this.secondsBeforeNextDay - (this.secondsBeforeNextDay % 60)) / 60 | number: '2.0-0'}}:{{this.secondsBeforeNextDay % 60 | number: '2.0-0'}}
+    </div>
+
     <mat-card-content>
-        <mat-progress-bar mode="determinate" [value]="progressBarValue">
+        <mat-progress-bar class="manage-game-progress-bar" mode="determinate" [value]="progressBarValue">
         </mat-progress-bar>
         <div class="manage-game-buttons">
-            <button mat-button (click)="stopGame()">
+            <button *ngIf="isAlreadyStarted" mat-button (click)="stopGame()">
                 <i class="material-icons md-48">pause</i>
             </button>
-            <button mat-button (click)="playGame()">
+            <button *ngIf="!isAlreadyStarted" mat-button (click)="playGame()">
                 <i class="material-icons md-48">play_arrow</i>
             </button>
-            <button mat-button (click)="restartGame()">
+            <button mat-button *ngIf="!isFirstTime" (click)="restartGame()">
                 <i class="material-icons md-48">replay</i>
             </button>
         </div>

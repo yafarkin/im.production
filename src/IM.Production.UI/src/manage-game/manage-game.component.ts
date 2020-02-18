@@ -18,12 +18,12 @@ export class ManageGameComponent implements OnInit {
     progressBarValue: number;
     percentCoefficient: number;
     isAlreadyStarted: boolean;
+    isFirstTime: boolean = true;
 
     constructor(private manageGameService: ManageGameService) { }
 
     ngOnInit() {
         this.progressBarValue = 0;
-
         this.updateConfig();
     }
 
@@ -32,7 +32,6 @@ export class ManageGameComponent implements OnInit {
         clearInterval(this.secondsLeftIntervalId);
         this.playIntervalId = null;
         this.secondsLeftIntervalId = null;
-        this.secondsBeforeNextDay = 0;
         this.isAlreadyStarted = false;
     }
 
@@ -42,8 +41,13 @@ export class ManageGameComponent implements OnInit {
             this.isAlreadyStarted = true;
             this.updateConfig();
 
+            if (this.isFirstTime) {
+                this.secondsBeforeNextDay = this.gameConfig.dayDurationInSeconds;
+            }
+
+            this.isFirstTime = false;
             this.percentCoefficient = 100 / this.gameConfig.dayDurationInSeconds;
-            this.secondsBeforeNextDay = this.gameConfig.dayDurationInSeconds;
+
             this.playIntervalId = setInterval(() => {
                 this.manageGameService.calculateDay().subscribe(
                     success => { this.currentDay = success; }
@@ -63,11 +67,14 @@ export class ManageGameComponent implements OnInit {
 
     updateConfig(): void {
         this.manageGameService.getGameConfig().subscribe(
-            success => { this.gameConfig = success; }
+            success => {
+                this.gameConfig = success;
+            }
         );
     }
 
     restartGame(): void {
+        this.isFirstTime = false;
         this.updateConfig();
         this.manageGameService.restartGame().subscribe(
             success => {

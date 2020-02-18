@@ -5,6 +5,25 @@
     margin-right: auto;
 }
 
+.manage-game-day-timer {
+    font-size: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.manage-game-timer {
+    font-size: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.manage-game-progress-bar {
+    padding-top: 5%;
+    margin-bottom: 5%;
+}
+
 .manage-game-buttons {
     margin-top: 5%;
     display: flex;
