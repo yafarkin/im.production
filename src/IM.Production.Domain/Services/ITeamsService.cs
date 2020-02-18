@@ -5,6 +5,6 @@ namespace Epam.ImitationGames.Production.Domain.Services
     public interface ITeamsService
     {
         IEnumerable<Customer> GetTeams();
-        bool AddTeam(Customer team);
+        void AddTeam(Customer team);
     }
 }

@@ -1,36 +1,34 @@
 <div mat-dialog-title>Добавление Команды</div>
+
+<form [formGroup]="gameGroup">
 <div mat-dialog-content [formGroup]="gameGroup" class="new-team-main-form">
     <mat-grid-list cols="1" rowHeight="7:1">
         <mat-grid-tile>
-            <form [formGroup]="gameGroup" class="game-group-form">
                 <mat-form-field class="game-group-form-field">
                     <mat-label>Название команды</mat-label>
                     <input matInput formControlName="teamName" placeholder="Название команды" type="text">
                 </mat-form-field>
-            </form>
-        </mat-grid-tile>
+            </mat-grid-tile>
 
-        <mat-grid-tile>
-            <form [formGroup]="gameGroup" class="game-group-form">
-                <mat-form-field class="game-group-form-field">
-                    <mat-label>Логин команды</mat-label>
-                    <input matInput formControlName="teamLogin" placeholder="Логин команды" type="text">
-                </mat-form-field>
-            </form>
-        </mat-grid-tile>
+            <mat-grid-tile>
+                    <mat-form-field class="game-group-form-field">
+                        <mat-label>Логин команды</mat-label>
+                        <input matInput formControlName="teamLogin" placeholder="Логин команды" type="text">
+                    </mat-form-field>
+            </mat-grid-tile>
 
-        <mat-grid-tile>
-            <form [formGroup]="gameGroup" class="game-group-form">
-                <mat-form-field class="game-group-form-field">
-                    <mat-label>Пароль</mat-label>
-                    <input matInput formControlName="teamPassword" placeholder="123" type="text">
-                </mat-form-field>
-            </form>
-        </mat-grid-tile>
-    </mat-grid-list>
+            <mat-grid-tile>
+                    <mat-form-field class="game-group-form-field">
+                        <mat-label>Пароль</mat-label>
+                        <input matInput formControlName="teamPassword" placeholder="123" type="text">
+                    </mat-form-field>
+            </mat-grid-tile>
+        </mat-grid-list>
 
-    <button mat-button class="add-team-button" [disabled]="!gameGroup.valid" (click)="addNewTeam()"
+        <button mat-button class="add-team-button" [disabled]="!gameGroup.valid" (click)="addNewTeam()"
         mat-dialog-close>
         Добавить
     </button>
 </div>
+
+</form>

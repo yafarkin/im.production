@@ -38,16 +38,14 @@ export class NewTeamComponent implements OnInit {
         team.passwordHash = Md5.hashStr(this.gameGroup.value.teamPassword, false).toString();
         this.teamsService.addTeam(team).subscribe(
             success => {
-                if (success) {
-                    this.snackBar.openFromComponent(SnackBarTeamAddSuccessComponent, {
-                        duration: 3 * 1000 // 10 sec
-                    });
-                }
-                else {
-                    this.snackBar.openFromComponent(SnackBarTeamAddErrorComponent, {
-                        duration: 3 * 1000 // 10 sec
-                    });
-                }
+                this.snackBar.openFromComponent(SnackBarTeamAddSuccessComponent, {
+                    duration: 3 * 1000 // 10 sec
+                });
+            },
+            error => {
+                this.snackBar.openFromComponent(SnackBarTeamAddErrorComponent, {
+                    duration: 3 * 1000 // 10 sec
+                });
             }
         );
     }

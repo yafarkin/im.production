@@ -1,5 +1,6 @@
 ﻿using CalculationEngine;
 using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Exceptions;
 using Epam.ImitationGames.Production.Domain.Production;
 using Epam.ImitationGames.Production.Domain.Services;
 using IM.Production.CalculationEngine;
@@ -23,10 +24,9 @@ namespace IM.Production.Services
             return _game.Customers;
         }
 
-        public bool AddTeam(Customer team)
+        public void AddTeam(Customer team)
         {
-            var customer = _logic.AddCustomer(team.Login, team.PasswordHash, team.DisplayName);
-            return (customer != null) ? true : false;
+            _logic.AddCustomer(team.Login, team.PasswordHash, team.DisplayName);
         }
     }
 }
