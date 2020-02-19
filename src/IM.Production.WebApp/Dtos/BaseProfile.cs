@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System.Linq;
 using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Production;
 
 namespace IM.Production.WebApp.Dtos
 {
@@ -40,6 +41,11 @@ namespace IM.Production.WebApp.Dtos
            .ForMember(dest => dest.Contracts,
                 opt => opt.MapFrom(src => string.Join(". ", src.Contracts
                                                                 .Select(s => s.Description))));
+
+            CreateMap<Factory, FactoryDto>()
+                 .ForMember(source => source.ProductionTypeKey,
+                        opt => opt.MapFrom(dest => dest.FactoryDefinition.ProductionType.Key));
+
         }
     }
 }

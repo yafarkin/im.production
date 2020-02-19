@@ -24,6 +24,7 @@ namespace IM.Production.WebApp
             services.AddSingleton<Game>(game);
             services.AddTransient<IContractsService, ContractsService>();
             services.AddTransient<ITeamsService, TeamsService>();            
+            services.AddTransient<ITeamService, TeamService>();            
             services.AddAutoMapper(c => c.AddProfile<BaseProfile>(), typeof(Startup));
         }
 

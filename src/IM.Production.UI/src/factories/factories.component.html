@@ -1,0 +1,44 @@
+
+<button mat-button>Добавить фабрику +</button>
+<mat-divider></mat-divider>
+
+<mat-grid-list cols="2" rowHeight="2:1" >
+    <mat-grid-tile *ngFor="let factory of factories; let i = index">
+        <mat-card class="example-card">
+            <mat-card-header>
+                <i mat-card-avatar class="material-icons md-48">business</i>
+                <mat-card-title *ngIf="isProductionTypeMetall(i)" class="factory-title-background-gray">Фабрика</mat-card-title>
+                <mat-card-title *ngIf="isProductionTypeOil(i)" class="factory-title-background-green">Фабрика</mat-card-title>
+                <mat-card-title *ngIf="isProductionTypeElectronic(i)" class="factory-title-background-blue">Фабрика</mat-card-title>
+                <mat-card-title *ngIf="isProductionTypeWooden(i)" class="factory-title-background-brown">Фабрика</mat-card-title>
+                <mat-card-subtitle>
+                    {{factory?.id}}
+                    <button mat-button (click)="setFactoriesShowAdditionalInfo(i)" >
+                        <i *ngIf="getFactoriesShowAdditionalInfo(i)" class="material-icons md-48">keyboard_arrow_up</i>
+                        <i *ngIf="!getFactoriesShowAdditionalInfo(i)" class="material-icons md-48">keyboard_arrow_down</i>
+                    </button>
+                </mat-card-subtitle>
+            </mat-card-header>
+            <mat-divider></mat-divider>
+            <mat-card-content *ngIf="getFactoriesShowAdditionalInfo(i)">
+                <mat-list>
+                    <mat-list-item> Кол-во рабочих {{factory?.workers}} </mat-list-item>
+                    <mat-list-item> Доходность 0к </mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item> Доходность 0к </mat-list-item>
+                 </mat-list>
+            </mat-card-content>
+        </mat-card>
+    </mat-grid-tile>
+
+    <mat-grid-tile *ngFor="let contractFactory of contractFactories; let i = index">
+        <mat-card class="example-card">
+            <mat-card-header>
+                <i mat-card-avatar class="material-icons md-48">business</i>
+                <mat-card-title class="factory-title-background">Фабрика</mat-card-title>
+                <mat-card-subtitle>{{factory?.id}}</mat-card-subtitle>
+            </mat-card-header>
+        </mat-card>
+    </mat-grid-tile>
+
+</mat-grid-list>

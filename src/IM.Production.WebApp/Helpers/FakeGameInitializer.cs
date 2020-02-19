@@ -89,7 +89,6 @@ namespace IM.Production.WebApp.Helpers
                         var d = new Dictionary<int, List<Material>>();
                         factoryDefinition.CanProductionMaterials = d;
                         logic.BuyFactoryFromGame(customer, factoryDefinition, 30);
-                        logic.BuyFactoryFromGame(customer, factoryDefinition, 30);
                         #endregion
 
                         #region CreateContract
