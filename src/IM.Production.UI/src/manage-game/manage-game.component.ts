@@ -36,8 +36,7 @@ export class ManageGameComponent implements OnInit {
     }
 
     playGame(): void {
-        if (!this.isAlreadyStarted)
-        {
+        if (!this.isAlreadyStarted) {
             this.isAlreadyStarted = true;
             this.updateConfig();
 
