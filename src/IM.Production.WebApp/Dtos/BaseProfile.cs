@@ -28,6 +28,9 @@ namespace IM.Production.WebApp.Dtos
             .ForMember(source => source.DestinationWorkers,
                         opt => opt.MapFrom(dest => dest.DestinationFactory.Workers));
 
+            CreateMap<NewTeamDto, Customer>()
+                .ForMember(source => source.DisplayName, opt => opt.MapFrom(dest => dest.Name));
+
             CreateMap<Customer, TeamDto>()
              .ForMember(dest => dest.Name,
                 opts => opts.MapFrom(src => src.Login))

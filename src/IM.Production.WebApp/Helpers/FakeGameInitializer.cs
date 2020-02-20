@@ -3,6 +3,7 @@ using CalculationEngine;
 using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Bank;
 using Epam.ImitationGames.Production.Domain.Production;
+using Epam.ImitationGames.Production.Domain.ReferenceData;
 using IM.Production.CalculationEngine;
 
 namespace IM.Production.WebApp.Helpers
@@ -35,18 +36,40 @@ namespace IM.Production.WebApp.Helpers
                 var productionType = new ProductionType();
                 productionType.Key = "GameProductionTypeKey";
                 productionType.DisplayName = "GameProductionTypeDisplayName";
-                var customer = logic.AddCustomer("Game", "GamePassword", "GameName", productionType);
+                var customer = logic.AddCustomer("Game", "GamePassword", "GameName");
+                customer.DisplayName = "Game";
                 customerList.Add(customer);
             }
             #endregion
+
+            /*
+                ProductionType:
+                * Metallurgical industry
+                * Oil and gas and chemical industry
+                * Electronic industry
+             */
 
             for (var c = 0; c < customersCount; c++)
             {
                 var productionType = new ProductionType();
                 productionType.Key = "key";
-                productionType.DisplayName = "DisplayName";
+                var randNumber = rand.Next(0, 100);
+                if (randNumber < 30)
+                {
+                    productionType.DisplayName = "Metallurgical";
+                }
+                else if (randNumber >= 30 && randNumber < 60)
+                {
+                    productionType.DisplayName = "Oil and gas and chemical";
+                }
+                else
+                {
+                    productionType.DisplayName = "Electronic";
+                }
+
                 var customer = logic.AddCustomer("CustomerLogin" + c, "CustomerPassword" + c,
-                    "CustomerName" + c, productionType);
+                    "CustomerName" + c);
+                customer.DisplayName = "Customer" + c + (char)((rand.Next(0, 100) < 50) ? rand.Next('A', 'Z') : rand.Next('a', 'z')); 
                 customerList.Add(customer);
             }
             #endregion
@@ -66,7 +89,7 @@ namespace IM.Production.WebApp.Helpers
             for (var c = 0; c < customerList.Count; c++)
             {
                 var customer = customerList[c];
-                var contractsNumber = rand.Next(3, 10);
+                var contractsNumber = rand.Next(3, 7);
                 for (var r = 0; r < contractsNumber; r++)
                 {
                     var materialNumber = rand.Next(1, 99);
@@ -81,11 +104,9 @@ namespace IM.Production.WebApp.Helpers
 
                         var factoryDefinition = new FactoryDefinition();
                         factoryDefinition.BaseWorkers = 50;
-                        factoryDefinition.ProductionType = new ProductionType();
-                        factoryDefinition.ProductionType.Id = customer.ProductionType.Id;
-                        factoryDefinition.ProductionType.Key = "key";
-                        factoryDefinition.ProductionType.DisplayName = "display name";
+                        factoryDefinition.ProductionType = ReferenceData.GetProductionTypeByKey(customer.ProductionType.Key);
                         factoryDefinition.GenerationLevel = 1;
+                        
                         var d = new Dictionary<int, List<Material>>();
                         factoryDefinition.CanProductionMaterials = d;
                         logic.BuyFactoryFromGame(customer, factoryDefinition, 30);
