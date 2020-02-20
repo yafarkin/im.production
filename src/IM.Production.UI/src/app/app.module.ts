@@ -29,8 +29,6 @@ import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
 import { NewTeamComponent } from '../new-team/new-team.component';
-import { SnackBarTeamAddSuccessComponent } from '../snack-bars/snack-bar-team-add-success/snack-bar-team-add-success.component';
-import { SnackBarTeamAddErrorComponent } from '../snack-bars/snack-bar-team-add-error/snack-bar-team-add-error.component';
 
 // определение маршрутов
 const appRoutes: Routes = [
@@ -46,9 +44,7 @@ const appRoutes: Routes = [
         TeamsComponent,
         ContractComponent,
         ContractsComponent,
-        NewTeamComponent,
-        SnackBarTeamAddSuccessComponent,
-        SnackBarTeamAddErrorComponent
+        NewTeamComponent
     ],
     imports: [
         CommonModule,
@@ -84,8 +80,6 @@ const appRoutes: Routes = [
     ],
     entryComponents: [
         NewTeamComponent,
-        SnackBarTeamAddSuccessComponent,
-        SnackBarTeamAddErrorComponent,
         MatSnackBarContainer
     ]
 })

@@ -3,8 +3,6 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { NewTeamDto } from '../models/dtos/newteam.dto';
 import { TeamsService } from '../services/teams.service';
 import { Md5 } from 'ts-md5/dist/md5';
-import { SnackBarTeamAddErrorComponent} from '../snack-bars/snack-bar-team-add-error/snack-bar-team-add-error.component';
-import { SnackBarTeamAddSuccessComponent } from '../snack-bars/snack-bar-team-add-success/snack-bar-team-add-success.component';
 import { MatSnackBar } from '@angular/material';
 
 @Component({
@@ -38,13 +36,13 @@ export class NewTeamComponent implements OnInit {
         team.passwordHash = Md5.hashStr(this.gameGroup.value.teamPassword, false).toString();
         this.teamsService.addTeam(team).subscribe(
             success => {
-                this.snackBar.openFromComponent(SnackBarTeamAddSuccessComponent, {
-                    duration: 3 * 1000 // 10 sec
+                this.snackBar.open("Команда добавлена!", "", {
+                    duration: 3 * 1000
                 });
             },
             error => {
-                this.snackBar.openFromComponent(SnackBarTeamAddErrorComponent, {
-                    duration: 3 * 1000 // 10 sec
+                this.snackBar.open("Команда не добавлена!", "", {
+                    duration: 3 * 1000
                 });
             }
         );

@@ -25,7 +25,7 @@ namespace IM.Production.CalculationEngine
             _game = game ?? throw new ArgumentNullException(nameof(game));
         }
 
-        public bool IsCustomerAlreadyExist(string login, string name)
+        private bool IsCustomerAlreadyExists(string login, string name)
         {
             var alreadyExists = _game.Customers.Any(
                 c => c.Login.ToLower().Equals(login.ToLower()) || 
@@ -33,7 +33,7 @@ namespace IM.Production.CalculationEngine
             return alreadyExists;
         }
 
-        public (int, int, int, int) GetProductionTypesCount()
+        private (int, int, int, int) GetProductionTypesCount()
         {
             var metallurgicalCount = 0;
             var oilAndGasAndChemicalCount = 0;
@@ -65,7 +65,7 @@ namespace IM.Production.CalculationEngine
         {
             lock (_lockObj)
             {
-                var alreadyExists = IsCustomerAlreadyExist(login, name);
+                var alreadyExists = IsCustomerAlreadyExists(login, name);
                 if (alreadyExists)
                 {
                     throw new TeamAlreadyExistsException($"The team {login} already exists.");
@@ -73,26 +73,26 @@ namespace IM.Production.CalculationEngine
 
                 (var metallurgicalCount, var oilAndGasAndChemicalCount, var electronicCount, var woodenCount) = 
                     GetProductionTypesCount();
-                string displayName;
+                string productionTypeKey;
                 var min = new int[] { metallurgicalCount, oilAndGasAndChemicalCount, electronicCount, woodenCount }.Min();
                 if (min == metallurgicalCount)
                 {
-                    displayName = "metall";
+                    productionTypeKey = "metall";
                 } 
                 else if (min == oilAndGasAndChemicalCount)
                 {
-                    displayName = "neft_gaz";
+                    productionTypeKey = "neft_gaz";
                 }
                 else if (min == electronicCount)
                 {
-                    displayName = "electronic";
+                    productionTypeKey = "electronic";
                 }
                 else
                 {
-                    displayName = "derevo";
+                    productionTypeKey = "derevo";
                 }
 
-                var productionType = ReferenceData.GetProductionTypeByKey(displayName);
+                var productionType = ReferenceData.GetProductionTypeByKey(productionTypeKey);
                 var customer = Customer.CreateCustomer(login, passwordHash, name, productionType);
                 _game.Customers.Add(customer);
                 _game.AddActivity(new InfoChanging(customer, "Добавление новой команды"));

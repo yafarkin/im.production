@@ -24,7 +24,7 @@ namespace IM.Production.WebApp
             var game = FakeGameInitializer.CreateGame(30);
             var logic = new Logic(game);
             services.AddSingleton<Game>(game);
-            services.AddSingleton<Logic>(logic);
+            services.AddSingleton<Logic>();
             services.AddTransient<IContractsService, ContractsService>();
             services.AddTransient<ITeamsService, TeamsService>();            
             services.AddAutoMapper(c => c.AddProfile<BaseProfile>(), typeof(Startup));
