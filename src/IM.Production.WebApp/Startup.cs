@@ -37,7 +37,7 @@ namespace IM.Production.WebApp
             var logic = new Logic(game);
             services.AddSingleton<Game>(game);
             services.AddSingleton<Logic>(logic);
-            services.AddSingleton<CalculationEngine>(calculationEngine);
+            services.AddSingleton<CalculationEngine.CalculationEngine>(calculationEngine);
             services.AddSingleton(AppConfiguration);
             services.AddTransient<IContractsService, ContractsService>();
             services.AddTransient<IGameService, GameService>();
