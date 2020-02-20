@@ -2,6 +2,15 @@
     font-size: 48px;
 }
 
+.mat-list.list-horizontal {
+    padding: 0;
+    .mat-list-item {
+        display: inline-block;
+        height: auto;
+        width: auto;
+    }
+}
+
 .factory-title-background-gray {
     background-color: green;
 }
