@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using IM.Production.CalculationEngine;
 
 namespace IM.Production.WebApp
 {
@@ -20,8 +21,10 @@ namespace IM.Production.WebApp
             /// <summary>
             /// Test data for cheking displaying information about contracts.
             /// </summary>>
-            var game = FakeGameInitializer.CreateGame(15);
+            var game = FakeGameInitializer.CreateGame(30);
+            var logic = new Logic(game);
             services.AddSingleton<Game>(game);
+            services.AddSingleton<Logic>();
             services.AddTransient<IContractsService, ContractsService>();
             services.AddTransient<ITeamsService, TeamsService>();            
             services.AddAutoMapper(c => c.AddProfile<BaseProfile>(), typeof(Startup));
