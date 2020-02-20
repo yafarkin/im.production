@@ -2,6 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ManageGameService } from '../services/manage-game.service';
 import { GameConfigDto } from '../models/dtos/game.config.dto';
 
+enum GameState {
+    Initilized,
+    Stopped,
+    Launched,
+    Finished
+}
+
 @Component({
     selector: 'app-manage-game',
     templateUrl: './manage-game.component.html',
@@ -17,34 +24,34 @@ export class ManageGameComponent implements OnInit {
     secondsBeforeNextDay: number;
     progressBarValue: number;
     percentCoefficient: number;
-    isAlreadyStarted: boolean;
-    isFirstTime: boolean = true;
+
+    gameState: GameState;
 
     constructor(private manageGameService: ManageGameService) { }
 
     ngOnInit() {
         this.progressBarValue = 0;
+        this.gameState = GameState.Initilized;
         this.updateConfig();
     }
 
     stopGame(): void {
-        clearInterval(this.playIntervalId);
-        clearInterval(this.secondsLeftIntervalId);
+        this.stopGameInterval();
         this.playIntervalId = null;
         this.secondsLeftIntervalId = null;
-        this.isAlreadyStarted = false;
+
+        this.gameState = GameState.Stopped;
     }
 
     playGame(): void {
-        if (!this.isAlreadyStarted) {
-            this.isAlreadyStarted = true;
+        if (this.gameState != GameState.Launched) {
             this.updateConfig();
 
-            if (this.isFirstTime) {
+            if (this.gameState == GameState.Initilized) {
                 this.secondsBeforeNextDay = this.gameConfig.dayDurationInSeconds;
             }
 
-            this.isFirstTime = false;
+            this.gameState = GameState.Launched;
             this.percentCoefficient = 100 / this.gameConfig.dayDurationInSeconds;
 
             this.playIntervalId = setInterval(() => {
@@ -59,7 +66,14 @@ export class ManageGameComponent implements OnInit {
                     this.secondsBeforeNextDay--;
                 }
                 this.progressBarValue = this.percentCoefficient *
-                    (this.gameConfig.dayDurationInSeconds - this.secondsBeforeNextDay);
+                (this.gameConfig.dayDurationInSeconds - this.secondsBeforeNextDay);
+
+                if (this.currentDay == this.gameConfig.maxDays &&
+                    this.secondsBeforeNextDay == 0)
+                {
+                    this.gameState = GameState.Finished;
+                    this.stopGameInterval();
+                }
             }, 1000);
         }
     }
@@ -73,14 +87,36 @@ export class ManageGameComponent implements OnInit {
     }
 
     restartGame(): void {
-        this.isFirstTime = false;
+        this.stopGameInterval();
         this.updateConfig();
         this.manageGameService.restartGame().subscribe(
             success => {
                 this.currentDay = 0;
                 this.progressBarValue = 0;
                 this.secondsBeforeNextDay = this.gameConfig.dayDurationInSeconds;
+                this.gameState = GameState.Initilized;
             }
         );
+    }
+
+    stopGameInterval(): void {
+        clearInterval(this.playIntervalId);
+        clearInterval(this.secondsLeftIntervalId);
+    }
+
+    isGameInitialized(): boolean {
+        return this.gameState == GameState.Initilized;
+    }
+
+    isGameStopped(): boolean {
+        return this.gameState == GameState.Stopped;
+    }
+
+    isGameLaunched(): boolean {
+        return this.gameState == GameState.Launched;
+    }
+
+    isGameFinished(): boolean {
+        return this.gameState == GameState.Finished;
     }
 }
