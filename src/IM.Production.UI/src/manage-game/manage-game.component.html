@@ -2,6 +2,7 @@
     <mat-card-header>
         <i mat-card-avatar class="material-icons md-48">games</i>
         <mat-card-title>Управление игрой</mat-card-title>
+        <mat-card-subtitle *ngIf="isGameInitialized()">Статус: готова к запуску</mat-card-subtitle>
         <mat-card-subtitle *ngIf="isGameLaunched()">Статус: запущена</mat-card-subtitle>
         <mat-card-subtitle *ngIf="isGameStopped()">Статус: приостановлена</mat-card-subtitle>
         <mat-card-subtitle *ngIf="isGameFinished()">Статус: закончена</mat-card-subtitle>
