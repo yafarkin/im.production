@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.Linq;
 using Epam.ImitationGames.Production.Domain.Services;
 using IM.Production.WebApp.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -21,35 +22,17 @@ namespace IM.Production.WebApp.Controllers
 
         [HttpGet]
         [Route("get-team-factories")]
-        public IEnumerable<FactoryDto> GetTeamFactories(string login)
+        public FactoryAndContractFactories[] GetTeamFactories(string login)
         {
-            var factories = _service.GetFactoriesByLogin(login);
-            var result = new List<FactoryDto>();
-            foreach (var factory in factories)
+            var factoriesAndContractFactoriesList = _service.GetContractFactoriesByLogin(login).ToList();
+            var result = new List<FactoryAndContractFactories>();
+            foreach (var factoryAndContractFactoriesList in factoriesAndContractFactoriesList)
             {
-                var dto = _mapper?.Map<FactoryDto>(factory);
-                result.Add(dto);
+                var entity = _mapper?.Map<FactoryAndContractFactories>(factoryAndContractFactoriesList);
+                result.Add(entity);
             }
-            return result;
+            return result.ToArray();
         }
 
-        [HttpGet]
-        [Route("get-team-contract-factories")]
-        public IEnumerable<FactoryDto[]> GetTeamContractFactories(string login)
-        {
-            var contractFactoriesList = _service.GetContractFactoriesByLogin(login);
-            var result = new List<FactoryDto[]>();
-            foreach (var contractFactories in contractFactoriesList)
-            {
-                var list = new List<FactoryDto>();
-                foreach (var factory in contractFactories)
-                {
-                    var dto = _mapper?.Map<FactoryDto>(factory);
-                    list.Add(dto);
-                }
-                result.Add(list.ToArray());
-            }
-            return result;
-        }
     }
 }

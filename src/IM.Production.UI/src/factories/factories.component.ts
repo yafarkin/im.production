@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FactoryDto } from '../models/dtos/factory.dto';
 import { TeamService } from '../services/team.service';
+import { FactoryAndContractFactoriesDto } from '../models/dtos/factory.and.contract.factories.dto';
 
 @Component({
     selector: 'app-factories',
@@ -11,27 +12,26 @@ import { TeamService } from '../services/team.service';
 export class FactoriesComponent implements OnInit {
 
     login: string = "CustomerLogin1";
-    factories: FactoryDto[];
+    factoriesAndContractFactories: FactoryAndContractFactoriesDto[];
     contractFactories: FactoryDto[][];
     factoriesShowAdditionalInfo: boolean[] = [];
 
     constructor(private teamService: TeamService) { }
 
     ngOnInit() {
+
         this.teamService.getFactories(this.login).subscribe(
             success => {
-                this.factories = success;
-            }
-        );
-        this.teamService.getContractFactories(this.login).subscribe(
-            success => {
-                this.contractFactories = success;
+                this.factoriesAndContractFactories = success;
+                this.factoriesAndContractFactories.forEach(element => {
+                    this.factoriesShowAdditionalInfo.push(true);
+                });
             }
         );
     }
 
     setFactoriesShowAdditionalInfo(index: number): void {
-        this.factoriesShowAdditionalInfo[index]= !this.factoriesShowAdditionalInfo[index];
+        this.factoriesShowAdditionalInfo[index] = !this.factoriesShowAdditionalInfo[index];
     }
 
     getFactoriesShowAdditionalInfo(index: number): boolean {
@@ -39,19 +39,19 @@ export class FactoriesComponent implements OnInit {
     }
 
     isProductionTypeMetall(index: number) {
-        return this.factories[index].productionTypeKey == "metall" || true;
+        return this.factoriesAndContractFactories[index].factory.productionTypeKey == "metall" || true;
     }
 
     isProductionTypeOil(index: number) {
-        return this.factories[index].productionTypeKey == "neft_gaz";
+        return this.factoriesAndContractFactories[index].factory.productionTypeKey == "neft_gaz";
     }
 
     isProductionTypeElectronic(index: number) {
-        return this.factories[index].productionTypeKey == "electronic";
+        return this.factoriesAndContractFactories[index].factory.productionTypeKey == "electronic";
     }
 
     isProductionTypeWooden(index: number) {
-        return this.factories[index].productionTypeKey == "derevo";
+        return this.factoriesAndContractFactories[index].factory.productionTypeKey == "derevo";
     }
 
 }

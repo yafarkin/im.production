@@ -41,13 +41,21 @@ namespace IM.Production.WebApp.Dtos
              .ForMember(dest => dest.Factories,
                 opt => opt.MapFrom(src => string.Join(". ", src.Factories
                                                                 .Select(s => s.FactoryDefinition.DisplayName))))
-           .ForMember(dest => dest.Contracts,
-                opt => opt.MapFrom(src => string.Join(". ", src.Contracts
+               .ForMember(dest => dest.Contracts,
+                    opt => opt.MapFrom(src => string.Join(". ", src.Contracts
                                                                 .Select(s => s.Description))));
 
             CreateMap<Factory, FactoryDto>()
                  .ForMember(source => source.ProductionTypeKey,
-                        opt => opt.MapFrom(dest => dest.FactoryDefinition.ProductionType.Key));
+                        opt => opt.MapFrom(dest => dest.FactoryDefinition.ProductionType.Key))
+                 .ForMember(source => source.Id,
+                        opt => opt.MapFrom(dest => dest.Id));
+
+            CreateMap<(Factory, Factory[]), FactoryAndContractFactories>()
+                .ForMember(source => source.Factory,
+                         opt => opt.MapFrom(dest => dest.Item1))
+                .ForMember(source => source.ContractFactories,
+                         opt => opt.MapFrom(dest => dest.Item2));
 
         }
     }

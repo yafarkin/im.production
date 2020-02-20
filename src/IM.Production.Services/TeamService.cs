@@ -20,10 +20,9 @@ namespace IM.Production.Services
             return _game?.Customers?.Where(obj => obj.Login.Equals(login)).FirstOrDefault()?.Factories;
         }
 
-        public IEnumerable<Factory[]> GetContractFactoriesByLogin(string login)
+        (Factory, Factory[])[] ITeamService.GetContractFactoriesByLogin(string login)
         {
-            //_game?.Customers?.Where(obj => obj.Login.Equals(login)).FirstOrDefault()?.Factories
-            var result = new List<Factory[]>();
+            var result = new List<(Factory, Factory[])>();
             var customer = _game?.Customers?.Where(obj => obj.Login.Equals(login)).FirstOrDefault();
             var factories = customer?.Factories;
             foreach (var factory in factories)
@@ -34,16 +33,19 @@ namespace IM.Production.Services
                 var list = new List<Factory>();
                 foreach (var item in thisFactoryContracts)
                 {
-                    if (!list.Contains(item.DestinationFactory))
+                    var theSameObject = list
+                        .Where(obj => obj.Id.Equals(item.DestinationFactory.Id))
+                        .FirstOrDefault();
+                    if (theSameObject == null)
                     {
                         list.Add(item.DestinationFactory);
                     }
                 }
-                //thisFactoryContracts.ForEach(item => list.Add(item.DestinationFactory));
-                result.Add(list.ToArray());
+                result.Add((factory, list.ToArray()));
             }
 
-            return result;
+            return result.ToArray();
         }
+
     }
 }
