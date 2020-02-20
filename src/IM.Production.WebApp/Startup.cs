@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using IM.Production.CalculationEngine;
 
 namespace IM.Production.WebApp
 {
@@ -31,11 +32,12 @@ namespace IM.Production.WebApp
             /// <summary>
             /// Test data for cheking displaying information about contracts.
             /// </summary>>
-            var game = new Game(); 
-                //FakeGameInitializer.CreateGame(15);
+            var game = FakeGameInitializer.CreateGame(30);
             var calculationEngine = new CalculationEngine.CalculationEngine(game);
-            services.AddSingleton(game);
-            services.AddSingleton(calculationEngine);
+            var logic = new Logic(game);
+            services.AddSingleton<Game>(game);
+            services.AddSingleton<Logic>(logic);
+            services.AddSingleton<CalculationEngine>(calculationEngine);
             services.AddSingleton(AppConfiguration);
             services.AddTransient<IContractsService, ContractsService>();
             services.AddTransient<IGameService, GameService>();

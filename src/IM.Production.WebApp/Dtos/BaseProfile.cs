@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using System.Linq;
 using Epam.ImitationGames.Production.Domain;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace IM.Production.WebApp.Dtos
 {
@@ -27,6 +29,9 @@ namespace IM.Production.WebApp.Dtos
             .ForMember(source => source.DestinationWorkers,
                         opt => opt.MapFrom(dest => dest.DestinationFactory.Workers));
 
+            CreateMap<NewTeamDto, Customer>()
+                .ForMember(source => source.DisplayName, opt => opt.MapFrom(dest => dest.Name));
+
             CreateMap<Customer, TeamDto>()
              .ForMember(dest => dest.Name,
                 opts => opts.MapFrom(src => src.Login))
@@ -40,6 +45,7 @@ namespace IM.Production.WebApp.Dtos
            .ForMember(dest => dest.Contracts,
                 opt => opt.MapFrom(src => string.Join(". ", src.Contracts
                                                                 .Select(s => s.Description))));
+
         }
     }
 }

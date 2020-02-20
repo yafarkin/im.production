@@ -5,6 +5,7 @@ using CalculationEngine;
 using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Bank;
 using Epam.ImitationGames.Production.Domain.Base;
+using Epam.ImitationGames.Production.Domain.Exceptions;
 using Epam.ImitationGames.Production.Domain.Production;
 using Epam.ImitationGames.Production.Domain.ReferenceData;
 
@@ -24,13 +25,76 @@ namespace IM.Production.CalculationEngine
             _game = game ?? throw new ArgumentNullException(nameof(game));
         }
 
-        public Customer AddCustomer(string login, string password, string name, ProductionType productionType, decimal? initialBalance = null)
+        private bool IsCustomerAlreadyExists(string login, string name)
+        {
+            var alreadyExists = _game.Customers.Any(
+                c => c.Login.ToLower().Equals(login.ToLower()) || 
+                     c.DisplayName.ToLower().Equals(name.ToLower()));
+            return alreadyExists;
+        }
+
+        private (int, int, int, int) GetProductionTypesCount()
+        {
+            var metallurgicalCount = 0;
+            var oilAndGasAndChemicalCount = 0;
+            var electronicCount = 0;
+            var woodenCount = 0;
+            foreach (var customerInstance in _game.Customers)
+            {
+                if (customerInstance.ProductionType.DisplayName.Equals("metall"))
+                {
+                    ++metallurgicalCount;
+                }
+                else if (customerInstance.ProductionType.DisplayName.Equals("neft_gaz"))
+                {
+                    ++oilAndGasAndChemicalCount;
+                }
+                else if (customerInstance.ProductionType.DisplayName.Equals("electronic"))
+                {
+                    ++electronicCount;
+                }
+                else if (customerInstance.ProductionType.DisplayName.Equals("derevo"))
+                {
+                    ++woodenCount;
+                }
+            }
+            return (metallurgicalCount, oilAndGasAndChemicalCount, electronicCount, woodenCount);
+        }
+
+        public Customer AddCustomer(string login, string passwordHash, string name, decimal? initialBalance = null)
         {
             lock (_lockObj)
             {
-                var customer = Customer.CreateCustomer(login, Game.GetMD5Hash(password), name, productionType);
-                _game.Customers.Add(customer);
+                var alreadyExists = IsCustomerAlreadyExists(login, name);
+                if (alreadyExists)
+                {
+                    throw new TeamAlreadyExistsException($"The team {login} already exists.");
+                }
 
+                (var metallurgicalCount, var oilAndGasAndChemicalCount, var electronicCount, var woodenCount) = 
+                    GetProductionTypesCount();
+                string productionTypeKey;
+                var min = new int[] { metallurgicalCount, oilAndGasAndChemicalCount, electronicCount, woodenCount }.Min();
+                if (min == metallurgicalCount)
+                {
+                    productionTypeKey = "metall";
+                } 
+                else if (min == oilAndGasAndChemicalCount)
+                {
+                    productionTypeKey = "neft_gaz";
+                }
+                else if (min == electronicCount)
+                {
+                    productionTypeKey = "electronic";
+                }
+                else
+                {
+                    productionTypeKey = "derevo";
+                }
+
+                var productionType = ReferenceData.GetProductionTypeByKey(productionTypeKey);
+                var customer = Customer.CreateCustomer(login, passwordHash, name, productionType);
+                _game.Customers.Add(customer);
                 _game.AddActivity(new InfoChanging(customer, "Добавление новой команды"));
                 _game.AddActivity(new FinanceCustomerChange(customer, initialBalance ?? ReferenceData.InitialCustomerBalance,  "Установка начальной суммы на счёте"));
                 
