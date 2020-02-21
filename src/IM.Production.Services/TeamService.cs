@@ -25,12 +25,12 @@ namespace IM.Production.Services
             var result = new List<(Factory, Factory[])>();
             var customer = _game?.Customers?.Where(obj => obj.Login.Equals(login)).FirstOrDefault();
             var factories = customer?.Factories;
+            var list = new List<Factory>();
             foreach (var factory in factories)
             {
                 var thisFactoryContracts = customer.Contracts
                     .Where(obj => obj.SourceFactory.Id.Equals(factory.Id))
                     .ToList();
-                var list = new List<Factory>();
                 foreach (var item in thisFactoryContracts)
                 {
                     var theSameObject = list
@@ -42,6 +42,7 @@ namespace IM.Production.Services
                     }
                 }
                 result.Add((factory, list.ToArray()));
+                list.Clear();
             }
 
             return result.ToArray();
