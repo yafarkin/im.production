@@ -1,32 +1,63 @@
 
-<button mat-button>Добавить фабрику +</button>
+<div class="team-progress">
+    Логин: {{login}} <br/>
+    Уровень: {{gameProgress?.factoryGenerationLevel}} <br/>
+    <i class="material-icons md-24">payment</i>
+    {{gameProgress?.moneyBalance | number: '1.0-0'}} <br/>
+    <i class="material-icons md-24">settings</i>
+    RD: {{gameProgress?.rdProgress  | number: '1.0-0'}}%
+</div>
+
+<button mat-flat-button color="primary">
+    Добавить фабрику +
+</button>
+
 <mat-divider></mat-divider>
 
 <mat-grid-list cols="2" rowHeight="2:1" *ngFor="let factoryAndContractFactories of factoriesAndContractFactories; let i = index">
     <mat-grid-tile>
         <mat-card class="example-card">
             <mat-card-header>
-                <i mat-card-avatar class="material-icons md-48">business</i>
-                <mat-card-title *ngIf="true" class="factory-title-background-gray">Фабрика</mat-card-title>
-                <!-- <mat-card-title *ngIf="isProductionTypeOil(i)" class="factory-title-background-green">Фабрика</mat-card-title>
-                <mat-card-title *ngIf="isProductionTypeElectronic(i)" class="factory-title-background-blue">Фабрика</mat-card-title>
-                <mat-card-title *ngIf="isProductionTypeWooden(i)" class="factory-title-background-brown">Фабрика</mat-card-title> -->
-                <mat-card-subtitle>
-                    {{factoryAndContractFactories?.factory?.id}}
-                    <button mat-button (click)="setFactoriesShowAdditionalInfo(i)" >
+                <i mat-card-avatar class="material-icons md-48">apartment</i>
+                <mat-card-title>Фабрика</mat-card-title>
+
+                <mat-card-subtitle [ngSwitch]="getFactoryProductionType(factoryAndContractFactories?.factory)">
+                    <ng-template ngSwitchCase="metall">
+                        <i class="factory-title-background-gray">
+                            Металлургическая промышленность
+                        </i>
+                    </ng-template>
+
+                    <ng-template ngSwitchCase="neft_gaz">
+                        <i class="factory-title-background-green">
+                            Химическая промышленность
+                        </i>
+                    </ng-template>
+
+                    <ng-template ngSwitchCase="electronic">
+                        <i class="factory-title-background-blue">
+                            Электронная промышленность
+                        </i>
+                    </ng-template>
+
+                    <ng-template ngSwitchCase="derevo">
+                        <i class="factory-title-background-brown">
+                            Деревообрабатывающая промышленность
+                        </i>
+                    </ng-template>
+
+                    <button mat-button (click)="setFactoriesShowAdditionalInfo(i)">
                         <i *ngIf="getFactoriesShowAdditionalInfo(i)" class="material-icons md-48">keyboard_arrow_up</i>
                         <i *ngIf="!getFactoriesShowAdditionalInfo(i)" class="material-icons md-48">keyboard_arrow_down</i>
                     </button>
                 </mat-card-subtitle>
+
             </mat-card-header>
             <mat-divider></mat-divider>
             <mat-card-content *ngIf="getFactoriesShowAdditionalInfo(i)">
                 <mat-list>
-                    <mat-list-item> Кол-во рабочих {{factory?.workers}} </mat-list-item>
-                    <mat-list-item> Доходность 0к </mat-list-item>
-                    <mat-divider></mat-divider>
-                    <mat-list-item> Доходность 0к </mat-list-item>
-                 </mat-list>
+                    <mat-list-item> Кол-во рабочих: {{factoryAndContractFactories?.factory?.workers}} </mat-list-item>
+                </mat-list>
             </mat-card-content>
         </mat-card>
     </mat-grid-tile>
@@ -36,9 +67,34 @@
             <mat-list-item role="listitem" *ngFor="let contractFactory of factoryAndContractFactories.contractFactories; let i = index">
                 <mat-card class="example-card">
                     <mat-card-header>
-                        <i mat-card-avatar class="material-icons md-48">business</i>
+                        <i mat-card-avatar class="material-icons md-48">apartment</i>
                         <mat-card-title class="factory-title-background">Фабрика</mat-card-title>
-                        <mat-card-subtitle>{{contractFactory?.id}}</mat-card-subtitle>
+                        <mat-card-subtitle [ngSwitch]="getFactoryProductionType(contractFactory)">
+                            <ng-template ngSwitchCase="metall">
+                                <i class="factory-title-background-gray">
+                                    Металлургическая промышленность
+                                </i>
+                            </ng-template>
+
+                            <ng-template ngSwitchCase="neft_gaz">
+                                <i class="factory-title-background-green">
+                                    Химическая промышленность
+                                </i>
+                            </ng-template>
+
+                            <ng-template ngSwitchCase="electronic">
+                                <i class="factory-title-background-blue">
+                                    Электронная промышленность
+                                </i>
+                            </ng-template>
+
+                            <ng-template ngSwitchCase="derevo">
+                                <i class="factory-title-background-brown">
+                                    Деревообрабатывающая промышленность
+                                </i>
+                            </ng-template>
+
+                        </mat-card-subtitle>
                     </mat-card-header>
                 </mat-card>
             </mat-list-item>

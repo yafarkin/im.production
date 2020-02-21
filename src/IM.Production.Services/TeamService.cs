@@ -47,5 +47,11 @@ namespace IM.Production.Services
             return result.ToArray();
         }
 
+        (decimal, decimal, int) ITeamService.GetTeamGameProgress(string login)
+        {
+            var customer = _game.Customers.Where(obj => obj.Login.Equals(login)).FirstOrDefault();
+            return (customer.Sum, customer.RDProgress, customer.FactoryGenerationLevel);
+        }
+
     }
 }

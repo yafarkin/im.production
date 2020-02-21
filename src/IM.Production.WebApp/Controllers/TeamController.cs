@@ -34,5 +34,16 @@ namespace IM.Production.WebApp.Controllers
             return result.ToArray();
         }
 
+        [HttpGet]
+        [Route("get-team-game-progress")]
+        public GameProgressDto GetTeamGameProgress(string login)
+        {
+            var teamGameProgress = _service.GetTeamGameProgress(login);
+            var gameProgressDto = new GameProgressDto();
+            gameProgressDto.MoneyBalance = teamGameProgress.Item1;
+            gameProgressDto.RDProgress = teamGameProgress.Item2;
+            return gameProgressDto;
+        }
+
     }
 }

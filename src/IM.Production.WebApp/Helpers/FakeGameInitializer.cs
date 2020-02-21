@@ -97,7 +97,6 @@ namespace IM.Production.WebApp.Helpers
                     {
                         #region GiveMoneyAndFabrics
                         var material = materialList[materialNumber];
-                        var contract = new Contract(customer, material);
                         var bfo = new BankCredit(customer, 5_000_000);
                         bfo.Percent = 0.0M;
                         logic.TakeDebitOrCredit(customer, bfo);
@@ -113,19 +112,46 @@ namespace IM.Production.WebApp.Helpers
                         #endregion
 
                         #region CreateContract
-                        contract.SourceFactory = GetFirstFactory(customer.Factories);
-                        contract.TillCount =
-                            (int?)((r * materialNumber + c * System.DateTime.Now.Ticks + 1) / (System.DateTime.Now.Second + 1) % 10_000_000);
-                        contract.TotalCountCompleted = 50;
-                        contract.TillDate =
-                            (int?)(System.DateTime.Now.Ticks % 10_000_000);
-                        contract.TotalSumm =
-                            (decimal)(contract.TillCount * contract.TillDate + 1) % 10_000_000;
-                        contract.DestinationFactory = (c >= 1) ? GetFirstFactory(customerList[c - 1].Factories) : new Factory();
 
-                        if (contract?.DestinationFactory != null && contract?.SourceFactory != null)
+                        if (c > 0)
                         {
-                            logic.AddContract(contract);
+                            foreach (var factory in customer.Factories)
+                            {
+                                var contract = new Contract(customer, material);
+                                contract.SourceFactory = factory;
+                                contract.TillCount =
+                                    (int?)((r * materialNumber + c * System.DateTime.Now.Ticks + 1) / (System.DateTime.Now.Second + 1) % 10_000_000);
+                                contract.TotalCountCompleted = 50;
+                                contract.TillDate =
+                                    (int?)(System.DateTime.Now.Ticks % 10_000_000);
+                                contract.TotalSumm =
+                                    (decimal)(contract.TillCount * contract.TillDate + 1) % 10_000_000;
+
+                                contract.DestinationFactory = GetFirstFactory(customerList[c - 1].Factories);
+
+                                if (contract?.DestinationFactory != null && contract?.SourceFactory != null)
+                                {
+                                    logic.AddContract(contract);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var contract = new Contract(customer, material);
+                            contract.SourceFactory = GetFirstFactory(customer.Factories);
+                            contract.TillCount =
+                                (int?)((r * materialNumber + c * System.DateTime.Now.Ticks + 1) / (System.DateTime.Now.Second + 1) % 10_000_000);
+                            contract.TotalCountCompleted = 50;
+                            contract.TillDate =
+                                (int?)(System.DateTime.Now.Ticks % 10_000_000);
+                            contract.TotalSumm =
+                                (decimal)(contract.TillCount * contract.TillDate + 1) % 10_000_000;
+                            contract.DestinationFactory = (c >= 1) ? GetFirstFactory(customerList[c - 1].Factories) : new Factory();
+
+                            if (contract?.DestinationFactory != null && contract?.SourceFactory != null)
+                            {
+                                logic.AddContract(contract);
+                            }
                         }
                         #endregion
 

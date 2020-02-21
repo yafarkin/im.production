@@ -7,5 +7,6 @@ namespace Epam.ImitationGames.Production.Domain.Services
     {
         IEnumerable<Factory> GetFactoriesByLogin(string login);
         (Factory, Factory[])[] GetContractFactoriesByLogin(string login);
+        (decimal, decimal, int) GetTeamGameProgress(string login);
     }
 }

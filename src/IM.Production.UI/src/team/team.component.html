@@ -1,5 +1,6 @@
-
 <mat-tab-group>
-    <mat-tab label="Фабрики"><app-factories></app-factories></mat-tab>
+    <mat-tab label="Фабрики">
+        <app-factories [gameProgress]="gameProgress"></app-factories>
+    </mat-tab>
     <mat-tab label="Контракты"> Контракты (not implimented yet) </mat-tab>
 </mat-tab-group>

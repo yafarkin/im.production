@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FactoryDto } from '../models/dtos/factory.dto';
 import { TeamService } from '../services/team.service';
 import { FactoryAndContractFactoriesDto } from '../models/dtos/factory.and.contract.factories.dto';
+import { GameProgressDto } from '../models/dtos/game.progress.dto';
 
 @Component({
     selector: 'app-factories',
@@ -11,6 +12,8 @@ import { FactoryAndContractFactoriesDto } from '../models/dtos/factory.and.contr
 })
 export class FactoriesComponent implements OnInit {
 
+    @Input() gameProgress: GameProgressDto;
+
     login: string = "CustomerLogin1";
     factoriesAndContractFactories: FactoryAndContractFactoriesDto[];
     contractFactories: FactoryDto[][];
@@ -19,13 +22,9 @@ export class FactoriesComponent implements OnInit {
     constructor(private teamService: TeamService) { }
 
     ngOnInit() {
-
         this.teamService.getFactories(this.login).subscribe(
             success => {
                 this.factoriesAndContractFactories = success;
-                this.factoriesAndContractFactories.forEach(element => {
-                    this.factoriesShowAdditionalInfo.push(true);
-                });
             }
         );
     }
@@ -38,20 +37,11 @@ export class FactoriesComponent implements OnInit {
         return this.factoriesShowAdditionalInfo[index];
     }
 
-    isProductionTypeMetall(index: number) {
-        return this.factoriesAndContractFactories[index].factory.productionTypeKey == "metall" || true;
-    }
-
-    isProductionTypeOil(index: number) {
-        return this.factoriesAndContractFactories[index].factory.productionTypeKey == "neft_gaz";
-    }
-
-    isProductionTypeElectronic(index: number) {
-        return this.factoriesAndContractFactories[index].factory.productionTypeKey == "electronic";
-    }
-
-    isProductionTypeWooden(index: number) {
-        return this.factoriesAndContractFactories[index].factory.productionTypeKey == "derevo";
+    getFactoryProductionType(contractFactory: FactoryDto): string {
+        if (contractFactory != null) {
+            return contractFactory.productionTypeKey;
+        }
+        return "default";
     }
 
 }
