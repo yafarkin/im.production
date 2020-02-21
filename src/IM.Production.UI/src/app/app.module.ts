@@ -25,40 +25,51 @@ import { TeamDetailsComponent } from '../team-details/team-details.component';
 import { ContractsService } from '../services/contracts.service';
 import { MatTableModule } from '@angular/material/table';
 import { AppComponent } from './app/app.component';
+import { FactoryInfoComponent } from '../factory-info/factory-info.component';
 
 // определение маршрутов
 const appRoutes: Routes = [
     { path: '', component: TeamsComponent },
     { path: 'teamDetails', component: TeamDetailsComponent },
     { path: 'contracts', component: ContractsComponent },
-    { path: 'contracts/:id', component: ContractComponent }
+    { path: 'contracts/:id', component: ContractComponent },
+    { path: 'factory-info', component: FactoryInfoComponent }
 ];
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        TeamDetailsComponent,
-        TeamsComponent,
-        ContractComponent,
-        ContractsComponent
-    ],
-    imports: [
-        CommonModule,
-        BrowserModule,
-        RouterModule.forRoot(appRoutes),
-        FormsModule,
-        HttpClientModule,
-        BrowserAnimationsModule,
-        MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatButtonToggleModule,
-        MatToolbarModule, MatDividerModule, MatListModule, MatGridListModule, MatCardModule,
-        MatTabsModule
-    ],
-    providers: [
-        ContractsService,
-        TeamsService
-    ],
-    bootstrap: [
-        AppComponent
-    ]
+   declarations: [
+      AppComponent,
+      TeamDetailsComponent,
+      TeamsComponent,
+      ContractComponent,
+      ContractsComponent,
+      FactoryInfoComponent
+   ],
+   imports: [
+      CommonModule,
+      BrowserModule,
+      RouterModule.forRoot(appRoutes),
+      FormsModule,
+      HttpClientModule,
+      BrowserAnimationsModule,
+      MatTableModule,
+      MatPaginatorModule,
+      MatSortModule,
+      MatButtonModule,
+      MatButtonToggleModule,
+      MatToolbarModule,
+      MatDividerModule,
+      MatListModule,
+      MatGridListModule,
+      MatCardModule,
+      MatTabsModule
+   ],
+   providers: [
+      ContractsService,
+      TeamsService
+   ],
+   bootstrap: [
+      AppComponent
+   ]
 })
 export class AppModule { }

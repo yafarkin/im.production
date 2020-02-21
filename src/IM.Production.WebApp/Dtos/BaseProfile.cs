@@ -40,6 +40,14 @@ namespace IM.Production.WebApp.Dtos
            .ForMember(dest => dest.Contracts,
                 opt => opt.MapFrom(src => string.Join(". ", src.Contracts
                                                                 .Select(s => s.Description))));
+
+            CreateMap<Contract, FactoryContractDto>()
+            .ForMember(dest => dest.DestinationCustomerLogin,
+                opts => opts.MapFrom(source => source.DestinationFactory.Customer.Login))
+            .ForMember(dest => dest.SourceCustomerLogin,
+                opts => opts.MapFrom(source => source.SourceFactory.Customer.Login))
+            .ForMember(dest => dest.MaterialKey,
+                opts => opts.MapFrom(source => source.MaterialWithPrice.Material.Key));
         }
     }
 }

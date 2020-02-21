@@ -59,5 +59,20 @@ namespace IM.Production.WebApp.Controllers
 
             return result;
         }
+
+        [HttpGet]
+        [Route("get-factory-contracts")]
+        public FactoryContractDto[] GetFactoryContracts(string login)
+        {
+            var contracts = _service.GetFactoryContracts(login).ToList();
+            var contractsDtos = new FactoryContractDto[contracts.Count];
+            for (var i = 0; i < contracts.Count; i++)
+            {
+                var contractDto = _mapper.Map<FactoryContractDto>(contracts[i]);
+                contractsDtos[i] = contractDto;
+            }
+            return contractsDtos;
+        }
+
     }
 }
