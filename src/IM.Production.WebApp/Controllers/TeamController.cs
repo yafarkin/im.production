@@ -3,7 +3,6 @@ using System.Linq;
 using Epam.ImitationGames.Production.Domain.Services;
 using IM.Production.WebApp.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace IM.Production.WebApp.Controllers
 {
@@ -24,14 +23,16 @@ namespace IM.Production.WebApp.Controllers
         [Route("get-team-factories")]
         public FactoryAndContractFactories[] GetTeamFactories(string login)
         {
+            var index = 0;
             var factoriesAndContractFactoriesList = _service.GetContractFactoriesByLogin(login).ToList();
             var result = new FactoryAndContractFactories[factoriesAndContractFactoriesList.Count];
-            var index = 0;
+            
             foreach (var factoryAndContractFactoriesList in factoriesAndContractFactoriesList)
             {
                 var entity = _mapper?.Map<FactoryAndContractFactories>(factoryAndContractFactoriesList);
                 result[index++] = entity;
             }
+
             return result;
         }
 
@@ -41,7 +42,7 @@ namespace IM.Production.WebApp.Controllers
         {
             var teamGameProgress = _service.GetTeamGameProgress(login);
             var gameProgressDto = new GameProgressDto() { 
-                MoneyBalance = teamGameProgress.Item1 , 
+                MoneyBalance = teamGameProgress.Item1, 
                 RDProgress = teamGameProgress.Item2
             };
             return gameProgressDto;
