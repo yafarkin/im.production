@@ -1,9 +1,8 @@
-
 <div class="team-progress">
-    Логин: {{login}} <br/>
-    Уровень: {{gameProgress?.factoryGenerationLevel}} <br/>
+    Логин: {{login}} <br />
+    Уровень: {{gameProgress?.factoryGenerationLevel}} <br />
     <i class="material-icons md-24">payment</i>
-    {{gameProgress?.moneyBalance | number: '1.0-0'}} <br/>
+    {{gameProgress?.moneyBalance | number: '1.0-0'}} <br />
     <i class="material-icons md-24">settings</i>
     RD: {{gameProgress?.rdProgress  | number: '1.0-0'}}%
 </div>
@@ -14,7 +13,8 @@
 
 <mat-divider></mat-divider>
 
-<mat-grid-list cols="2" rowHeight="2:1" *ngFor="let factoryAndContractFactories of factoriesAndContractFactories; let i = index">
+<mat-grid-list cols="2" rowHeight="2:1"
+    *ngFor="let factoryAndContractFactories of factoriesAndContractFactories; let i = index">
     <mat-grid-tile>
         <mat-card class="example-card">
             <mat-card-header>
@@ -48,7 +48,8 @@
 
                     <button mat-button (click)="setFactoriesShowAdditionalInfo(i)">
                         <i *ngIf="getFactoriesShowAdditionalInfo(i)" class="material-icons md-48">keyboard_arrow_up</i>
-                        <i *ngIf="!getFactoriesShowAdditionalInfo(i)" class="material-icons md-48">keyboard_arrow_down</i>
+                        <i *ngIf="!getFactoriesShowAdditionalInfo(i)"
+                            class="material-icons md-48">keyboard_arrow_down</i>
                     </button>
                 </mat-card-subtitle>
 
@@ -64,7 +65,8 @@
 
     <mat-grid-tile>
         <mat-list role="list" class="list-horizontal">
-            <mat-list-item role="listitem" *ngFor="let contractFactory of factoryAndContractFactories.contractFactories; let i = index">
+            <mat-list-item role="listitem"
+                *ngFor="let contractFactory of factoryAndContractFactories.contractFactories; let i = index">
                 <mat-card class="example-card">
                     <mat-card-header>
                         <i mat-card-avatar class="material-icons md-48">apartment</i>
@@ -98,7 +100,7 @@
                     </mat-card-header>
                 </mat-card>
             </mat-list-item>
-          </mat-list>
+        </mat-list>
     </mat-grid-tile>
 
 </mat-grid-list>

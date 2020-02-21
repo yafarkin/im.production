@@ -18,7 +18,7 @@ export class TeamService {
         });
     }
 
-    getTeamGameProgress(login: string) : Observable<GameProgressDto> {
+    getTeamGameProgress(login: string): Observable<GameProgressDto> {
         let params = new HttpParams().set('login', login);
         return this.httpClient.get<GameProgressDto>(this.getTeamGameProgressUrl, {
             params: params

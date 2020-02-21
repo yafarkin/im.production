@@ -22,10 +22,12 @@ namespace IM.Production.Services
 
         (Factory, Factory[])[] ITeamService.GetContractFactoriesByLogin(string login)
         {
-            var result = new List<(Factory, Factory[])>();
+            var index = 0;
             var customer = _game?.Customers?.Where(obj => obj.Login.Equals(login)).FirstOrDefault();
-            var factories = customer?.Factories;
+            var factories = customer?.Factories.ToList();
+            var result = new (Factory, Factory[])[factories.Count];
             var list = new List<Factory>();
+
             foreach (var factory in factories)
             {
                 var thisFactoryContracts = customer.Contracts
@@ -41,11 +43,12 @@ namespace IM.Production.Services
                         list.Add(item.DestinationFactory);
                     }
                 }
-                result.Add((factory, list.ToArray()));
+                
+                result[index++] = (factory, list.ToArray());
                 list.Clear();
             }
 
-            return result.ToArray();
+            return result;
         }
 
         (decimal, decimal, int) ITeamService.GetTeamGameProgress(string login)
