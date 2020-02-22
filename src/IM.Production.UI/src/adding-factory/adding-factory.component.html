@@ -1,0 +1,34 @@
+<h2>Добавление фабрики</h2>
+<div>
+    Уровень:
+    <mat-form-field>
+        <mat-select align="center">
+            <mat-option *ngFor="let level of levels" [value]="level">
+                {{level}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <br>
+    Определение фабрики:
+    <mat-form-field>
+        <mat-select align="center">
+            <mat-option *ngFor="let factoryDefinition of factoryDefinitions" [value]="factoryDefinition">
+                {{factoryDefinition}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <br>
+    Количество работников:
+    <mat-form-field>
+        <mat-select align="center">
+            <mat-option *ngFor="let setwNumWorkers of numWorkers" [value]="setwNumWorkers">
+                {{setwNumWorkers}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    /10
+    <br>
+    Сумма: 100$
+    <br>
+    <button mat-raised-button color="primary">Добавить</button>
+</div>

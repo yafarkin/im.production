@@ -19,6 +19,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule, MatSnackBarContainer } from '@angular/material';
 import { Md5 } from 'ts-md5/dist/md5';
 
@@ -29,6 +31,7 @@ import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
 import { NewTeamComponent } from '../new-team/new-team.component';
+import { AddingFactoryComponent } from '../adding-factory/adding-factory.component';
 
 // определение маршрутов
 const appRoutes: Routes = [
@@ -44,7 +47,8 @@ const appRoutes: Routes = [
         TeamsComponent,
         ContractComponent,
         ContractsComponent,
-        NewTeamComponent
+        NewTeamComponent,
+        AddingFactoryComponent
     ],
     imports: [
         CommonModule,
@@ -67,7 +71,9 @@ const appRoutes: Routes = [
         MatTabsModule,
         MatInputModule,
         MatDialogModule,
-        MatSnackBarModule
+        MatSnackBarModule,
+        MatFormFieldModule,
+        MatSelectModule
     ],
     providers: [
         ContractsService,
