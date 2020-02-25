@@ -11,11 +11,21 @@ import { FactoryContractDto } from '../models/dtos/factory.contract.dto';
 export class FactoryInfoComponent implements OnInit {
 
     displayedColumns: string[] = ['sourceCustomerLogin', 'destinationCustomerLogin', 'materialKey', 'totalCountCompleted', 'totalSumm'];
-    dataSource: FactoryContractDto[] = [
+    oneTimeContractsSource: FactoryContractDto[] = [
         {
             sourceCustomerLogin: 'sourceCustomerLogin',
             destinationCustomerLogin: 'destinationCustomerLogin',
-            materialKey: 'sad',
+            materialKey: '',
+            totalCountCompleted: 0,
+            totalSumm: 200
+        }
+    ];
+
+    multiTimeContractsSource: FactoryContractDto[] = [
+        {
+            sourceCustomerLogin: 'sourceCustomerLogin',
+            destinationCustomerLogin: 'destinationCustomerLogin',
+            materialKey: '',
             totalCountCompleted: 0,
             totalSumm: 200
         }
@@ -24,9 +34,14 @@ export class FactoryInfoComponent implements OnInit {
     constructor(private contractService: ContractsService) { }
 
     ngOnInit() {
-        this.contractService.getFactoryContracts("CustomerLogin1").subscribe(
+        this.contractService.getOneTimeContracts("CustomerLogin1").subscribe(
             success => {
-                this.dataSource = success
+                this.oneTimeContractsSource = success
+            }
+        );
+        this.contractService.getMultiTimeContracts("CustomerLogin1").subscribe(
+            success => {
+                this.multiTimeContractsSource = success;
             }
         );
     }

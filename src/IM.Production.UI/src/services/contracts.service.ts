@@ -9,7 +9,8 @@ import { FactoryContractDto } from '../models/dtos/factory.contract.dto';
 export class ContractsService {
     private contractUrl: string = "/api/contracts/single";
     private allUrl: string = "/api/contracts/all";
-    private getFactoryContractsUrl: string = "/api/contracts/get-factory-contracts";
+    private getOneTimeContractsUrl: string = "/api/contracts/get-one-time-contracts";
+    private getMultiTimeContractsUrl: string = "/api/contracts/get-multi-time-contracts";
 
     constructor(private httpClient: HttpClient) {
     }
@@ -25,9 +26,16 @@ export class ContractsService {
         return this.httpClient.get<ContractDto[]>(this.allUrl);
     }
 
-    getFactoryContracts(login: string): Observable<FactoryContractDto[]> {
+    getOneTimeContracts(login: string): Observable<FactoryContractDto[]> {
         let params = new HttpParams().set('login', login);
-        return this.httpClient.get<FactoryContractDto[]>(this.allUrl, {
+        return this.httpClient.get<FactoryContractDto[]>(this.getOneTimeContractsUrl, {
+            params: params
+        });
+    }
+
+    getMultiTimeContracts(login: string): Observable<FactoryContractDto[]> {
+        let params = new HttpParams().set('login', login);
+        return this.httpClient.get<FactoryContractDto[]>(this.getMultiTimeContractsUrl, {
             params: params
         });
     }

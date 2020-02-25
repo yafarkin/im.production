@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
-using CalculationEngine;
-using Epam.ImitationGames.Production.Domain;
-using Epam.ImitationGames.Production.Domain.Base;
-using Epam.ImitationGames.Production.Domain.Production;
 using Epam.ImitationGames.Production.Domain.Services;
-using IM.Production.CalculationEngine;
 using IM.Production.WebApp.Dtos;
-using IM.Production.WebApp.Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IM.Production.WebApp.Controllers
@@ -61,10 +53,10 @@ namespace IM.Production.WebApp.Controllers
         }
 
         [HttpGet]
-        [Route("get-factory-contracts")]
-        public FactoryContractDto[] GetFactoryContracts(string login)
+        [Route("get-one-time-contracts")]
+        public FactoryContractDto[] GetOneTimeContracts(string login)
         {
-            var contracts = _service.GetFactoryContracts(login).ToList();
+            var contracts = _service.GetOneTimeContracts(login).ToList();
             var contractsDtos = new FactoryContractDto[contracts.Count];
             for (var i = 0; i < contracts.Count; i++)
             {
@@ -74,5 +66,18 @@ namespace IM.Production.WebApp.Controllers
             return contractsDtos;
         }
 
+        [HttpGet]
+        [Route("get-multi-time-contracts")]
+        public FactoryContractDto[] GetMultiTimeContracts(string login)
+        {
+            var contracts = _service.GetMultiTimeContracts(login).ToList();
+            var contractsDtos = new FactoryContractDto[contracts.Count];
+            for (var i = 0; i < contracts.Count; i++)
+            {
+                var contractDto = _mapper.Map<FactoryContractDto>(contracts[i]);
+                contractsDtos[i] = contractDto;
+            }
+            return contractsDtos;
+        }
     }
 }
