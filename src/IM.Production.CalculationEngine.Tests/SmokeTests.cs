@@ -367,7 +367,7 @@ namespace IM.Production.CalculationEngine.Tests
             // 4. начинают исследования поколения №2
             // 5. после исследования поколения №2, покупают фабрику №2, заключают контракт на поставку с фабрики №1 и начинают производство №2, продавая излишки игре
 
-            var c = Logic.AddCustomer("c", "1", "команда 1", ReferenceData.GetProductionTypeByKey("metall"));
+            var c = Logic.AddCustomer("c", "1", "команда 1");
             Assert.AreEqual(ReferenceData.InitialCustomerBalance, c.Sum);
 
             var f1 = Logic.BuyFactoryFromGame(c, ReferenceData.GetAvailFactoryDefenitions(c).First());
@@ -515,8 +515,8 @@ namespace IM.Production.CalculationEngine.Tests
             // обе команды начинают производить первичные материалы
             // и т.д.
 
-            var c1 = Logic.AddCustomer("c1", "1", "команда 1", ReferenceData.GetProductionTypeByKey("metall"));
-            var c2 = Logic.AddCustomer("c2", "2", "команда 2", ReferenceData.GetProductionTypeByKey("electronic"));
+            var c1 = Logic.AddCustomer("c1", "1", "команда 1");
+            var c2 = Logic.AddCustomer("c2", "2", "команда 2");
             Assert.IsNotNull(c1);
             Assert.IsNotNull(c2);
             Assert.AreEqual(0, c1.Contracts.Count());
