@@ -12,12 +12,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.Domain", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.CalculationEngine", "src\IM.Production.CalculationEngine\IM.Production.CalculationEngine.csproj", "{BBCF7CAF-92D3-4832-ACED-618EB488CA70}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.SantaHelpers", "src\IM.Production.SantaHelpers\IM.Production.SantaHelpers.csproj", "{2BC001E7-2A68-4908-8765-942FBC46F57D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.SantaHelpers.Tests", "src\IM.Production.SantaHelpers.Tests\IM.Production.SantaHelpers.Tests.csproj", "{9196592D-282F-4C80-9726-E7F5C359D447}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.Admin", "src\IM.Production.Admin\IM.Production.Admin.csproj", "{18F23B39-FF19-4FF0-91BB-06DC4D593201}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.CalculationEngine.Tests", "src\IM.Production.CalculationEngine.Tests\IM.Production.CalculationEngine.Tests.csproj", "{9989E7D1-9284-45D8-B41B-50BA6F4B43E8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.Domain.Tests", "src\IM.Production.Domain.Tests\IM.Production.Domain.Tests.csproj", "{CC1ED266-222A-4DBE-8546-E314CDD9D1E0}"
@@ -42,18 +36,6 @@ Global
 		{BBCF7CAF-92D3-4832-ACED-618EB488CA70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBCF7CAF-92D3-4832-ACED-618EB488CA70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBCF7CAF-92D3-4832-ACED-618EB488CA70}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2BC001E7-2A68-4908-8765-942FBC46F57D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2BC001E7-2A68-4908-8765-942FBC46F57D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2BC001E7-2A68-4908-8765-942FBC46F57D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2BC001E7-2A68-4908-8765-942FBC46F57D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9196592D-282F-4C80-9726-E7F5C359D447}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9196592D-282F-4C80-9726-E7F5C359D447}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9196592D-282F-4C80-9726-E7F5C359D447}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9196592D-282F-4C80-9726-E7F5C359D447}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18F23B39-FF19-4FF0-91BB-06DC4D593201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18F23B39-FF19-4FF0-91BB-06DC4D593201}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18F23B39-FF19-4FF0-91BB-06DC4D593201}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18F23B39-FF19-4FF0-91BB-06DC4D593201}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9989E7D1-9284-45D8-B41B-50BA6F4B43E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9989E7D1-9284-45D8-B41B-50BA6F4B43E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9989E7D1-9284-45D8-B41B-50BA6F4B43E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
