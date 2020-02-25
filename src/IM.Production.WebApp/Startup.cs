@@ -25,24 +25,22 @@ namespace IM.Production.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var builder = new ConfigurationBuilder();
-            builder.Build();
-
             services.AddControllers();
             /// <summary>
             /// Test data for cheking displaying information about contracts.
             /// </summary>>
+            var result = new GameConfigDto();
+            AppConfiguration.GetSection("Game").Bind(result);
             var game = FakeGameInitializer.CreateGame(30);
-            var calculationEngine = new CalculationEngine.CalculationEngine(game);
-            var logic = new Logic(game);
+            game.TotalGameDays = result.TotalDays;
             services.AddSingleton<Game>(game);
-            services.AddSingleton<Logic>(logic);
-            services.AddSingleton<CalculationEngine.CalculationEngine>(calculationEngine);
-            services.AddSingleton(AppConfiguration);
+            services.AddSingleton<Logic>(new Logic(game));
+            services.AddSingleton<CalculationEngine.CalculationEngine>();
             services.AddTransient<IContractsService, ContractsService>();
             services.AddTransient<IGameService, GameService>();
             services.AddTransient<ITeamsService, TeamsService>();
             services.AddAutoMapper(c => c.AddProfile<BaseProfile>(), typeof(Startup));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

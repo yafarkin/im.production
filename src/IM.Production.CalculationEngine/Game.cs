@@ -31,7 +31,7 @@ namespace CalculationEngine
         {
             CurrentGameProps.GameDay = 0;
             Activity.Clear();
-            Customers.ForEach(obj => obj.ResetProgress());
+            Customers.ForEach(obj => obj.Reset());
         }
 
         public void Save(string filename)

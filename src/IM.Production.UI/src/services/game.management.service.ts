@@ -4,9 +4,10 @@ import { Observable } from 'rxjs';
 import { GameConfigDto } from '../models/dtos/game.config.dto';
 
 @Injectable()
-export class ManageGameService {
+export class GameManagementService {
 
     private gameConfigUrl: string = "/api/game/get-game-config";
+    private currentDayUrl: string = "/api/game/get-current-day";
     private calculateDayUrl: string = "/api/game/calculate";
     private restartGameUrl: string = "/api/game/restart";
 
@@ -17,11 +18,15 @@ export class ManageGameService {
         return this.httpClient.get<GameConfigDto>(this.gameConfigUrl);
     }
 
-    calculateDay(): Observable<number> {
-        return this.httpClient.get<number>(this.calculateDayUrl);
+    getCurrentDay(): Observable<number> {
+        return this.httpClient.get<number>(this.currentDayUrl);
+    }
+
+    calculateDay() {
+        return this.httpClient.put(this.calculateDayUrl, {});
     }
 
     restartGame() {
-        return this.httpClient.get(this.restartGameUrl);
+        return this.httpClient.put(this.restartGameUrl, {});
     }
 }

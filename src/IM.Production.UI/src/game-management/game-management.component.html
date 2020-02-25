@@ -1,4 +1,4 @@
-<mat-card class="manage-game-card">
+<mat-card class="game-management-card">
     <mat-card-header>
         <i mat-card-avatar class="material-icons md-48">games</i>
         <mat-card-title>Управление игрой</mat-card-title>
@@ -8,17 +8,17 @@
         <mat-card-subtitle *ngIf="isGameFinished()">Статус: закончена</mat-card-subtitle>
     </mat-card-header>
 
-    <div *ngIf="!isGameInitialized()" class="manage-game-day-timer">
-        День: {{currentDay}}/{{gameConfig?.maxDays}}
+    <div *ngIf="!isGameInitialized()" class="mat-display-1 game-management-day-timer">
+        День: {{currentDay}}/{{gameConfig?.totalDays}}
     </div>
-    <div *ngIf="!isGameInitialized()" class="manage-game-timer">
+    <div *ngIf="!isGameInitialized()" class="mat-display-1 game-management-timer">
         До следующего дня: {{(this.secondsBeforeNextDay - (this.secondsBeforeNextDay % 60)) / 60 | number: '2.0-0'}}:{{this.secondsBeforeNextDay % 60 | number: '2.0-0'}}
     </div>
 
     <mat-card-content>
-        <mat-progress-bar class="manage-game-progress-bar" mode="determinate" [value]="progressBarValue">
+        <mat-progress-bar class="game-management-progress-bar" mode="determinate" [value]="progressBarValue">
         </mat-progress-bar>
-        <div class="manage-game-buttons">
+        <div class="game-management-buttons">
             <button *ngIf="isGameLaunched()" mat-button (click)="stopGame()">
                 <i class="material-icons md-48">pause</i>
             </button>

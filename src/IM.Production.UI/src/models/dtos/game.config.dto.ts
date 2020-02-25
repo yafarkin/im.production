@@ -1,4 +1,4 @@
 export class GameConfigDto {
-    public maxDays: number;
+    public totalDays: number;
     public dayDurationInSeconds: number;
 }

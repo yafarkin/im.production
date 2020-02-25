@@ -112,7 +112,7 @@ namespace Epam.ImitationGames.Production.Domain
             return customer;
         }
 
-        public void ResetProgress()
+        public void Reset()
         {
             Sum = 0;
             SumOnRD = 0;

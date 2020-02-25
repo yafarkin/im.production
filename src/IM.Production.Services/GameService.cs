@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using CalculationEngine;
+﻿using CalculationEngine;
+using Epam.ImitationGames.Production.Domain.Exceptions;
 using Epam.ImitationGames.Production.Domain.Services;
 using Epam.ImitationGames.Production.Domain.Static;
 
@@ -17,24 +16,24 @@ namespace IM.Production.Services
             _calculationEngine = calculationEngine;
         }
 
-        public void SetGameMaxDays(int maxDays)
+        public void CalculateDay()
         {
-            _game.TotalGameDays = maxDays;
-        }
-
-        public int CalculateDay()
-        {
-            if (CurrentGameProps.GameDay < _game.TotalGameDays)
+            if (CurrentGameProps.GameDay >= _game.TotalGameDays)
             {
-                _calculationEngine.Calculate();
+                throw new GameFinishedException("Игра окончена!");
             }
+            _calculationEngine.Calculate();
+        }
+        
+        public int GetCurrentDay()
+        {
             return CurrentGameProps.GameDay;
         }
 
         public void RestartGame()
         {
             _game.Reset();
-            CurrentGameProps.GameDay = 0;
         }
+
     }
 }

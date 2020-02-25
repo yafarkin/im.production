@@ -23,19 +23,25 @@ namespace IM.Production.WebApp.Controllers
         public GameConfigDto GetGameConfig()
         {
             var result = new GameConfigDto();
-            _config.GetSection("GameConfig").Bind(result);
-            _service.SetGameMaxDays(result.MaxDays);
+            _config.GetSection("Game").Bind(result);
             return result;
         }
 
         [HttpGet]
-        [Route("calculate")]
-        public int CalculateGame()
+        [Route("get-current-day")]
+        public int GetCurrentDay()
         {
-            return _service.CalculateDay();
+            return _service.GetCurrentDay();
         }
 
-        [HttpGet]
+        [HttpPut]
+        [Route("calculate")]
+        public void CalculateGame()
+        {
+            _service.CalculateDay();
+        }
+
+        [HttpPut]
         [Route("restart")]
         public void RestartGame()
         {

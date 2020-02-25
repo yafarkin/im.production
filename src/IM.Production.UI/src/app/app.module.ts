@@ -26,8 +26,8 @@ import { Md5 } from 'ts-md5/dist/md5';
 import { TeamsService } from '../services/teams.service';
 import { ContractsService } from '../services/contracts.service';
 import { AppComponent } from './app/app.component';
-import { ManageGameComponent } from '../manage-game/manage-game.component';
-import { ManageGameService } from '../services/manage-game.service';
+import { GameManagementComponent } from '../game-management/game-management.component';
+import { GameManagementService } from '../services/game.management.service';
 import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
@@ -38,7 +38,7 @@ const appRoutes: Routes = [
     { path: 'teams', component: TeamsComponent },
     { path: 'contracts', component: ContractsComponent },
     { path: 'contracts/:id', component: ContractComponent },
-    { path: 'manage-game', component: ManageGameComponent },
+    { path: 'game-management', component: GameManagementComponent },
     { path: 'new-team', component: NewTeamComponent }
 ];
 
@@ -48,7 +48,7 @@ const appRoutes: Routes = [
         TeamsComponent,
         ContractComponent,
         ContractsComponent,
-        ManageGameComponent,
+        GameManagementComponent,
         NewTeamComponent
     ],
     imports: [
@@ -78,7 +78,7 @@ const appRoutes: Routes = [
     providers: [
         ContractsService,
         TeamsService,
-        ManageGameService,
+        GameManagementService,
         MatSnackBar,
         Md5
     ],
