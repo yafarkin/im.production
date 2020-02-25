@@ -36,7 +36,7 @@ namespace IM.Production.WebApp.Helpers
                 var productionType = new ProductionType();
                 productionType.Key = "GameProductionTypeKey";
                 productionType.DisplayName = "GameProductionTypeDisplayName";
-                var customer = logic.AddCustomer("Game", "GamePassword", "GameName");
+                var customer = logic.AddNewCustomer("Game", "GamePassword", "GameName");
                 customer.DisplayName = "Game";
                 customerList.Add(customer);
             }
@@ -67,7 +67,7 @@ namespace IM.Production.WebApp.Helpers
                     productionType.DisplayName = "Electronic";
                 }
 
-                var customer = logic.AddCustomer("CustomerLogin" + c, "CustomerPassword" + c,
+                var customer = logic.AddNewCustomer("CustomerLogin" + c, "CustomerPassword" + c,
                     "CustomerName" + c);
                 customer.DisplayName = "Customer" + c + (char)((rand.Next(0, 100) < 50) ? rand.Next('A', 'Z') : rand.Next('a', 'z')); 
                 customerList.Add(customer);
