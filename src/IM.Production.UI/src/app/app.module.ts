@@ -23,7 +23,6 @@ import { TeamsService } from '../services/teams.service';
 import { ContractsService } from '../services/contracts.service';
 import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
-import { OldAppComponent } from './old-app/app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LoginComponent } from './login/login.component';
 import { AppComponent } from './app/app.component';
@@ -39,7 +38,6 @@ import { NewTeamComponent } from '../new-team/new-team.component';
         ContractComponent,
         ContractsComponent,
         NewTeamComponent,
-        OldAppComponent,
         TeamsComponent,
         LoginComponent
     ],
