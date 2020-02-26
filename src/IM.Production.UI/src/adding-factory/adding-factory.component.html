@@ -1,34 +1,50 @@
-<h2>Добавление фабрики</h2>
-<div>
-    Уровень:
-    <mat-form-field>
-        <mat-select align="center">
-            <mat-option *ngFor="let level of levels" [value]="level">
-                {{level}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-    <br>
-    Определение фабрики:
-    <mat-form-field>
-        <mat-select align="center">
-            <mat-option *ngFor="let factoryDefinition of factoryDefinitions" [value]="factoryDefinition">
-                {{factoryDefinition}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-    <br>
-    Количество работников:
-    <mat-form-field>
-        <mat-select align="center">
-            <mat-option *ngFor="let setwNumWorkers of numWorkers" [value]="setwNumWorkers">
-                {{setwNumWorkers}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-    /10
-    <br>
-    Сумма: 100$
-    <br>
-    <button mat-raised-button color="primary">Добавить</button>
-</div>
+<div mat-dialog-title>Добавление фабрики</div>
+<form [formGroup]="addFactoryGroup">
+    <div mat-dialog-content [formGroup]="addFactoryGroup" class="add-factory-form">
+        <mat-grid-list cols="2" rowHeight="8:1">
+            <mat-grid-tile>
+                <mat-label>Уровень:</mat-label>
+                <mat-form-field>
+                    <mat-select align="center" formControlName="level">
+                        <mat-option *ngFor="let level of levels" [value]="level">
+                            {{level}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                Определение фабрики:
+                <mat-form-field>
+                    <mat-select align="center" formControlName="productionType">
+                        <mat-option *ngFor="let productionType of productionTypes" [value]="productionType">
+                            {{productionType}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <mat-label>Количество работников: </mat-label>
+                <mat-form-field class="add-factory-form-field">
+                    <input matInput formControlName="workersAmounts" type="text" (click)="setMaxWorkers()">
+                </mat-form-field>
+                <mat-label [(ngModel)]="maxWorkers">/{{maxWorkers}}</mat-label>
+            </mat-grid-tile>
+            <mat-grid-tile>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <mat-label>Сумма: </mat-label>
+                <mat-form-field class="add-factory-form-field">
+                    <input matInput formControlName="sum" type="text">
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+                <button mat-raised-button color="primary" [disabled]="!addFactoryGroup.valid"
+                    (click)="addFactory()">Добавить</button>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </div>
+</form>
