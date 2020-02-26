@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GameManagementService } from '../services/game.management.service';
-import { interval, Subscription, timer } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 import { GameConfigDto } from '../models/dtos/game.config.dto';
 
 enum GameState {
@@ -10,6 +10,8 @@ enum GameState {
     Finished
 }
 
+const ONE_SECOND: number = 1000;
+
 @Component({
     selector: 'app-game-management',
     templateUrl: './game-management.component.html',
@@ -18,15 +20,14 @@ enum GameState {
 })
 export class GameManagementComponent implements OnInit {
 
-    currentDay: number = 0;
     gameConfig: GameConfigDto;
-    playIntervalId: Subscription;
+    gameState: GameState;
+    playIntervalSubscription: Subscription;
+    currentDay: number;
     secondsBeforeNextDay: number;
-    secondsLeft: number;
+    secondsAfterPreviousDay: number;
     progressBarValue: number;
     percentCoefficient: number;
-
-    gameState: GameState;
 
     constructor(private gameManagementService: GameManagementService) { }
 
@@ -34,53 +35,86 @@ export class GameManagementComponent implements OnInit {
         this.initializeGame();
     }
 
+    initializeGame(): void {
+        this.gameState = GameState.Initilized;
+        this.resetProgression();
+        this.updateConfig();
+        this.updateCurrentDay();
+    }
+
     stopGame(): void {
-        this.stopGameInterval();
         this.gameState = GameState.Stopped;
+        this.stopPlayInterval();
     }
 
     playGame(): void {
-        if (this.gameState != GameState.Launched) {
-            if (this.gameState == GameState.Initilized) {
-                this.secondsBeforeNextDay = this.gameConfig.dayDurationInSeconds;
-            }
-
-            this.gameState = GameState.Launched;
-            this.percentCoefficient = 100 / this.gameConfig.dayDurationInSeconds;
-
-            this.playIntervalId = interval(1000)
-                .subscribe(
-                    useless => {
-                        ++this.secondsLeft;
-                        if (this.secondsBeforeNextDay > 0) {
-                            this.secondsBeforeNextDay = this.gameConfig.dayDurationInSeconds - this.secondsLeft;
-                            if (this.secondsBeforeNextDay == 0
-                                && this.currentDay != this.gameConfig.totalDays) {
-                                this.gameManagementService.calculateDay().subscribe(success => {
-                                        this.gameManagementService.getCurrentDay().subscribe(currentDay => {
-                                                this.secondsLeft = 0;
-                                                this.progressBarValue = 0;
-                                                this.secondsBeforeNextDay = this.gameConfig.dayDurationInSeconds;
-                                                this.currentDay = currentDay;
-                                            }
-                                        )
-                                    }
-                                );
-                            }
-                        }
-
-                        this.progressBarValue = this.percentCoefficient *
-                            (this.gameConfig.dayDurationInSeconds - this.secondsBeforeNextDay);
-
-                        if (this.currentDay == this.gameConfig.totalDays
-                            && this.secondsBeforeNextDay == 0) {
-                            this.gameState = GameState.Finished;
-                            this.stopGameInterval();
-                        }
-                    }
-                );
-
+        if (this.gameState == GameState.Launched) {
+            return;
         }
+
+        if (this.gameState == GameState.Initilized) {
+            this.secondsBeforeNextDay = this.gameConfig.dayDurationInSeconds;
+        }
+
+        this.gameState = GameState.Launched;
+        this.percentCoefficient = 100 / this.gameConfig.dayDurationInSeconds;
+
+        this.startPlayInterval();
+    }
+
+    restartGame(): void {
+        this.stopPlayInterval();
+        this.gameManagementService.restartGame().subscribe(
+            success => {
+                this.initializeGame();
+            }
+        );
+    }
+
+    finishGame(): void {
+        this.gameState = GameState.Finished;
+        this.stopPlayInterval();
+    }
+
+    calculateNextDay(): void {
+        this.gameManagementService.calculateDay().subscribe(
+            success => {
+                this.secondsBeforeNextDay = this.gameConfig.dayDurationInSeconds;
+                this.updateCurrentDay();
+                this.resetProgression();
+            }
+        );
+    }
+
+    startPlayInterval(): void {
+        this.playIntervalSubscription = interval(ONE_SECOND).subscribe(
+        useless => {
+            ++this.secondsAfterPreviousDay;
+
+            this.secondsBeforeNextDay =
+                this.gameConfig.dayDurationInSeconds - this.secondsAfterPreviousDay;
+            this.progressBarValue = this.percentCoefficient *
+                (this.gameConfig.dayDurationInSeconds - this.secondsBeforeNextDay);
+
+            if (this.isEndOfLastDay(this.currentDay)) {
+                this.finishGame();
+            }
+            else if (this.isEndOfDay(this.currentDay)) {
+                this.calculateNextDay();
+            }
+        });
+    }
+
+    stopPlayInterval(): void {
+        if (this.playIntervalSubscription) {
+            this.playIntervalSubscription.unsubscribe();
+        }
+    }
+
+    updateCurrentDay(): void {
+        this.gameManagementService.getCurrentDay().subscribe(currentDay => {
+            this.currentDay = currentDay;
+        });
     }
 
     updateConfig(): void {
@@ -91,30 +125,17 @@ export class GameManagementComponent implements OnInit {
         );
     }
 
-    initializeGame(): void {
-        this.secondsLeft = 0;
-        this.currentDay = 0;
+    resetProgression(): void {
+        this.secondsAfterPreviousDay = 0;
         this.progressBarValue = 0;
-        this.gameState = GameState.Initilized;
-        this.updateConfig();
-        this.gameManagementService.getCurrentDay().subscribe(currentDay => {
-            this.currentDay = currentDay;
-        });
     }
 
-    restartGame(): void {
-        this.stopGameInterval();
-        this.gameManagementService.restartGame().subscribe(
-            success => {
-                this.initializeGame();
-            }
-        );
+    isEndOfDay(currentDay: number): boolean {
+        return currentDay != this.gameConfig.totalDays && this.secondsBeforeNextDay == 0;
     }
 
-    stopGameInterval(): void {
-        if (this.playIntervalId) {
-            this.playIntervalId.unsubscribe();
-        }
+    isEndOfLastDay(currentDay: number): boolean {
+        return currentDay == this.gameConfig.totalDays && this.secondsBeforeNextDay == 0;
     }
 
     isGameInitialized(): boolean {

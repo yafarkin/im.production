@@ -8,7 +8,7 @@
         <mat-card-subtitle *ngIf="isGameFinished()">Статус: закончена</mat-card-subtitle>
     </mat-card-header>
 
-    <div *ngIf="!isGameInitialized()" class="mat-display-1 game-management-day-timer">
+    <div *ngIf="!isGameInitialized()" class="mat-display-1 game-management-timer">
         День: {{currentDay}}/{{gameConfig?.totalDays}}
     </div>
     <div *ngIf="!isGameInitialized()" class="mat-display-1 game-management-timer">
