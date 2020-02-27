@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using System.Linq;
 using Epam.ImitationGames.Production.Domain;
-using System.Security.Cryptography;
-using System.Text;
+using System.Linq;
 
 namespace IM.Production.WebApp.Dtos
 {
@@ -45,7 +43,6 @@ namespace IM.Production.WebApp.Dtos
            .ForMember(dest => dest.Contracts,
                 opt => opt.MapFrom(src => string.Join(". ", src.Contracts
                                                                 .Select(s => s.Description))));
-
         }
     }
 }
