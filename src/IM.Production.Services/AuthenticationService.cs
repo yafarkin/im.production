@@ -36,6 +36,7 @@ namespace IM.Production.Services
                 throw new ArgumentException("Password cannot be empty or contain white spaces.", nameof(password));
             }
 
+            //TODO Extract TokenGenerator to a separate project and extract AuthenticateAsAdmin and AuthenticateAsTeam
             var credentials = _options.Value.Credentials;
             var key = Encoding.ASCII.GetBytes(_options.Value.Secret);
             var handler = new JwtSecurityTokenHandler();

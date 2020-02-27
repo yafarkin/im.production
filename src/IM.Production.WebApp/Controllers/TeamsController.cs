@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using IM.Production.WebApp.Dtos;
-using System.Collections.Generic;
 using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Services;
-using IM.Production.CalculationEngine;
+using IM.Production.Services;
+using IM.Production.WebApp.Dtos;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace IM.Production.WebApp.Controllers
 {
@@ -24,7 +24,7 @@ namespace IM.Production.WebApp.Controllers
 
         [HttpGet]
         public IEnumerable<TeamDto> GetTeams()
-       {
+        {
             var teams = _service.GetTeams();
             var teamsDtos = _mapper.Map<IEnumerable<TeamDto>>(teams);
             return teamsDtos;

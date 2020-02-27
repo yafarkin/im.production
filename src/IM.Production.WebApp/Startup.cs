@@ -4,11 +4,14 @@ using IM.Production.CalculationEngine;
 using IM.Production.Services;
 using IM.Production.WebApp.Dtos;
 using IM.Production.WebApp.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace IM.Production.WebApp
 {
@@ -32,6 +35,23 @@ namespace IM.Production.WebApp
             var game = FakeGameInitializer.CreateGame(30);
             game.TotalGameDays = result.TotalDays;
 
+            services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+            {
+                o.RequireHttpsMetadata = false;
+                o.SaveToken = true;
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetValue<string>($"{nameof(Authentication)}:{nameof(Authentication.Secret)}"))),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
             services.AddSingleton(game);
             services.AddSingleton<Logic>();
             services.AddSingleton<CalculationEngine.CalculationEngine>();
@@ -51,6 +71,8 @@ namespace IM.Production.WebApp
             }
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
