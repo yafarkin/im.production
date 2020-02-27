@@ -23,7 +23,7 @@ namespace IM.Production.WebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<Credentials>(Configuration.GetSection(nameof(Credentials)));
+            services.Configure<Authentication>(Configuration.GetSection(nameof(Authentication)));
 
             services.AddControllers();
 

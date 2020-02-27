@@ -1,17 +1,26 @@
-﻿using Epam.ImitationGames.Production.Domain.Services;
+﻿using CalculationEngine;
+using Epam.ImitationGames.Production.Domain.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Authentication;
+using System.Security.Claims;
+using System.Text;
 
 namespace IM.Production.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly IOptions<Credentials> _options;
+        private readonly Game _game;
 
-        public AuthenticationService(IOptions<Credentials> options)
+        private readonly IOptions<Authentication> _options;
+
+        public AuthenticationService(Game game, IOptions<Authentication> options)
         {
+            _game = game;
             _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
@@ -27,22 +36,42 @@ namespace IM.Production.Services
                 throw new ArgumentException("Password cannot be empty or contain white spaces.", nameof(password));
             }
 
-            var credentials = _options.Value;
+            var credentials = _options.Value.Credentials;
+            var key = Encoding.ASCII.GetBytes(_options.Value.Secret);
+            var handler = new JwtSecurityTokenHandler();
+            var descriptor = new SecurityTokenDescriptor();
+            var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
+            var expires = DateTime.UtcNow.AddDays(1);
 
-            if (login.Equals(credentials.Login, StringComparison.InvariantCultureIgnoreCase) &&
-                password.Equals(credentials.Password, StringComparison.InvariantCultureIgnoreCase))
+            if (login.Equals(credentials.Login) && password.Equals(credentials.Password))
             {
-                var handler = new JwtSecurityTokenHandler();
-                var descriptor = new SecurityTokenDescriptor();
+                descriptor.Subject = new ClaimsIdentity(new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, credentials.Login),
+                    new Claim(ClaimTypes.Role, Roles.Admin)
+                });
+                descriptor.Expires = expires;
+                descriptor.SigningCredentials = signingCredentials;
 
-                var token = handler.CreateToken(descriptor);
-
-                return handler.WriteToken(token);
+                return handler.WriteToken(handler.CreateToken(descriptor));
             }
 
-            //UNDONE Authenticate Team
+            var team = _game.Customers.SingleOrDefault(c => c.Login.Equals(login) && c.PasswordHash.Equals(Game.GetMD5Hash(password)));
 
-            throw new UnauthorizedAccessException();
+            if (team == null)
+            {
+                throw new InvalidCredentialException("Credentials are incorrect.");
+            }
+
+            descriptor.Subject = new ClaimsIdentity(new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, team.Login),
+                new Claim(ClaimTypes.Role, Roles.Team)
+            });
+            descriptor.Expires = expires;
+            descriptor.SigningCredentials = signingCredentials;
+
+            return handler.WriteToken(handler.CreateToken(descriptor));
         }
     }
 }
