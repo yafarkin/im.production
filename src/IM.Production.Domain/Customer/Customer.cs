@@ -111,5 +111,16 @@ namespace Epam.ImitationGames.Production.Domain
 
             return customer;
         }
+
+        public void Reset()
+        {
+            Sum = 0;
+            SumOnRD = 0;
+            SpentSumToNextGenerationLevel = 0;
+            SpentSumToNextGenerationLevel = 0;
+            FactoryGenerationLevel = 0;
+            _factories = new List<Factory>();
+            _contracts = new List<Contract>();
+        }
     }
 }

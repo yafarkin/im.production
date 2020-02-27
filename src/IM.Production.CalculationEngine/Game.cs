@@ -23,9 +23,15 @@ namespace CalculationEngine
 
         public Game()
         {
-            Customers = new List<Customer>();
-            TotalGameDays = 0;
             Activity = new List<ActivityLog>();
+            Customers = new List<Customer>();
+        }
+
+        public void Reset()
+        {
+            CurrentGameProps.GameDay = 0;
+            Activity.Clear();
+            Customers.ForEach(obj => obj.Reset());
         }
 
         public void Save(string filename)

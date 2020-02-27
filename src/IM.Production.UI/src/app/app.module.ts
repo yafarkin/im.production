@@ -14,6 +14,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule, MatSnackBarContainer } from '@angular/material';
@@ -26,6 +27,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { LoginComponent } from './login/login.component';
 import { AppComponent } from './app/app.component';
+import { GameManagementComponent } from '../game-management/game-management.component';
+import { GameManagementService } from '../services/game.management.service';
 import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
@@ -37,6 +40,7 @@ import { NewTeamComponent } from '../new-team/new-team.component';
         TeamsComponent,
         ContractComponent,
         ContractsComponent,
+        GameManagementComponent,
         NewTeamComponent,
         TeamsComponent,
         LoginComponent
@@ -60,6 +64,7 @@ import { NewTeamComponent } from '../new-team/new-team.component';
         MatGridListModule,
         MatCardModule,
         MatTabsModule,
+        MatProgressBarModule,
         MatInputModule,
         MatDialogModule,
         MatSnackBarModule
@@ -68,6 +73,7 @@ import { NewTeamComponent } from '../new-team/new-team.component';
         ContractsService,
         TeamsService,
         MatTableModule,
+        GameManagementService,
         HttpClientModule,
         TeamsService,
         MatSnackBar,
