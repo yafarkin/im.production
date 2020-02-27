@@ -20,6 +20,7 @@ namespace IM.Production.CalculationEngine
         public CalculationEngine(Game game)
         {
             _game = game;
+            CurrentGameProps.GameDay = 0;
         }
 
         public void Calculate()

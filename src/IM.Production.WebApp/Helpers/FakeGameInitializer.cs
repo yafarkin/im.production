@@ -28,6 +28,11 @@ namespace IM.Production.WebApp.Helpers
             }
             #endregion
 
+            var canProduceMaterials = new List<Material>();
+            canProduceMaterials.Add(new Material());
+            canProduceMaterials.Add(new Material());
+            canProduceMaterials.Add(new Material());
+
             #region CreateCustomers
             var customerList = new List<Customer>();
 
@@ -96,8 +101,14 @@ namespace IM.Production.WebApp.Helpers
                     if (materialNumber > 0 && materialNumber < materialList.Count)
                     {
                         #region GiveMoneyAndFabrics
-                        var material = materialList[materialNumber];
-                        var contract = new Contract(customer, material);
+                        var material = ReferenceData.GetMaterialByKey("metall_zelezo");
+                        var materialOnStock = new MaterialOnStock();
+                        materialOnStock.Amount = 150_000;
+                        materialOnStock.Material = material;
+                        var materialWithPrice = new MaterialWithPrice();
+                        materialWithPrice.SellPrice = 1200;
+
+                        var contract = new Contract(customer, materialWithPrice);
                         var bfo = new BankCredit(customer, 5_000_000);
                         bfo.Percent = 0.0M;
                         logic.TakeDebitOrCredit(customer, bfo);
@@ -107,12 +118,13 @@ namespace IM.Production.WebApp.Helpers
                         factoryDefinition.ProductionType = ReferenceData.GetProductionTypeByKey(customer.ProductionType.Key);
                         factoryDefinition.GenerationLevel = 1;
                         
-                        var d = new Dictionary<int, List<Material>>();
-                        factoryDefinition.CanProductionMaterials = d;
+                        var listOfProductionMaterials = new Dictionary<int, List<Material>>();
+                        listOfProductionMaterials.Add(1, new List<Material>() { material });
+                        factoryDefinition.CanProductionMaterials = listOfProductionMaterials;
                         logic.BuyFactoryFromGame(customer, factoryDefinition, 30);
                         logic.BuyFactoryFromGame(customer, factoryDefinition, 30);
                         #endregion
-
+                        
                         #region CreateContract
                         contract.SourceFactory = GetFirstFactory(customer.Factories);
                         contract.TillCount =

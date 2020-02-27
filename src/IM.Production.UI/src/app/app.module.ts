@@ -16,6 +16,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
@@ -25,6 +26,8 @@ import { Md5 } from 'ts-md5/dist/md5';
 import { TeamsService } from '../services/teams.service';
 import { ContractsService } from '../services/contracts.service';
 import { AppComponent } from './app/app.component';
+import { GameManagementComponent } from '../game-management/game-management.component';
+import { GameManagementService } from '../services/game.management.service';
 import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
@@ -35,6 +38,7 @@ const appRoutes: Routes = [
     { path: 'teams', component: TeamsComponent },
     { path: 'contracts', component: ContractsComponent },
     { path: 'contracts/:id', component: ContractComponent },
+    { path: 'game-management', component: GameManagementComponent },
     { path: 'new-team', component: NewTeamComponent }
 ];
 
@@ -44,6 +48,7 @@ const appRoutes: Routes = [
         TeamsComponent,
         ContractComponent,
         ContractsComponent,
+        GameManagementComponent,
         NewTeamComponent
     ],
     imports: [
@@ -65,6 +70,7 @@ const appRoutes: Routes = [
         MatGridListModule,
         MatCardModule,
         MatTabsModule,
+        MatProgressBarModule,
         MatInputModule,
         MatDialogModule,
         MatSnackBarModule
@@ -72,6 +78,7 @@ const appRoutes: Routes = [
     providers: [
         ContractsService,
         TeamsService,
+        GameManagementService,
         MatSnackBar,
         Md5
     ],
