@@ -1,8 +1,10 @@
-<div mat-dialog-title>Добавление фабрики</div>
 <form [formGroup]="addFactoryGroup">
     <div mat-dialog-content [formGroup]="addFactoryGroup" class="add-factory-form">
-        <mat-grid-list cols="2" rowHeight="8:1">
-            <mat-grid-tile>
+        <mat-grid-list cols="4" rowHeight="8:1">
+            <mat-grid-tile colspan="4">
+                <div mat-dialog-title>Добавление фабрики</div>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="4">
                 <mat-label>Уровень:</mat-label>
                 <mat-form-field>
                     <mat-select align="center" formControlName="level">
@@ -12,10 +14,21 @@
                     </mat-select>
                 </mat-form-field>
             </mat-grid-tile>
-            <mat-grid-tile>
+            <mat-grid-tile colspan="4">
+                <mat-label>Рабочие: </mat-label>
+                <mat-form-field class="add-factory-form-field">
+                    <input matInput formControlName="workersAmounts" type="text" (click)="setMaxWorkers()">
+                </mat-form-field>
+                <mat-label [(ngModel)]="maxWorkers">/{{maxWorkers}}</mat-label>
             </mat-grid-tile>
-            <mat-grid-tile>
-                Определение фабрики:
+            <mat-grid-tile colspan="4">
+                <mat-label>Стоимость: </mat-label>
+                <mat-form-field class="add-factory-form-field">
+                    <input matInput formControlName="cost" type="text">
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="4">
+                <mat-label>Тип производства:</mat-label>
                 <mat-form-field>
                     <mat-select align="center" formControlName="productionType">
                         <mat-option *ngFor="let productionType of productionTypes" [value]="productionType">
@@ -24,26 +37,11 @@
                     </mat-select>
                 </mat-form-field>
             </mat-grid-tile>
-            <mat-grid-tile>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <mat-label>Количество работников: </mat-label>
-                <mat-form-field class="add-factory-form-field">
-                    <input matInput formControlName="workersAmounts" type="text" (click)="setMaxWorkers()">
-                </mat-form-field>
-                <mat-label [(ngModel)]="maxWorkers">/{{maxWorkers}}</mat-label>
-            </mat-grid-tile>
-            <mat-grid-tile>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <mat-label>Сумма: </mat-label>
-                <mat-form-field class="add-factory-form-field">
-                    <input matInput formControlName="sum" type="text">
-                </mat-form-field>
+            <mat-grid-tile colspan="2">
             </mat-grid-tile>
             <mat-grid-tile>
                 <button mat-raised-button color="primary" [disabled]="!addFactoryGroup.valid"
-                    (click)="addFactory()">Добавить</button>
+                (click)="addFactory()">Купить</button>
             </mat-grid-tile>
         </mat-grid-list>
     </div>

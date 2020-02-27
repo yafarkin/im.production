@@ -25,7 +25,7 @@ export class AddingFactoryComponent implements OnInit {
             Validators.required, Validators.pattern("[0-9]*"), Validators.minLength(1), Validators.maxLength(30)
         ]),
         productionType: new FormControl('', Validators.required),
-        sum: new FormControl('', [
+        cost: new FormControl('', [
             Validators.required, Validators.pattern("[0-9]*"), Validators.minLength(1), Validators.maxLength(30)
         ]),
     });
