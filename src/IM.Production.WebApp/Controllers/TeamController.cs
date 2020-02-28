@@ -14,9 +14,10 @@ namespace IM.Production.WebApp.Controllers
         private readonly IFactoriesService _factoriesService;
         private readonly IMapper _mapper;
 
-        public TeamController(ITeamsService service, IMapper mapper)
+        public TeamController(ITeamsService service, IFactoriesService factoriesService, IMapper mapper)
         {
             _teamService = service;
+            _factoriesService = factoriesService;
             _mapper = mapper;
         }
 

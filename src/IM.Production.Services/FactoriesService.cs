@@ -11,6 +11,11 @@ namespace IM.Production.Services
     {
         private readonly Game _game;
 
+        public FactoriesService(Game game)
+        {
+            _game = game;
+        }
+
         public IEnumerable<Factory> GetContractFactoriesByLogin(string login)
         {
             var factories = _game.Customers
