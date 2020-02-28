@@ -19,7 +19,7 @@
 ## Команда
 ![Alt](Team.svg)
 
-[Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmaster%2Fdocs%2Fmockups%2FTeam.svg)
+[Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmockups-folder%2Fdocs%2Fmockups%2FTeam.svg)
 
 ## Информация о фабрике
 ![Alt](FactoryInfo.svg)
