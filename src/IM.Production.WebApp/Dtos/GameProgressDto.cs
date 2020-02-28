@@ -2,7 +2,6 @@
 {
     public class GameProgressDto
     {
-        //Sum
         public decimal MoneyBalance { get; set; }
         //the same
         public decimal RDProgress { get; set; }

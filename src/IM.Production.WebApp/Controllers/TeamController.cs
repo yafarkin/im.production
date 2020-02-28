@@ -23,17 +23,8 @@ namespace IM.Production.WebApp.Controllers
         [Route("get-team-factories")]
         public FactoryAndContractFactories[] GetTeamFactories(string login)
         {
-            var index = 0;
             var factoriesAndContractFactoriesList = _service.GetContractFactoriesByLogin(login).ToList();
-            var result = new FactoryAndContractFactories[factoriesAndContractFactoriesList.Count];
-            
-            foreach (var factoryAndContractFactoriesList in factoriesAndContractFactoriesList)
-            {
-                var entity = _mapper?.Map<FactoryAndContractFactories>(factoryAndContractFactoriesList);
-                result[index++] = entity;
-            }
-
-            return result;
+            return _mapper?.Map<FactoryAndContractFactories[]>(factoriesAndContractFactoriesList);
         }
 
         [HttpGet]
@@ -41,11 +32,7 @@ namespace IM.Production.WebApp.Controllers
         public GameProgressDto GetTeamGameProgress(string login)
         {
             var teamGameProgress = _service.GetTeamGameProgress(login);
-            var gameProgressDto = new GameProgressDto() { 
-                MoneyBalance = teamGameProgress.Item1, 
-                RDProgress = teamGameProgress.Item2
-            };
-            return gameProgressDto;
+            return _mapper?.Map<GameProgressDto>(teamGameProgress);
         }
 
     }

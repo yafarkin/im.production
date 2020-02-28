@@ -53,6 +53,14 @@ namespace IM.Production.WebApp.Dtos
                        opt => opt.MapFrom(dest => dest.Item1))
             .ForMember(source => source.ContractFactories,
                        opt => opt.MapFrom(dest => dest.Item2));
+            
+            CreateMap<(decimal, decimal, int), GameProgressDto>()
+            .ForMember(source => source.MoneyBalance,
+                       opt => opt.MapFrom(dest => dest.Item1))
+            .ForMember(source => source.RDProgress,
+                       opt => opt.MapFrom(dest => dest.Item2))
+            .ForMember(source => source.FactoryGenerationLevel,
+                       opt => opt.MapFrom(dest => dest.Item3));
 
         }
     }
