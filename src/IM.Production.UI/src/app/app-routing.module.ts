@@ -3,12 +3,14 @@ import { Routes, RouterModule } from '@angular/router';
 import { AppComponent } from './app/app.component';
 import { AccessGuard } from './core/access.guard';
 import { LoginComponent } from './login/login.component';
+import { Roles } from './models/roles';
 
 const routes: Routes = [
     {
         path: '',
         component: AppComponent,
-        canActivate: [AccessGuard]
+        canActivate: [AccessGuard],
+        data: { roles: [Roles.admin, Roles.team] }
     },
     {
         path: 'login',
