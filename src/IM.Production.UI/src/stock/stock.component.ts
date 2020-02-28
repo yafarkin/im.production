@@ -17,7 +17,7 @@ export class StockComponent implements OnInit {
     constructor(private warehouseService: StockService) { }
 
     ngOnInit() {
-        //subject ot change
+        //TODO: remove it in the future
         let temp: StockMaterialDto = new StockMaterialDto();
         temp.name = "Material";
         temp.amount = 100;
