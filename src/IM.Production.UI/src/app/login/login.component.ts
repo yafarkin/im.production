@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthenticationService } from '../services/authentication.service';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
     selector: 'imp-login',
@@ -10,13 +11,15 @@ import { AuthenticationService } from '../services/authentication.service';
 export class LoginComponent {
     formGroup: FormGroup;
 
-    constructor(private authenticationService: AuthenticationService) {
+    constructor(private authenticationService: AuthenticationService, private navigationService: NavigationService) {
         this.initFormGroup();
     }
 
     login() {
         const value = this.formGroup.getRawValue();
-        this.authenticationService.authenticate(value);
+        this.authenticationService.authenticate(value).subscribe(() => {
+            this.navigationService.navigateToDefault();
+        });
     }
 
     private initFormGroup() {

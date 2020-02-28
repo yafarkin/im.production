@@ -10,4 +10,8 @@ export class NavigationService {
     navigateToLogin() {
         this.router.navigate(['login']);
     }
+
+    navigateToDefault(){
+        this.router.navigate(['/']);
+    }
 }
