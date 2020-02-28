@@ -33,15 +33,15 @@ namespace IM.Production.WebApp
             var result = new GameConfigDto();
             AppConfiguration.GetSection("Game").Bind(result);
             var game = FakeGameInitializer.CreateGame(30);
-            game.TotalGameDays = result.TotalDays;
+            game.TotalGameDays = result.TotalDays; 
 
             services.AddSingleton<Game>(game);
             services.AddSingleton<Logic>(new Logic(game));
             services.AddSingleton<CalculationEngine.CalculationEngine>();
             services.AddTransient<IContractsService, ContractsService>();
             services.AddTransient<ITeamsService, TeamsService>();            
-            services.AddTransient<ITeamService, TeamService>();            
             services.AddTransient<IGameService, GameService>();
+            services.AddTransient<IFactoriesService, FactoriesService>();
             services.AddAutoMapper(c => c.AddProfile<BaseProfile>(), typeof(Startup));
 
         }

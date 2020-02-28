@@ -5,6 +5,7 @@ using Epam.ImitationGames.Production.Domain.Production;
 using Epam.ImitationGames.Production.Domain.Services;
 using IM.Production.CalculationEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace IM.Production.Services
 {
@@ -27,6 +28,17 @@ namespace IM.Production.Services
         public void AddTeam(Customer team)
         {
             _logic.AddCustomer(team.Login, team.PasswordHash, team.DisplayName);
+        }
+
+        public TeamProgress GetTeamProgress(string login)
+        {
+            var customer = _game.Customers.Where(obj => obj.Login.Equals(login)).FirstOrDefault();
+            return new TeamProgress()
+            {
+                MoneyBalance = customer.Sum,
+                RDProgress = customer.RDProgress,
+                FactoryGenerationLevel = customer.FactoryGenerationLevel
+            };
         }
     }
 }

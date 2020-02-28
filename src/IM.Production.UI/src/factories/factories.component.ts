@@ -1,8 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FactoryDto } from '../models/dtos/factory.dto';
 import { TeamService } from '../services/team.service';
-import { FactoryAndContractFactoriesDto } from '../models/dtos/factory.and.contract.factories.dto';
-import { GameProgressDto } from '../models/dtos/game.progress.dto';
+import { TeamProgressDto } from '../models/dtos/team.progress.dto';
 
 @Component({
     selector: 'app-factories',
@@ -12,11 +11,10 @@ import { GameProgressDto } from '../models/dtos/game.progress.dto';
 })
 export class FactoriesComponent implements OnInit {
 
-    @Input() gameProgress: GameProgressDto;
+    @Input() teamProgress: TeamProgressDto;
 
     login: string = "CustomerLogin1";
-    factoriesAndContractFactories: FactoryAndContractFactoriesDto[];
-    contractFactories: FactoryDto[][];
+    factories: FactoryDto[];
     factoriesShowAdditionalInfo: boolean[] = [];
 
     constructor(private teamService: TeamService) { }
@@ -24,7 +22,7 @@ export class FactoriesComponent implements OnInit {
     ngOnInit() {
         this.teamService.getFactories(this.login).subscribe(
             success => {
-                this.factoriesAndContractFactories = success;
+                this.factories = success;
             }
         );
     }
@@ -35,13 +33,6 @@ export class FactoriesComponent implements OnInit {
 
     getFactoriesShowAdditionalInfo(index: number): boolean {
         return this.factoriesShowAdditionalInfo[index];
-    }
-
-    getFactoryProductionType(contractFactory: FactoryDto): string {
-        if (contractFactory != null) {
-            return contractFactory.productionTypeKey;
-        }
-        return "default";
     }
 
 }

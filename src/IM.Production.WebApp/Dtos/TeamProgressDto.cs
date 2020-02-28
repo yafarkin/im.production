@@ -1,6 +1,6 @@
 ﻿namespace IM.Production.WebApp.Dtos
 {
-    public class GameProgressDto
+    public class TeamProgressDto
     {
         public decimal MoneyBalance { get; set; }
         public decimal RDProgress { get; set; }

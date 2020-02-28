@@ -10,29 +10,30 @@ namespace IM.Production.WebApp.Controllers
     [Route("api/[controller]")]
     public class TeamController : ControllerBase
     {
-        private readonly ITeamService _service;
+        private readonly ITeamsService _teamService;
+        private readonly IFactoriesService _factoriesService;
         private readonly IMapper _mapper;
 
-        public TeamController(ITeamService service, IMapper mapper)
+        public TeamController(ITeamsService service, IMapper mapper)
         {
-            _service = service;
+            _teamService = service;
             _mapper = mapper;
         }
 
         [HttpGet]
-        [Route("get-team-factories")]
-        public FactoryAndContractFactories[] GetTeamFactories(string login)
+        [Route("factories")]
+        public FactoryDto[] GetTeamFactories(string login)
         {
-            var factoriesAndContractFactoriesList = _service.GetContractFactoriesByLogin(login).ToList();
-            return _mapper?.Map<FactoryAndContractFactories[]>(factoriesAndContractFactoriesList);
+            var factoriesAndContractFactories = _factoriesService.GetContractFactoriesByLogin(login);
+            return _mapper?.Map<FactoryDto[]>(factoriesAndContractFactories);
         }
 
         [HttpGet]
-        [Route("get-team-game-progress")]
-        public GameProgressDto GetTeamGameProgress(string login)
+        [Route("get-team-progress")]
+        public TeamProgressDto GetTeamProgress(string login)
         {
-            var teamGameProgress = _service.GetTeamGameProgress(login);
-            return _mapper?.Map<GameProgressDto>(teamGameProgress);
+            var teamGameProgress = _teamService.GetTeamProgress(login);
+            return _mapper?.Map<TeamProgressDto>(teamGameProgress);
         }
 
     }

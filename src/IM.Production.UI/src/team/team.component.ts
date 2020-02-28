@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TeamService } from '../services/team.service';
-import { GameProgressDto } from '../models/dtos/game.progress.dto';
+import { TeamProgressDto } from '../models/dtos/team.progress.dto';
 
 @Component({
     selector: 'app-team',
@@ -10,13 +10,13 @@ import { GameProgressDto } from '../models/dtos/game.progress.dto';
 })
 export class TeamComponent implements OnInit {
 
-    gameProgress: GameProgressDto;
+    teamProgress: TeamProgressDto;
     constructor(private teamService: TeamService) { }
 
     ngOnInit() {
-        this.teamService.getTeamGameProgress("CustomerLogin1").subscribe(
+        this.teamService.getTeamProgress("CustomerLogin1").subscribe(
             success => {
-                this.gameProgress = success;
+                this.teamProgress = success;
             }
         );
     }
