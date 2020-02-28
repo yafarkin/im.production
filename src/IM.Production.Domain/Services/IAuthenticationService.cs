@@ -1,7 +1,9 @@
-﻿namespace Epam.ImitationGames.Production.Domain.Services
+﻿using IM.Production.Services;
+
+namespace Epam.ImitationGames.Production.Domain.Services
 {
     public interface IAuthenticationService
     {
-        string Authenticate(string login, string password);
+        User Authenticate(string login, string password);
     }
 }

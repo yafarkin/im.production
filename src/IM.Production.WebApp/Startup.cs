@@ -60,7 +60,7 @@ namespace IM.Production.WebApp
             services.AddTransient<ITeamsService, TeamsService>();
             services.AddTransient<IAuthenticationService, AuthenticationService>();
 
-            services.AddAutoMapper(c => c.AddProfile<BaseProfile>(), typeof(Startup));
+            services.AddAutoMapper(typeof(Startup));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

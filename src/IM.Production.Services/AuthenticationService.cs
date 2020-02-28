@@ -24,7 +24,7 @@ namespace IM.Production.Services
             _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
-        public string Authenticate(string login, string password)
+        public User Authenticate(string login, string password)
         {
             if (string.IsNullOrWhiteSpace(login))
             {
@@ -54,7 +54,7 @@ namespace IM.Production.Services
                 descriptor.Expires = expires;
                 descriptor.SigningCredentials = signingCredentials;
 
-                return handler.WriteToken(handler.CreateToken(descriptor));
+                return new User(credentials.Login, Roles.Admin, handler.WriteToken(handler.CreateToken(descriptor)));
             }
 
             var team = _game.Customers.SingleOrDefault(c => c.Login.Equals(login) && c.PasswordHash.Equals(Game.GetMD5Hash(password)));
@@ -72,7 +72,7 @@ namespace IM.Production.Services
             descriptor.Expires = expires;
             descriptor.SigningCredentials = signingCredentials;
 
-            return handler.WriteToken(handler.CreateToken(descriptor));
+            return new User(team.Login, Roles.Team, handler.WriteToken(handler.CreateToken(descriptor)));
         }
     }
 }

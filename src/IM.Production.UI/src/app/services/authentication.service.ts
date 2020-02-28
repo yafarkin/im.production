@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserDto } from '../models/user.dto';
-import { SignInDto } from '../models/sign-in.dto';
+import { AuthenticationDto } from '../models/authentication';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -13,9 +13,9 @@ export class AuthenticationService {
         return null;
     }
 
-    signIn(value: SignInDto) {
+    authenticate(value: AuthenticationDto) {
         this.httpClient.post<UserDto>("/api/users/authenticate", value)
-            .subscribe(user => {
+            .subscribe(token => {
 
             });
     }
