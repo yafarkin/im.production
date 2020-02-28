@@ -14,7 +14,7 @@ export class LoginComponent {
         this.initFormGroup();
     }
 
-    signIn() {
+    login() {
         const value = this.formGroup.getRawValue();
         this.authenticationService.authenticate(value);
     }

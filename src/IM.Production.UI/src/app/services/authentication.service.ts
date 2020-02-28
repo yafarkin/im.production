@@ -10,13 +10,13 @@ export class AuthenticationService {
     constructor(private httpClient: HttpClient) { }
 
     get currentUser(): UserDto {
-        return null;
+        return JSON.parse(localStorage.getItem('currentUser'));
     }
 
     authenticate(value: AuthenticationDto) {
-        this.httpClient.post<UserDto>("/api/users/authenticate", value)
-            .subscribe(token => {
-
+        this.httpClient.post<UserDto>("/api/authentication", value)
+            .subscribe(user => {
+                localStorage.setItem('currentUser', JSON.stringify(user));
             });
     }
 }
