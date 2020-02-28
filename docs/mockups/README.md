@@ -17,9 +17,14 @@
 [Редактировать](https://www.draw.io/?mode=github#Hyafarkin%2Fim.production%2Fmockups-folder%2Fdocs%2Fmockups%2FNewTeam.svg)
 
 ## Команда
-![Alt](Customer.svg)
+![Alt](Team.svg)
 
-[Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmaster%2Fdocs%2Fmockups%2FCustomer.svg)
+[Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmaster%2Fdocs%2Fmockups%2FTeam.svg)
+
+## Информация о фабрике
+![Alt](FactoryInfo.svg)
+
+[Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmockups-folder%2Fdocs%2Fmockups%2FFactoryInfo.svg)
 
 ## Покупка фабрики  
 ![Alt](BuyFactory.svg)
@@ -30,4 +35,3 @@
 ![Alt](Warehouse.svg)
 
 [Редактировать](https://www.draw.io/#Hyafarkin%2Fim.production%2Fmockups-folder%2Fdocs%2Fmockups%2FWarehouse.svg)
-
