@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
-using CalculationEngine;
-using Epam.ImitationGames.Production.Domain;
-using Epam.ImitationGames.Production.Domain.Base;
-using Epam.ImitationGames.Production.Domain.Production;
-using Epam.ImitationGames.Production.Domain.Services;
-using IM.Production.CalculationEngine;
-using IM.Production.WebApp.Dtos;
-using IM.Production.WebApp.Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using IM.Production.WebApp.Dtos;
+using System.Collections.Generic;
+using Epam.ImitationGames.Production.Domain.Services;
 
 namespace IM.Production.WebApp.Controllers
 {
