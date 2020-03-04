@@ -31,7 +31,7 @@ import { GameManagementComponent } from '../game-management/game-management.comp
 import { GameManagementService } from '../services/game.management.service';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
-import { NewTeamComponent } from '../new-team/new-team.component';
+import { NewTeamComponent } from './features/admin/new-team/new-team.component';
 
 @NgModule({
     declarations: [

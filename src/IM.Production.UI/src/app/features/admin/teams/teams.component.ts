@@ -1,7 +1,7 @@
 import { MatDialog } from '@angular/material/dialog';
 import { Component, OnInit } from '@angular/core';
 import { TeamsService } from '../../../../services/teams.service';
-import { NewTeamComponent } from '../../../../new-team/new-team.component';
+import { NewTeamComponent } from '../new-team/new-team.component';
 import { TeamDto } from '../../../../models/dtos/team.dto';
 
 @Component({
