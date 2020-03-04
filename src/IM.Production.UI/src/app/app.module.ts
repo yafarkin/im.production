@@ -29,7 +29,6 @@ import { LoginComponent } from './login/login.component';
 import { AppComponent } from './app/app.component';
 import { GameManagementComponent } from '../game-management/game-management.component';
 import { GameManagementService } from '../services/game.management.service';
-import { TeamsComponent } from '../teams/teams.component';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
 import { NewTeamComponent } from '../new-team/new-team.component';
@@ -37,12 +36,10 @@ import { NewTeamComponent } from '../new-team/new-team.component';
 @NgModule({
     declarations: [
         AppComponent,
-        TeamsComponent,
         ContractComponent,
         ContractsComponent,
         GameManagementComponent,
         NewTeamComponent,
-        TeamsComponent,
         LoginComponent
     ],
     imports: [
@@ -72,9 +69,7 @@ import { NewTeamComponent } from '../new-team/new-team.component';
     providers: [
         ContractsService,
         TeamsService,
-        MatTableModule,
         GameManagementService,
-        HttpClientModule,
         TeamsService,
         MatSnackBar,
         Md5

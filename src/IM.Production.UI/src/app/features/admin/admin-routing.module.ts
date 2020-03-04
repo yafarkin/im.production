@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AdminHomeComponent } from './admin-home/admin-home.component';
+import { TeamsComponent } from './teams/teams.component';
 
 const routes: Routes = [
     {
         path: '',
-        component: AdminHomeComponent
+        component: TeamsComponent
     }
 ];
 
