@@ -1,14 +1,13 @@
 import { Input } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { ContractsService } from '../services/contracts.service';
-import { ContractDto } from '../models/dtos/contract.dto';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ContractDto } from '../models/contract.dto';
 
 @Component({
     selector: 'app-contract',
     templateUrl: './contract.component.html',
-    styleUrls: ['./contract.component.scss'],
-    providers: [ContractsService]
+    styleUrls: ['./contract.component.scss']
 })
 export class ContractComponent implements OnInit {
     contractId: string;

@@ -5,14 +5,13 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 
-import { ContractDto } from '../models/dtos/contract.dto';
 import { ContractsService } from '../services/contracts.service';
+import { ContractDto } from '../models/contract.dto';
 
 @Component({
     selector: 'app-contracts',
     templateUrl: './contracts.component.html',
-    styleUrls: ['./contracts.component.scss'],
-    providers: [ContractsService]
+    styleUrls: ['./contracts.component.scss']
 })
 export class ContractsComponent implements OnInit {
 

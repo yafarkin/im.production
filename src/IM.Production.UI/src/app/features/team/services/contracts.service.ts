@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-import { ContractDto } from '../models/dtos/contract.dto';
+import { ContractDto } from '../models/contract.dto';
 
 @Injectable()
 export class ContractsService {
