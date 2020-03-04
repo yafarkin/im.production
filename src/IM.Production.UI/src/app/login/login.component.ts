@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthenticationService } from '../services/authentication.service';
 import { NavigationService } from '../services/navigation.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'imp-login',
@@ -11,14 +12,17 @@ import { NavigationService } from '../services/navigation.service';
 export class LoginComponent {
     formGroup: FormGroup;
 
-    constructor(private authenticationService: AuthenticationService, private navigationService: NavigationService) {
+    constructor(
+        private authenticationService: AuthenticationService,
+        private navigationService: NavigationService,
+        private route: ActivatedRoute) {
         this.initFormGroup();
     }
 
     login() {
         const value = this.formGroup.getRawValue();
         this.authenticationService.authenticate(value).subscribe(() => {
-            this.navigationService.navigateToDefault();
+            this.navigationService.navigateToUrl(this.route.snapshot.queryParams.returnUrl);
         });
     }
 

@@ -7,14 +7,20 @@ import { Roles } from './models/roles';
 
 const routes: Routes = [
     {
-        path: '',
-        component: AppComponent,
-        canActivate: [AccessGuard],
-        data: { roles: [Roles.admin, Roles.team] }
-    },
-    {
         path: 'login',
         component: LoginComponent
+    },
+    {
+        path: 'admin',
+        loadChildren: () => import('./features/admin/admin.module').then(v => v.AdminModule),
+        canActivate: [AccessGuard],
+        data: { role: Roles.admin }
+    },
+    {
+        path: 'team',
+        loadChildren: () => import('./features/team/team.module').then(v => v.TeamModule),
+        canActivate: [AccessGuard],
+        data: { role: Roles.team }
     }
 ];
 

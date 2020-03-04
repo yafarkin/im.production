@@ -9,20 +9,18 @@ import { NavigationService } from '../services/navigation.service';
 export class AccessGuard implements CanActivate {
     constructor(private authenticationService: AuthenticationService, private navigationService: NavigationService) { }
 
-    canActivate(route: ActivatedRouteSnapshot) {
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         const currentUser = this.authenticationService.currentUser;
 
         if (currentUser) {
-            if (route.data.roles && route.data.roles.indexOf(currentUser.role) === -1) {
-                this.navigationService.navigateToLogin();
-                return false;
+            if (route.data.role && route.data.role === currentUser.role) {
+                return true;
             }
 
-            return true;
+            return false;
         }
 
-        this.navigationService.navigateToLogin();
-
+        this.navigationService.navigateToLogin(state.url);
         return false;
     }
 }
