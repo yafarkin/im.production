@@ -14,32 +14,25 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarModule, MatSnackBarContainer } from '@angular/material';
+import { MatSnackBarModule, MatSnackBarContainer } from '@angular/material';
 import { Md5 } from 'ts-md5/dist/md5';
 
-import { TeamsService } from '../services/teams.service';
 import { ContractsService } from '../services/contracts.service';
 import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { LoginComponent } from './login/login.component';
 import { AppComponent } from './app/app.component';
-import { GameManagementComponent } from '../game-management/game-management.component';
-import { GameManagementService } from '../services/game.management.service';
 import { ContractComponent } from '../contract/contract.component';
 import { ContractsComponent } from '../contracts/contracts.component';
-import { NewTeamComponent } from './features/admin/new-team/new-team.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         ContractComponent,
         ContractsComponent,
-        GameManagementComponent,
-        NewTeamComponent,
         LoginComponent
     ],
     imports: [
@@ -61,25 +54,14 @@ import { NewTeamComponent } from './features/admin/new-team/new-team.component';
         MatGridListModule,
         MatCardModule,
         MatTabsModule,
-        MatProgressBarModule,
         MatInputModule,
-        MatDialogModule,
-        MatSnackBarModule
     ],
     providers: [
         ContractsService,
-        TeamsService,
-        GameManagementService,
-        TeamsService,
-        MatSnackBar,
         Md5
     ],
     bootstrap: [
         AppComponent
-    ],
-    entryComponents: [
-        NewTeamComponent,
-        MatSnackBarContainer
     ]
 })
 export class AppModule { }

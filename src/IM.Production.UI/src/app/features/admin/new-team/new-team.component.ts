@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { NewTeamDto } from '../../../../models/dtos/newteam.dto';
-import { TeamsService } from '../../../../services/teams.service';
+import { NewTeamDto } from '../models/newteam.dto';
+import { TeamsService } from '../services/teams.service';
 import { Md5 } from 'ts-md5/dist/md5';
 import { MatSnackBar } from '@angular/material';
 
 @Component({
     selector: 'app-new-team',
     templateUrl: './new-team.component.html',
-    styleUrls: ['./new-team.component.scss'],
-    providers: [TeamsService]
+    styleUrls: ['./new-team.component.scss']
 })
 export class NewTeamComponent implements OnInit {
     gameGroup = new FormGroup({

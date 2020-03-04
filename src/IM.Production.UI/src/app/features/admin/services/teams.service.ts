@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { TeamDto } from '../models/dtos/team.dto';
+import { TeamDto } from '../models/team.dto';
 import { Observable } from 'rxjs';
 
-import { NewTeamDto } from '../models/dtos/newteam.dto';
+import { NewTeamDto } from '../models/newteam.dto';
 
 @Injectable()
 export class TeamsService {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { GameConfigDto } from '../models/dtos/game.config.dto';
+import { GameConfigDto } from '../models/game.config.dto';
 
 @Injectable()
 export class GameManagementService {

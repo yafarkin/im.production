@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GameManagementService } from '../services/game.management.service';
 import { interval, Subscription } from 'rxjs';
-import { GameConfigDto } from '../models/dtos/game.config.dto';
+import { GameConfigDto } from '../models/game.config.dto';
 
 enum GameState {
     Initilized,
@@ -15,8 +15,7 @@ const ONE_SECOND: number = 1000;
 @Component({
     selector: 'app-game-management',
     templateUrl: './game-management.component.html',
-    styleUrls: ['./game-management.component.scss'],
-    providers: [GameManagementService]
+    styleUrls: ['./game-management.component.scss']
 })
 export class GameManagementComponent implements OnInit {
 
