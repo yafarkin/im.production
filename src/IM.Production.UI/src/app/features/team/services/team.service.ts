@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TeamProgressDto } from '../models/dtos/team.progress.dto';
-import { FactoryDto } from '../models/dtos/factory.dto';
+import { TeamProgressDto } from '../models/team.progress.dto';
+import { FactoryDto } from '../models/factory.dto';
 
 @Injectable()
 export class TeamService {

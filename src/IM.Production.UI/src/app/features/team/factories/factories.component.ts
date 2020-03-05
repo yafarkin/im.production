@@ -2,25 +2,26 @@ import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from '../services/team.service';
 import { FactoryDto } from '../models/factory.dto';
 import { TeamProgressDto } from '../models/team.progress.dto';
+import { AuthenticationService } from '../../../services/authentication.service';
 
 @Component({
     selector: 'app-factories',
     templateUrl: './factories.component.html',
     styleUrls: ['./factories.component.scss'],
-    providers: [TeamService]
+    providers: [TeamService, AuthenticationService]
 })
 export class FactoriesComponent implements OnInit {
 
     @Input() teamProgress: TeamProgressDto;
 
-    login: string = "CustomerLogin1";
     factories: FactoryDto[];
     factoriesShowAdditionalInfo: boolean[] = [];
 
-    constructor(private teamService: TeamService) { }
+    constructor(private teamService: TeamService, private authService: AuthenticationService) { }
 
     ngOnInit() {
-        this.teamService.getFactories(this.login).subscribe(
+        let login = this.authService.currentUser.login;
+        this.teamService.getFactories(login).subscribe(
             success => {
                 this.factories = success;
             }

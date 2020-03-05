@@ -3,6 +3,7 @@ using System.Linq;
 using Epam.ImitationGames.Production.Domain.Services;
 using IM.Production.WebApp.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using IM.Production.Services;
 
 namespace IM.Production.WebApp.Controllers
 {
@@ -25,7 +26,7 @@ namespace IM.Production.WebApp.Controllers
         [Route("factories")]
         public FactoryDto[] GetTeamFactories(string login)
         {
-            var factoriesAndContractFactories = _factoriesService.GetContractFactoriesByLogin(login);
+            var factoriesAndContractFactories = _factoriesService.GetFactoriesByLogin(login);
             return _mapper?.Map<FactoryDto[]>(factoriesAndContractFactories);
         }
 

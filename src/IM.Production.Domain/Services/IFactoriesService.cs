@@ -6,6 +6,5 @@ namespace Epam.ImitationGames.Production.Domain.Services
     public interface IFactoriesService
     {
         IEnumerable<Factory> GetFactoriesByLogin(string login);
-        IEnumerable<Factory> GetContractFactoriesByLogin(string login);
     }
 }

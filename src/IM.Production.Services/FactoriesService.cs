@@ -16,14 +16,6 @@ namespace IM.Production.Services
             _game = game;
         }
 
-        public IEnumerable<Factory> GetContractFactoriesByLogin(string login)
-        {
-            var factories = _game.Customers
-                .Where(obj => obj.Login.Equals(login))
-                .FirstOrDefault()?.Factories;
-            return factories;
-        }
-
         public IEnumerable<Factory> GetFactoriesByLogin(string login)
         {
             return _game.Customers.Where(obj => obj.Login.Equals(login)).FirstOrDefault()?.Factories;

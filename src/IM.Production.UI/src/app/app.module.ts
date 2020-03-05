@@ -10,15 +10,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app/app.component';
 import { LoginComponent } from './login/login.component';
-import { TeamComponent } from './features/team/team/team.component';
-import { FactoriesComponent } from './features/team/factories/factories.component';
 import { TeamService } from './features/team/services/team.service';
 
 @NgModule({
     declarations: [
         AppComponent,
-        TeamComponent,
-        FactoriesComponent,
         LoginComponent
     ],
     imports: [
@@ -31,6 +27,7 @@ import { TeamService } from './features/team/services/team.service';
         BrowserAnimationsModule,
         MatButtonModule,
         MatInputModule
+
     ],
     providers: [
         TeamService
