@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Services;
-using IM.Production.Services;
 using IM.Production.WebApp.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 

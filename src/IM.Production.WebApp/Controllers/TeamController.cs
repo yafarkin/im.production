@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
-using System.Linq;
 using Epam.ImitationGames.Production.Domain.Services;
 using IM.Production.WebApp.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using IM.Production.Services;
 
 namespace IM.Production.WebApp.Controllers
 {

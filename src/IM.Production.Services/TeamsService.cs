@@ -30,7 +30,7 @@ namespace IM.Production.Services
 
         public TeamProgress GetTeamProgress(string login)
         {
-            var customer = _game.Customers.Where(obj => obj.Login.Equals(login)).FirstOrDefault();
+            var customer = _game.Customers.FirstOrDefault(obj => obj.Login.Equals(login));
             return new TeamProgress()
             {
                 MoneyBalance = customer.Sum,

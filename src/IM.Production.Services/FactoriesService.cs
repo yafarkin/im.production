@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CalculationEngine;
 using Epam.ImitationGames.Production.Domain.Production;
@@ -18,7 +17,7 @@ namespace IM.Production.Services
 
         public IEnumerable<Factory> GetFactoriesByLogin(string login)
         {
-            return _game.Customers.Where(obj => obj.Login.Equals(login)).FirstOrDefault()?.Factories;
+            return _game.Customers.First(obj => obj.Login.Equals(login)).Factories;
         }
     }
 }
