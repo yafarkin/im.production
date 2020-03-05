@@ -25,7 +25,7 @@ namespace IM.Production.Services
 
         public void AddTeam(Customer team)
         {
-            _logic.AddCustomer(team.Login, team.PasswordHash, team.DisplayName);
+            _logic.AddNewCustomer(team.Login, team.PasswordHash, team.DisplayName);
         }
 
         public TeamProgress GetTeamProgress(string login)

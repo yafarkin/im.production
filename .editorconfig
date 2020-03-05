@@ -1,15 +1,14 @@
 # Remove the line below if you want to inherit .editorconfig settings from higher directories
 root = true
 
+[*]
+indent_style = space
+indent_size = 4
+
 # C# files
 [*.cs]
 
 #### Core EditorConfig Options ####
-
-# Indentation and spacing
-indent_size = 4
-indent_style = Space
-tab_width = 4
 
 # New line preferences
 end_of_line = crlf
