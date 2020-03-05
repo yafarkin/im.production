@@ -122,23 +122,47 @@ namespace IM.Production.WebApp.Helpers
                         listOfProductionMaterials.Add(1, new List<Material>() { material });
                         factoryDefinition.CanProductionMaterials = listOfProductionMaterials;
                         logic.BuyFactoryFromGame(customer, factoryDefinition, 30);
-                        logic.BuyFactoryFromGame(customer, factoryDefinition, 30);
                         #endregion
                         
                         #region CreateContract
-                        contract.SourceFactory = GetFirstFactory(customer.Factories);
-                        contract.TillCount =
-                            (int?)((r * materialNumber + c * System.DateTime.Now.Ticks + 1) / (System.DateTime.Now.Second + 1) % 10_000_000);
-                        contract.TotalCountCompleted = 50;
-                        contract.TillDate =
-                            (int?)(System.DateTime.Now.Ticks % 10_000_000);
-                        contract.TotalSumm =
-                            (decimal)(contract.TillCount * contract.TillDate + 1) % 10_000_000;
-                        contract.DestinationFactory = (c >= 1) ? GetFirstFactory(customerList[c - 1].Factories) : new Factory();
 
-                        if (contract?.DestinationFactory != null && contract?.SourceFactory != null)
+                        if (c > 0)
                         {
-                            logic.AddContract(contract);
+                            foreach (var factory in customer.Factories)
+                            {
+                                contract.SourceFactory = factory;
+                                contract.TillCount =
+                                    (int?)((r * materialNumber + c * System.DateTime.Now.Ticks + 1) / (System.DateTime.Now.Second + 1) % 10_000_000);
+                                contract.TotalCountCompleted = 50;
+                                contract.TillDate =
+                                    (int?)(System.DateTime.Now.Ticks % 10_000_000);
+                                contract.TotalSumm =
+                                    (decimal)(contract.TillCount * contract.TillDate + 1) % 10_000_000;
+
+                                contract.DestinationFactory = GetFirstFactory(customerList[c - 1].Factories);
+
+                                if (contract?.DestinationFactory != null && contract?.SourceFactory != null)
+                                {
+                                    logic.AddContract(contract);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            contract.SourceFactory = GetFirstFactory(customer.Factories);
+                            contract.TillCount =
+                                (int?)((r * materialNumber + c * System.DateTime.Now.Ticks + 1) / (System.DateTime.Now.Second + 1) % 10_000_000);
+                            contract.TotalCountCompleted = 50;
+                            contract.TillDate =
+                                (int?)(System.DateTime.Now.Ticks % 10_000_000);
+                            contract.TotalSumm =
+                                (decimal)(contract.TillCount * contract.TillDate + 1) % 10_000_000;
+                            contract.DestinationFactory = (c >= 1) ? GetFirstFactory(customerList[c - 1].Factories) : new Factory();
+
+                            if (contract?.DestinationFactory != null && contract?.SourceFactory != null)
+                            {
+                                logic.AddContract(contract);
+                            }
                         }
                         #endregion
 

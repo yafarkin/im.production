@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { GameManagementService } from '../services/game.management.service';
 import { interval, Subscription } from 'rxjs';
+import { GameManagementService } from '../services/game.management.service';
 import { GameConfigDto } from '../models/game.config.dto';
 
 enum GameState {

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { TeamDto } from '../models/team.dto';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { TeamDto } from '../models/team.dto';
 import { NewTeamDto } from '../models/newteam.dto';
 
 @Injectable()

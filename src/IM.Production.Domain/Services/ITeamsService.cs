@@ -6,5 +6,6 @@ namespace Epam.ImitationGames.Production.Domain.Services
     {
         IEnumerable<Customer> GetTeams();
         void AddTeam(Customer team);
+        TeamProgress GetTeamProgress(string login);
     }
 }

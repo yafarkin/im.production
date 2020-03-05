@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Md5 } from 'ts-md5/dist/md5';
 import { NewTeamDto } from '../models/newteam.dto';
 import { TeamsService } from '../services/teams.service';
-import { Md5 } from 'ts-md5/dist/md5';
-import { MatSnackBar } from '@angular/material';
 
 @Component({
     selector: 'app-new-team',
