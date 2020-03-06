@@ -9,6 +9,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Security.Claims;
 using IM.Production.CalculationEngine;
+using System.Security.Authentication;
 
 namespace IM.Production.Services.Tests
 {
@@ -189,6 +190,12 @@ namespace IM.Production.Services.Tests
             var user = _service.Authenticate(login, password);
 
             Assert.AreEqual(token, user.Token);
+        }
+
+        [TestMethod]
+        public void Authenticate_InvalidCredentials_ExceptionThrown()
+        {
+            Assert.ThrowsException<InvalidCredentialException>(() => _service.Authenticate("team", "password"));
         }
     }
 }
