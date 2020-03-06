@@ -11,6 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app/app.component';
 import { LoginComponent } from './login/login.component';
 import { TeamService } from './features/team/services/team.service';
+import { MatCardModule } from '@angular/material';
 
 @NgModule({
     declarations: [
@@ -26,8 +27,8 @@ import { TeamService } from './features/team/services/team.service';
         HttpClientModule,
         BrowserAnimationsModule,
         MatButtonModule,
-        MatInputModule
-
+        MatInputModule,
+        MatCardModule
     ],
     providers: [
         TeamService
