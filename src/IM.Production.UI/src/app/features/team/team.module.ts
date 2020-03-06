@@ -13,6 +13,8 @@ import { ContractComponent } from './contract/contract.component';
 import { ContractsComponent } from './contracts/contracts.component';
 import { ContractsService } from './services/contracts.service';
 import { FactoriesComponent } from './factories/factories.component';
+import { TeamsService } from '../admin/services/teams.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
     declarations: [
@@ -33,10 +35,12 @@ import { FactoriesComponent } from './factories/factories.component';
         MatDividerModule,
         MatGridListModule,
         TeamRoutingModule,
-        MatListModule
+        MatListModule,
+        HttpClientModule
     ],
     providers: [
-        ContractsService
+        ContractsService,
+        TeamsService
     ]
 })
 export class TeamModule { }

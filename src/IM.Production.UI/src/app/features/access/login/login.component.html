@@ -11,9 +11,7 @@
                 <input type="password" matInput formControlName="password">
             </mat-form-field>
             <br>
+            <button mat-raised-button color="primary" [disabled]="!formGroup.valid" (click)="login()">Войти</button>
         </form>
     </mat-card-content>
-    <mat-card-actions>
-        <button mat-raised-button color="primary" [disabled]="!formGroup.valid" (click)="login()">Войти</button>
-    </mat-card-actions>
 </mat-card>

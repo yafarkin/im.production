@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from '../services/team.service';
 import { FactoryDto } from '../models/factory.dto';
 import { TeamProgressDto } from '../models/team.progress.dto';
-import { AuthenticationService } from '../../../services/authentication.service';
+import { AuthenticationService } from '../../access/services/authentication.service';
 
 @Component({
     selector: 'app-factories',

@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { UserDto } from '../models/user.dto';
-import { AuthenticationDto } from '../models/authentication';
+import { AuthenticationDto } from '../models/authentication.dto';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class AuthenticationService {
     constructor(private httpClient: HttpClient) { }
 
