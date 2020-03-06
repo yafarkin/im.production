@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System.Linq;
 using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Production;
 
 namespace IM.Production.WebApp.Dtos
 {
@@ -10,22 +11,24 @@ namespace IM.Production.WebApp.Dtos
         {
             CreateMap<Contract, ContractDto>()
             .ForMember(source => source.SourceCustomerLogin,
-                        opt => opt.MapFrom(dest => dest.SourceFactory.Customer.Login))
+                       opt => opt.MapFrom(dest => dest.SourceFactory.Customer.Login))
             .ForMember(source => source.SourceFactoryName,
-                        opt => opt.MapFrom(dest => dest.SourceFactory.FactoryDefinition.Name))
+                       opt => opt.MapFrom(dest => dest.SourceFactory.FactoryDefinition.Name))
             .ForMember(source => source.SourceGenerationLevel,
-                        opt => opt.MapFrom(dest => dest.SourceFactory.FactoryDefinition.GenerationLevel))
+                       opt => opt.MapFrom(dest => dest.SourceFactory.FactoryDefinition.GenerationLevel))
             .ForMember(source => source.SourceWorkers,
-                        opt => opt.MapFrom(dest => dest.SourceFactory.Workers))
-
+                       opt => opt.MapFrom(dest => dest.SourceFactory.Workers))
             .ForMember(source => source.DestinationCustomerLogin,
-                        opt => opt.MapFrom(dest => dest.DestinationFactory.Customer.Login))
+                       opt => opt.MapFrom(dest => dest.DestinationFactory.Customer.Login))
             .ForMember(source => source.DestinationFactoryName,
-                        opt => opt.MapFrom(dest => dest.DestinationFactory.FactoryDefinition.Name))
+                       opt => opt.MapFrom(dest => dest.DestinationFactory.FactoryDefinition.Name))
             .ForMember(source => source.DestinationGenerationLevel,
-                        opt => opt.MapFrom(dest => dest.DestinationFactory.FactoryDefinition.GenerationLevel))
+                       opt => opt.MapFrom(dest => dest.DestinationFactory.FactoryDefinition.GenerationLevel))
             .ForMember(source => source.DestinationWorkers,
-                        opt => opt.MapFrom(dest => dest.DestinationFactory.Workers));
+                       opt => opt.MapFrom(dest => dest.DestinationFactory.Workers));
+
+            CreateMap<NewTeamDto, Customer>()
+            .ForMember(source => source.DisplayName, opt => opt.MapFrom(dest => dest.Name));
 
             CreateMap<Customer, TeamDto>()
              .ForMember(dest => dest.Name,
@@ -48,6 +51,15 @@ namespace IM.Production.WebApp.Dtos
                 opts => opts.MapFrom(source => source.SourceFactory.Customer.Login))
             .ForMember(dest => dest.MaterialKey,
                 opts => opts.MapFrom(source => source.MaterialWithPrice.Material.Key));
+
+            CreateMap<Factory, FactoryDto>()
+            .ForMember(source => source.ProductionTypeKey,
+                       opt => opt.MapFrom(dest => dest.FactoryDefinition.ProductionType.Key))
+            .ForMember(source => source.Id,
+                       opt => opt.MapFrom(dest => dest.Id));
+
+            CreateMap<TeamProgress, TeamProgressDto>();
+
         }
     }
 }

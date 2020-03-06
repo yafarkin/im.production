@@ -1,0 +1,40 @@
+<div class="team-progress">
+    Логин: {{login}} <br />
+    Уровень: {{teamProgress?.factoryGenerationLevel}} <br />
+    <i class="material-icons md-24">payment</i>
+    {{teamProgress?.moneyBalance | number: '1.0-0'}} <br />
+    <i class="material-icons md-24">settings</i>
+    RD: {{teamProgress?.rdProgress  | number: '1.0-0'}}%
+</div>
+
+<button mat-flat-button color="primary">
+    Добавить фабрику +
+</button>
+
+<mat-divider></mat-divider>
+
+<mat-grid-list cols="1" rowHeight="4:1"
+    *ngFor="let factory of factories; let i = index">
+    <mat-grid-tile>
+        <mat-card>
+            <mat-card-header>
+                <i mat-card-avatar class="material-icons md-48">apartment</i>
+                <mat-card-title>
+                    Фабрика
+                    <button mat-button (click)="setFactoriesShowAdditionalInfo(i)">
+                        <i *ngIf="getFactoriesShowAdditionalInfo(i)" class="material-icons md-48">keyboard_arrow_up</i>
+                        <i *ngIf="!getFactoriesShowAdditionalInfo(i)"
+                            class="material-icons md-48">keyboard_arrow_down</i>
+                    </button>
+                </mat-card-title>
+            </mat-card-header>
+            <mat-divider></mat-divider>
+            <mat-card-content *ngIf="getFactoriesShowAdditionalInfo(i)">
+                <mat-list>
+                    <mat-list-item> Кол-во рабочих: {{factory?.workers}} </mat-list-item>
+                </mat-list>
+            </mat-card-content>
+        </mat-card>
+    </mat-grid-tile>
+
+</mat-grid-list>
