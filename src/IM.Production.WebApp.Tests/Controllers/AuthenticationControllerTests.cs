@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using Epam.ImitationGames.Production.Domain.Authentication;
+using Epam.ImitationGames.Production.Domain.Authorization;
 using Epam.ImitationGames.Production.Domain.Services;
-using IM.Production.Services;
 using IM.Production.WebApp.Controllers;
 using IM.Production.WebApp.Dtos;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

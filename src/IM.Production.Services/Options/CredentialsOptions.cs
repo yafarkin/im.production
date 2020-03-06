@@ -1,6 +1,6 @@
 ﻿namespace IM.Production.Services
 {
-    public class Credentials
+    public class CredentialsOptions
     {
         public string Login { get; set; }
 

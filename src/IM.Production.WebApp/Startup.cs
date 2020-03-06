@@ -1,17 +1,15 @@
 using AutoMapper;
+using Epam.ImitationGames.Production.Domain.Authentication;
 using Epam.ImitationGames.Production.Domain.Services;
+using IM.Production.Authentication;
 using IM.Production.CalculationEngine;
 using IM.Production.Services;
-using IM.Production.WebApp.Dtos;
-using IM.Production.WebApp.Helpers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using IM.Production.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 namespace IM.Production.WebApp
 {
@@ -26,42 +24,23 @@ namespace IM.Production.WebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<Authentication>(Configuration.GetSection(nameof(Authentication)));
+            services.ConfigureOptions();
 
             services.AddControllers();
+            services.AddAuthenticationWithJwt();
+            services.AddAutoMapper(typeof(Startup));
 
-            services.AddAuthentication(o =>
-            {
-                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(o =>
-            {
-                o.RequireHttpsMetadata = false;
-                o.SaveToken = true;
-                o.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetValue<string>($"{nameof(Authentication)}:{nameof(Authentication.Secret)}"))),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
-
-            var result = new GameConfigDto();
-            Configuration.GetSection("Game").Bind(result);
-            var game = FakeGameInitializer.CreateGame(30);
-            game.TotalGameDays = result.TotalDays;
-
-            services.AddSingleton(game);
-            services.AddSingleton(new Logic(game));
+            services.AddSingleton(FakeGameFactory.CreateGame);
+            services.AddSingleton<Logic>();
             services.AddSingleton<CalculationEngine.CalculationEngine>();
+
             services.AddTransient<IContractsService, ContractsService>();
             services.AddTransient<ITeamsService, TeamsService>();
             services.AddTransient<IGameService, GameService>();
             services.AddTransient<IFactoriesService, FactoriesService>();
             services.AddTransient<IAuthenticationService, AuthenticationService>();
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddTransient<ITokenGenerator, TokenGenerator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

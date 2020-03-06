@@ -1,4 +1,4 @@
-﻿namespace IM.Production.Services
+﻿namespace Epam.ImitationGames.Production.Domain.Authentication
 {
     public class User
     {

@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IM.Production.Authentication\IM.Production.Authentication.csproj" />
     <ProjectReference Include="..\IM.Production.Domain\IM.Production.Domain.csproj" />
     <ProjectReference Include="..\IM.Production.Services\IM.Production.Services.csproj" />
   </ItemGroup>

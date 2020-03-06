@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using IM.Production.WebApp.Configuration;
+using IM.Production.WebApp.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace IM.Production.WebApp.Tests.Configuration
+namespace IM.Production.WebApp.Tests.Infrastructure
 {
     [TestClass]
     public class MappingProfileTests

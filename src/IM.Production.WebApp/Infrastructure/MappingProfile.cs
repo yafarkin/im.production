@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Authentication;
 using Epam.ImitationGames.Production.Domain.Production;
-using IM.Production.Services;
 using IM.Production.WebApp.Dtos;
 using System.Linq;
 
-namespace IM.Production.WebApp.Configuration
+namespace IM.Production.WebApp.Infrastructure
 {
     public class MappingProfile : Profile
     {

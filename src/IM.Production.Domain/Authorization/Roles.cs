@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace IM.Production.Services
+﻿namespace Epam.ImitationGames.Production.Domain.Authorization
 {
     public static class Roles
     {
