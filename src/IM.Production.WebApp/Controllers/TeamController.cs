@@ -20,7 +20,7 @@ namespace IM.Production.WebApp.Controllers
             _mapper = mapper;
         }
 
-        //Extract to FactoriesController
+        //TODO Extract to FactoriesController
         [HttpGet]
         [Route("factories")]
         public FactoryDto[] GetTeamFactories(string login)

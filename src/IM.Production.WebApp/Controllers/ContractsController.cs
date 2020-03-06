@@ -24,7 +24,9 @@ namespace IM.Production.WebApp.Controllers
         [Route("single")]
         public ContractDto GetContract(string id)
         {
+            //TODO Use Web API Model Binding
             var guid = Guid.Parse(id);
+            //TODO Implement GetContract(Guid id) in ContractsService
             var customerContracts = _service.GetContracts();
             foreach (var contract in customerContracts)
             {
