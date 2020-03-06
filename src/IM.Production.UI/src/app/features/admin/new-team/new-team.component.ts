@@ -11,6 +11,7 @@ import { TeamsService } from '../services/teams.service';
     styleUrls: ['./new-team.component.scss']
 })
 export class NewTeamComponent implements OnInit {
+    //TODO Extract to a method
     gameGroup = new FormGroup({
         teamName: new FormControl('', [
             Validators.required, Validators.minLength(3), Validators.maxLength(30)

@@ -1,23 +1,22 @@
-/* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ContractsComponent } from './contracts.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ContractsService } from '../services/contracts.service';
 
-describe('ContractsComponent', () => {
+fdescribe('ContractsComponent', () => {
     let component: ContractsComponent;
     let fixture: ComponentFixture<ContractsComponent>;
-    let httpClientMock: HttpClient = {};
+
+    const serviceMock = {};
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [ContractsComponent],
             providers: [
-                { provide: HttpClient, useValue: httpClientMock }
-            ]
-        })
-            .compileComponents();
+                {provide: ContractsService, useValue: serviceMock}
+            ],
+            schemas: [NO_ERRORS_SCHEMA]
+        }).compileComponents();
     }));
 
     beforeEach(() => {
@@ -29,9 +28,4 @@ describe('ContractsComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
-
-    //it('weird stuff', () => {
-    //  expect(component.arrayData.length).toBeCloseTo(1);
-    //});
-
 });

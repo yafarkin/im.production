@@ -11,8 +11,7 @@ describe('TeamsComponent', () => {
         TestBed.configureTestingModule({
             declarations: [TeamsComponent],
             schemas: [NO_ERRORS_SCHEMA]
-        })
-            .compileComponents();
+        }).compileComponents();
     }));
 
     beforeEach(() => {

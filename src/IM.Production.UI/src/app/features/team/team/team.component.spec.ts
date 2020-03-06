@@ -1,28 +1,40 @@
-/* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
 
 import { TeamComponent } from './team.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { TeamService } from '../services/team.service';
+import { AuthenticationService } from '../../access/services/authentication.service';
+import { of } from 'rxjs/internal/observable/of';
 
 describe('TeamComponent', () => {
-  let component: TeamComponent;
-  let fixture: ComponentFixture<TeamComponent>;
+    let component: TeamComponent;
+    let fixture: ComponentFixture<TeamComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ TeamComponent ]
-    })
-    .compileComponents();
-  }));
+    const teamServiceMock = {
+        getTeamProgress: jasmine.createSpy('getTeamProgress').and.returnValue(of())
+    };
+    const authenticationServiceMock = {
+        currentUser: jasmine.createSpy('currentUser')
+    };
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(TeamComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [TeamComponent],
+            providers: [
+                { provide: TeamService, useValue: teamServiceMock },
+                { provide: AuthenticationService, useValue: authenticationServiceMock }
+            ],
+            schemas: [NO_ERRORS_SCHEMA]
+        }).compileComponents();
+    }));
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(TeamComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

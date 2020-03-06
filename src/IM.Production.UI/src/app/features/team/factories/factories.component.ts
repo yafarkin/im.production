@@ -20,6 +20,7 @@ export class FactoriesComponent implements OnInit {
     constructor(private teamService: TeamService, private authService: AuthenticationService) { }
 
     ngOnInit() {
+        //TODO Implement HTTP Interceptor and remove adding the login parameter
         let login = this.authService.currentUser.login;
         this.teamService.getFactories(login).subscribe(
             success => {
