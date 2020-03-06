@@ -13,6 +13,7 @@ namespace IM.Production.Services
         {
             _game = game;
         }
+
         public IEnumerable<Contract> GetContracts()
         {
             var customerContracts = new List<Contract>();

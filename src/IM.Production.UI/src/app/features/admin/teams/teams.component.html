@@ -1,0 +1,31 @@
+<button mat-flat-button color="primary" class="add-team-button" (click)="addNewTeam()">
+    Добавить команду <i mat-card-avatar class="material-icons md-48">add</i>
+</button>
+
+<mat-table [dataSource]="teams" class="mat-elevation-z8 teams-table">
+    <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef>
+            <h3>Название</h3>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let team">
+            {{team.name}}
+        </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="productionType">
+        <mat-header-cell *matHeaderCellDef>
+            <h3>Тип продукции</h3>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let team"> {{team.productionType}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="sum">
+        <mat-header-cell *matHeaderCellDef>
+            <h3>Сумма на счету команды</h3>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let team"> {{team.sum}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>

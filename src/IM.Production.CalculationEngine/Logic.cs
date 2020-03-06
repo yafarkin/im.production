@@ -5,6 +5,7 @@ using CalculationEngine;
 using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Bank;
 using Epam.ImitationGames.Production.Domain.Base;
+using Epam.ImitationGames.Production.Domain.Exceptions;
 using Epam.ImitationGames.Production.Domain.Production;
 using Epam.ImitationGames.Production.Domain.ReferenceData;
 
@@ -24,6 +25,34 @@ namespace IM.Production.CalculationEngine
             _game = game ?? throw new ArgumentNullException(nameof(game));
         }
 
+        private (int, int, int, int) GetProductionTypesCount()
+        {
+            var metallurgicalCount = 0;
+            var oilAndGasAndChemicalCount = 0;
+            var electronicCount = 0;
+            var woodenCount = 0;
+            foreach (var customerInstance in _game.Customers)
+            {
+                if (customerInstance.ProductionType.DisplayName.Equals("metall"))
+                {
+                    ++metallurgicalCount;
+                }
+                else if (customerInstance.ProductionType.DisplayName.Equals("neft_gaz"))
+                {
+                    ++oilAndGasAndChemicalCount;
+                }
+                else if (customerInstance.ProductionType.DisplayName.Equals("electronic"))
+                {
+                    ++electronicCount;
+                }
+                else if (customerInstance.ProductionType.DisplayName.Equals("derevo"))
+                {
+                    ++woodenCount;
+                }
+            }
+            return (metallurgicalCount, oilAndGasAndChemicalCount, electronicCount, woodenCount);
+        }
+
         public Customer AddCustomer(string login, string password, string name, ProductionType productionType, decimal? initialBalance = null)
         {
             lock (_lockObj)
@@ -32,10 +61,44 @@ namespace IM.Production.CalculationEngine
                 _game.Customers.Add(customer);
 
                 _game.AddActivity(new InfoChanging(customer, "Добавление новой команды"));
-                _game.AddActivity(new FinanceCustomerChange(customer, initialBalance ?? ReferenceData.InitialCustomerBalance,  "Установка начальной суммы на счёте"));
-                
+                _game.AddActivity(new FinanceCustomerChange(customer, initialBalance ?? ReferenceData.InitialCustomerBalance, "Установка начальной суммы на счёте"));
+
                 return customer;
             }
+        }
+
+        public Customer AddNewCustomer(string login, string password, string name)
+        {
+            var exists = _game.Customers.Any(c => c.Login.Equals(login, StringComparison.InvariantCultureIgnoreCase));
+
+            if (exists)
+            {
+                throw new TeamAlreadyExistsException($"The team {login} already exists.");
+            }
+
+            (var metallurgicalCount, var oilAndGasAndChemicalCount, var electronicCount, var woodenCount) = GetProductionTypesCount();
+            string productionTypeKey;
+            var min = new int[] { metallurgicalCount, oilAndGasAndChemicalCount, electronicCount, woodenCount }.Min();
+            if (min == metallurgicalCount)
+            {
+                productionTypeKey = "metall";
+            }
+            else if (min == oilAndGasAndChemicalCount)
+            {
+                productionTypeKey = "neft_gaz";
+            }
+            else if (min == electronicCount)
+            {
+                productionTypeKey = "electronic";
+            }
+            else
+            {
+                productionTypeKey = "derevo";
+            }
+
+            var productionType = ReferenceData.GetProductionTypeByKey(productionTypeKey);
+
+            return AddCustomer(login, password, name, productionType);
         }
 
         /// <summary>
@@ -74,7 +137,7 @@ namespace IM.Production.CalculationEngine
             {
                 var sum = isCredit ? finOperation.Sum : -finOperation.Sum;
 
-                var finAction = new BankFinAction(customer, sum,  isCredit ? "Открытие кредита" : "Открытие вклада") {FinOperation = finOperation,};
+                var finAction = new BankFinAction(customer, sum, isCredit ? "Открытие кредита" : "Открытие вклада") { FinOperation = finOperation, };
 
                 _game.AddActivity(finOperation);
                 _game.AddActivity(finAction);
@@ -156,7 +219,7 @@ namespace IM.Production.CalculationEngine
                 throw new ArgumentNullException(nameof(factory));
             }
 
-            if(null == workers && null == sumOnRD && null == productionMaterials)
+            if (null == workers && null == sumOnRD && null == productionMaterials)
             {
                 return;
             }
@@ -173,7 +236,7 @@ namespace IM.Production.CalculationEngine
 
             if (productionMaterials != null && productionMaterials.Any())
             {
-                var factoryCanProduce =  factory.FactoryDefinition.CanProductionMaterials
+                var factoryCanProduce = factory.FactoryDefinition.CanProductionMaterials
                     .Where(x => x.Key <= factory.Level)
                     .SelectMany(x => x.Value)
                     .ToList();
@@ -187,7 +250,7 @@ namespace IM.Production.CalculationEngine
                 }
             }
 
-            lock(_lockObj)
+            lock (_lockObj)
             {
                 if (workers.HasValue)
                 {
