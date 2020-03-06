@@ -31,16 +31,26 @@ namespace IM.Production.WebApp.Dtos
             .ForMember(source => source.DisplayName, opt => opt.MapFrom(dest => dest.Name));
 
             CreateMap<Customer, TeamDto>()
-            .ForMember(source => source.Name,
-                       opt => opt.MapFrom(src => src.Login))
-            .ForMember(source => source.ProductionType,
-                       opt => opt.MapFrom(src => src.ProductionType.DisplayName))
-            .ForMember(source => source.Sum,
-                       opt => opt.MapFrom(src => src.Sum))
-            .ForMember(source => source.Factories,
-                       opt => opt.MapFrom(src => string.Join(". ", src.Factories.Select(s => s.FactoryDefinition.DisplayName))))
-            .ForMember(source => source.Contracts,
-                       opt => opt.MapFrom(src => string.Join(". ", src.Contracts.Select(s => s.Description))));
+             .ForMember(dest => dest.Name,
+                opts => opts.MapFrom(src => src.Login))
+             .ForMember(dest => dest.ProductionType,
+                opts => opts.MapFrom(src => src.ProductionType.DisplayName))
+             .ForMember(dest => dest.Sum,
+                opts => opts.MapFrom(src => src.Sum))
+             .ForMember(dest => dest.Factories,
+                opt => opt.MapFrom(src => string.Join(". ", src.Factories
+                                                                .Select(s => s.FactoryDefinition.DisplayName))))
+           .ForMember(dest => dest.Contracts,
+                opt => opt.MapFrom(src => string.Join(". ", src.Contracts
+                                                                .Select(s => s.Description))));
+
+            CreateMap<Contract, FactoryContractDto>()
+            .ForMember(dest => dest.DestinationCustomerLogin,
+                opts => opts.MapFrom(source => source.DestinationFactory.Customer.Login))
+            .ForMember(dest => dest.SourceCustomerLogin,
+                opts => opts.MapFrom(source => source.SourceFactory.Customer.Login))
+            .ForMember(dest => dest.MaterialKey,
+                opts => opts.MapFrom(source => source.MaterialWithPrice.Material.Key));
 
             CreateMap<Factory, FactoryDto>()
             .ForMember(source => source.ProductionTypeKey,

@@ -13,13 +13,15 @@ import { ContractComponent } from './contract/contract.component';
 import { ContractsComponent } from './contracts/contracts.component';
 import { ContractsService } from './services/contracts.service';
 import { FactoriesComponent } from './factories/factories.component';
+import { FactoryInfoComponent } from './factory-info/factory-info.component';
 
 @NgModule({
     declarations: [
         ContractsComponent,
         ContractComponent,
         TeamComponent,
-        FactoriesComponent
+        FactoriesComponent,
+        FactoryInfoComponent
     ],
     imports: [
         CommonModule,

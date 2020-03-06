@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule, MatDividerModule } from '@angular/material';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { TeamsComponent } from './teams/teams.component';
@@ -34,7 +35,9 @@ import { NewTeamComponent } from './new-team/new-team.component';
         MatGridListModule,
         MatDialogModule,
         MatSnackBarModule,
-        AdminRoutingModule
+        AdminRoutingModule,
+        MatTabsModule,
+        MatDividerModule
     ],
     providers: [
         TeamsService,

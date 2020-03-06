@@ -1,9 +1,10 @@
 ﻿using System;
-using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using IM.Production.WebApp.Dtos;
 using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
 using Epam.ImitationGames.Production.Domain.Services;
+using IM.Production.WebApp.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace IM.Production.WebApp.Controllers
 {
@@ -49,6 +50,34 @@ namespace IM.Production.WebApp.Controllers
             }
 
             return result;
+        }
+
+        [HttpGet]
+        [Route("get-one-time-contracts")]
+        public FactoryContractDto[] GetOneTimeContracts(string login)
+        {
+            var contracts = _service.GetOneTimeContracts(login).ToList();
+            var contractsDtos = new FactoryContractDto[contracts.Count];
+            for (var i = 0; i < contracts.Count; i++)
+            {
+                var contractDto = _mapper.Map<FactoryContractDto>(contracts[i]);
+                contractsDtos[i] = contractDto;
+            }
+            return contractsDtos;
+        }
+
+        [HttpGet]
+        [Route("get-multi-time-contracts")]
+        public FactoryContractDto[] GetMultiTimeContracts(string login)
+        {
+            var contracts = _service.GetMultiTimeContracts(login).ToList();
+            var contractsDtos = new FactoryContractDto[contracts.Count];
+            for (var i = 0; i < contracts.Count; i++)
+            {
+                var contractDto = _mapper.Map<FactoryContractDto>(contracts[i]);
+                contractsDtos[i] = contractDto;
+            }
+            return contractsDtos;
         }
     }
 }
