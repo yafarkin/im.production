@@ -11,6 +11,7 @@ export class TeamService {
 
     constructor(private httpClient: HttpClient) { }
 
+    //TODO Extract to FactoriesService
     getFactories(login: string): Observable<FactoryDto[]> {
         let params = new HttpParams().set('login', login);
         return this.httpClient.get<FactoryDto[]>(this.getFactoriesUrl, {
@@ -18,6 +19,7 @@ export class TeamService {
         });
     }
 
+    //TODO Extract to TeamService or GameService
     getTeamProgress(login: string): Observable<TeamProgressDto> {
         let params = new HttpParams().set('login', login);
         return this.httpClient.get<TeamProgressDto>(this.getTeamGameProgressUrl, {

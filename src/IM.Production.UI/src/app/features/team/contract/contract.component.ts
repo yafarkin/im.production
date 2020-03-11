@@ -1,4 +1,3 @@
-import { Input } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { ContractsService } from '../services/contracts.service';
 import { Router, ActivatedRoute } from '@angular/router';

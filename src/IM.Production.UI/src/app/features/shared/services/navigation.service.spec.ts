@@ -5,9 +5,11 @@ import { Router } from '@angular/router';
 
 describe('NavigationService', () => {
     const routerMock = {};
+    const navigationServiceMock = {};
 
     beforeEach(() => TestBed.configureTestingModule({
         providers: [
+            { provide: NavigationService, useValue: navigationServiceMock },
             { provide: Router, useValue: routerMock }
         ]
     }));
