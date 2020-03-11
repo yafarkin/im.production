@@ -25,6 +25,7 @@ namespace IM.Production.WebApp.Controllers
         [Route("get-game-config")]
         public GameConfigDto GetGameConfig()
         {
+            //TODO Remove dependency from IConfiguration and inject IOptions<GameOptions>
             var result = new GameConfigDto();
             _config.GetSection("Game").Bind(result);
             return result;
