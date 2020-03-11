@@ -4,18 +4,21 @@ import { AuthenticationService } from './authentication.service';
 import { HttpClient } from '@angular/common/http';
 
 describe('AuthenticationService', () => {
+    let service: AuthenticationService;
     const httpClientMock = {};
-    const authenticationServiceMock = {};
 
     beforeEach(() => TestBed.configureTestingModule({
         providers: [
-            { provide: HttpClient, useValue: httpClientMock },
-            { provide: AuthenticationService, useValue: authenticationServiceMock }
+            { provide: AuthenticationService, useClass: AuthenticationService },
+            { provide: HttpClient, useValue: httpClientMock }
         ]
     }));
 
+    beforeEach(() => {
+        service = TestBed.get(AuthenticationService)
+    });
+
     it('should be created', () => {
-        const service: AuthenticationService = TestBed.get(AuthenticationService);
         expect(service).toBeTruthy();
     });
 });
