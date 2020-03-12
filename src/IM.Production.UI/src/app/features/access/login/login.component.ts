@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthenticationService } from '../services/authentication.service';
 import { NavigationService } from '../../shared/services/navigation.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'imp-login',
@@ -19,11 +19,11 @@ export class LoginComponent {
         this.initFormGroup();
     }
 
-    login() {
-        const value = this.formGroup.getRawValue();
-        this.authenticationService.authenticate(value).subscribe(() => {
-            this.navigationService.navigateToUrl(this.route.snapshot.queryParams.returnUrl);
-        });
+    async login() {
+        const authentication = this.formGroup.getRawValue();
+        await this.authenticationService.authenticate(authentication);
+
+        this.navigationService.navigateToUrl(this.route.snapshot.queryParams.returnUrl);
     }
 
     private initFormGroup() {
