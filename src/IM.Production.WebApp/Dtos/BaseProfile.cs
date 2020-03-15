@@ -31,6 +31,28 @@ namespace IM.Production.WebApp.Dtos
             .ForMember(source => source.DisplayName, opt => opt.MapFrom(dest => dest.Name));
 
             CreateMap<Customer, TeamDto>()
+             .ForMember(dest => dest.Name,
+                opts => opts.MapFrom(src => src.Login))
+             .ForMember(dest => dest.ProductionType,
+                opts => opts.MapFrom(src => src.ProductionType.DisplayName))
+             .ForMember(dest => dest.Sum,
+                opts => opts.MapFrom(src => src.Sum))
+             .ForMember(dest => dest.Factories,
+                opt => opt.MapFrom(src => string.Join(". ", src.Factories
+                                                                .Select(s => s.FactoryDefinition.DisplayName))))
+           .ForMember(dest => dest.Contracts,
+                opt => opt.MapFrom(src => string.Join(". ", src.Contracts
+                                                                .Select(s => s.Description))));
+
+            CreateMap<MaterialWithPrice, StockMaterialDto>()
+            .ForMember(source => source.Name,
+                        opt => opt.MapFrom(dest => dest.Material.DisplayName))
+            .ForMember(source => source.Amount,
+                        opt => opt.MapFrom(dest => dest.Amount))
+            .ForMember(source => source.Progression,
+                        opt => opt.MapFrom(dest => dest.Amount))
+            .ForMember(source => source.SellPrice,
+                        opt => opt.MapFrom(dest => dest.SellPrice));
             .ForMember(source => source.Name,
                        opt => opt.MapFrom(src => src.Login))
             .ForMember(source => source.ProductionType,

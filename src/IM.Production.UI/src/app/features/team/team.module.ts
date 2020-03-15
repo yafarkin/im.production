@@ -13,13 +13,16 @@ import { ContractComponent } from './contract/contract.component';
 import { ContractsComponent } from './contracts/contracts.component';
 import { ContractsService } from './services/contracts.service';
 import { FactoriesComponent } from './factories/factories.component';
+import { StockService } from './services/stock.service';
+import { StockComponent } from './stock/stock.component';
 
 @NgModule({
     declarations: [
         ContractsComponent,
         ContractComponent,
         TeamComponent,
-        FactoriesComponent
+        FactoriesComponent,
+        StockComponent
     ],
     imports: [
         CommonModule,
@@ -36,7 +39,8 @@ import { FactoriesComponent } from './factories/factories.component';
         MatListModule
     ],
     providers: [
-        ContractsService
+        ContractsService,
+        StockService
     ]
 })
 export class TeamModule { }
