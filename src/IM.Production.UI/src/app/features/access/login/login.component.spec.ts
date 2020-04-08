@@ -10,9 +10,19 @@ describe('LoginComponent', () => {
     let component: LoginComponent;
     let fixture: ComponentFixture<LoginComponent>;
 
-    const authenticationServiceMock = {};
-    const navigationServiceMock = {};
-    const routeMock = {};
+    const authenticationServiceMock = {
+        authenticate: jasmine.createSpy('authenticate')
+    };
+    const navigationServiceMock = {
+        navigateToUrl: jasmine.createSpy('navigateToUrl')
+    };
+    const routeMock = {
+        snapshot: {
+            queryParams: {
+                returnUrl: ''
+            }
+        }
+    };
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -36,21 +46,39 @@ describe('LoginComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should create the form group', () => {
+    it('should create form group', () => {
         expect(component.formGroup).toBeTruthy();
     });
 
-    it('should create the login form field', () => {
+    it('should create login form field', () => {
         expect(component.formGroup.controls.login).toBeTruthy();
     });
 
-    it('should create the required validation for login', () => {
+    it('should create required validation for login', () => {
         expect(component.formGroup.controls.login.validator).toBe(Validators.required);
     });
 
-    it('should create the password form field', () => {
+    it('should create password form field', () => {
         expect(component.formGroup.controls.password).toBeTruthy();
     });
 
+    it('should authenticate with set authentication credentials', async () => {
+        const login = 'admin';
+        const password = 'password';
+        component.formGroup.setValue({ login, password });
 
+        await component.login();
+
+        expect(authenticationServiceMock.authenticate).toHaveBeenCalledWith({ login, password });
+    });
+
+    it('should navigate to return URL', async () => {
+        const routeMock = TestBed.get(ActivatedRoute);
+        const returnUrl = "/admin";
+        routeMock.snapshot.queryParams.returnUrl = returnUrl;
+
+        await component.login();
+
+        expect(navigationServiceMock.navigateToUrl).toHaveBeenCalledWith(returnUrl);
+    });
 });
