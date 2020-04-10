@@ -21,6 +21,7 @@ namespace CalculationEngine
 
         public List<ActivityLog> Activity { get; set; }
 
+        //TODO Add TotalDays parameter in the constructor
         public Game()
         {
             Activity = new List<ActivityLog>();

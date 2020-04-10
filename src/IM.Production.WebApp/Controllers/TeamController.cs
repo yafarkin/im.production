@@ -20,6 +20,7 @@ namespace IM.Production.WebApp.Controllers
             _mapper = mapper;
         }
 
+        //TODO Extract to FactoriesController
         [HttpGet]
         [Route("factories")]
         public FactoryDto[] GetTeamFactories(string login)
@@ -28,6 +29,7 @@ namespace IM.Production.WebApp.Controllers
             return _mapper?.Map<FactoryDto[]>(factoriesAndContractFactories);
         }
 
+        //TODO Extract to TeamsController
         [HttpGet]
         [Route("get-team-progress")]
         public TeamProgressDto GetTeamProgress(string login)

@@ -16,6 +16,7 @@ import { GameManagementComponent } from './game-management/game-management.compo
 import { GameManagementService } from './services/game.management.service';
 import { TeamsService } from './services/teams.service';
 import { NewTeamComponent } from './new-team/new-team.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
     declarations: [
@@ -34,7 +35,8 @@ import { NewTeamComponent } from './new-team/new-team.component';
         MatGridListModule,
         MatDialogModule,
         MatSnackBarModule,
-        AdminRoutingModule
+        AdminRoutingModule,
+        HttpClientModule
     ],
     providers: [
         TeamsService,

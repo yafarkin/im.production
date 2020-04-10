@@ -1,26 +1,26 @@
 ﻿using CalculationEngine;
+using Epam.ImitationGames.Production.Domain.Authentication;
+using Epam.ImitationGames.Production.Domain.Authorization;
 using Epam.ImitationGames.Production.Domain.Services;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Authentication;
 using System.Security.Claims;
-using System.Text;
 
 namespace IM.Production.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
         private readonly Game _game;
+        private readonly ITokenGenerator _tokenGenerator;
+        private readonly IOptions<CredentialsOptions> _options;
 
-        private readonly IOptions<Authentication> _options;
-
-        public AuthenticationService(Game game, IOptions<Authentication> options)
+        public AuthenticationService(Game game, ITokenGenerator tokenGenerator, IOptions<CredentialsOptions> options)
         {
-            _game = game;
+            _game = game ?? throw new ArgumentNullException(nameof(game));
+            _tokenGenerator = tokenGenerator ?? throw new ArgumentNullException(nameof(tokenGenerator));
             _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
@@ -36,43 +36,41 @@ namespace IM.Production.Services
                 throw new ArgumentException("Password cannot be empty or contain white spaces.", nameof(password));
             }
 
-            //TODO Extract TokenGenerator to a separate project and extract AuthenticateAsAdmin and AuthenticateAsTeam
-            var credentials = _options.Value.Credentials;
-            var key = Encoding.ASCII.GetBytes(_options.Value.Secret);
-            var handler = new JwtSecurityTokenHandler();
-            var descriptor = new SecurityTokenDescriptor();
-            var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
-            var expires = DateTime.UtcNow.AddDays(1);
+            var credentials = _options.Value;
 
             if (login.Equals(credentials.Login) && password.Equals(credentials.Password))
             {
-                descriptor.Subject = new ClaimsIdentity(new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, credentials.Login),
-                    new Claim(ClaimTypes.Role, Roles.Admin)
-                });
-                descriptor.Expires = expires;
-                descriptor.SigningCredentials = signingCredentials;
-
-                return new User(credentials.Login, Roles.Admin, handler.WriteToken(handler.CreateToken(descriptor)));
+                return AuthenticateAsAdmin(credentials.Login);
             }
 
-            var team = _game.Customers.SingleOrDefault(c => c.Login.Equals(login) && c.PasswordHash.Equals(Game.GetMD5Hash(password)));
-
-            if (team == null)
+            if (_game.Customers.Any(c => c.Login.Equals(login) && c.PasswordHash.Equals(Game.GetMD5Hash(password))))
             {
-                throw new InvalidCredentialException("Credentials are incorrect.");
+                return AuthenticateAsTeam(login);
             }
 
-            descriptor.Subject = new ClaimsIdentity(new List<Claim>
+            throw new InvalidCredentialException("Credentials are incorrect.");
+        }
+
+        private User AuthenticateAsTeam(string login)
+        {
+            var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, team.Login),
+                new Claim(ClaimTypes.Name, login),
                 new Claim(ClaimTypes.Role, Roles.Team)
-            });
-            descriptor.Expires = expires;
-            descriptor.SigningCredentials = signingCredentials;
+            };
 
-            return new User(team.Login, Roles.Team, handler.WriteToken(handler.CreateToken(descriptor)));
+            return new User(login, Roles.Team, _tokenGenerator.Generate(claims));
+        }
+
+        private User AuthenticateAsAdmin(string login)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, login),
+                new Claim(ClaimTypes.Role, Roles.Admin)
+            };
+
+            return new User(login, Roles.Admin, _tokenGenerator.Generate(claims));
         }
     }
 }

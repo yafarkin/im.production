@@ -2,13 +2,12 @@ import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from '../services/team.service';
 import { FactoryDto } from '../models/factory.dto';
 import { TeamProgressDto } from '../models/team.progress.dto';
-import { AuthenticationService } from '../../../services/authentication.service';
+import { AuthenticationService } from '../../access/services/authentication.service';
 
 @Component({
     selector: 'app-factories',
     templateUrl: './factories.component.html',
-    styleUrls: ['./factories.component.scss'],
-    providers: [TeamService, AuthenticationService]
+    styleUrls: ['./factories.component.scss']
 })
 export class FactoriesComponent implements OnInit {
 
@@ -20,6 +19,7 @@ export class FactoriesComponent implements OnInit {
     constructor(private teamService: TeamService, private authService: AuthenticationService) { }
 
     ngOnInit() {
+        //TODO Implement HTTP Interceptor and remove adding the login parameter
         let login = this.authService.currentUser.login;
         this.teamService.getFactories(login).subscribe(
             success => {

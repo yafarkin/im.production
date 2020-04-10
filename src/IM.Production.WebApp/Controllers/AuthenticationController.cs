@@ -2,6 +2,7 @@
 using Epam.ImitationGames.Production.Domain.Services;
 using IM.Production.WebApp.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace IM.Production.WebApp.Controllers
 {
@@ -14,8 +15,8 @@ namespace IM.Production.WebApp.Controllers
 
         public AuthenticationController(IAuthenticationService service, IMapper mapper)
         {
-            _service = service ?? throw new System.ArgumentNullException(nameof(service));
-            _mapper = mapper ?? throw new System.ArgumentNullException(nameof(mapper));
+            _service = service ?? throw new ArgumentNullException(nameof(service));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpPost]

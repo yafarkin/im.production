@@ -1,18 +1,15 @@
 using AutoMapper;
-using System.Text;
+using Epam.ImitationGames.Production.Domain.Authentication;
 using Epam.ImitationGames.Production.Domain.Services;
+using IM.Production.Authentication;
 using IM.Production.CalculationEngine;
 using IM.Production.Services;
-using IM.Production.WebApp.Dtos;
-using IM.Production.WebApp.Helpers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using IM.Production.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using CalculationEngine;
 
 namespace IM.Production.WebApp
 {
@@ -27,46 +24,23 @@ namespace IM.Production.WebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<Authentication>(Configuration.GetSection(nameof(Authentication)));
+            services.ConfigureOptions();
 
             services.AddControllers();
+            services.AddAuthenticationWithJwt();
+            services.AddAutoMapper(typeof(Startup));
 
-            services.AddAuthentication(o =>
-            {
-                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(o =>
-            {
-                o.RequireHttpsMetadata = false;
-                o.SaveToken = true;
-                o.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetValue<string>($"{nameof(Authentication)}:{nameof(Authentication.Secret)}"))),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
-
-            /// <summary>
-            /// Test data for cheking displaying information about contracts.
-            /// </summary>>
-            var result = new GameConfigDto();
-            Configuration.GetSection("Game").Bind(result);
-            var game = FakeGameInitializer.CreateGame(30);
-            game.TotalGameDays = result.TotalDays; 
-
-            services.AddSingleton<Game>(game);
-            services.AddSingleton<Logic>(new Logic(game));
+            services.AddSingleton(FakeGameFactory.CreateGame);
+            services.AddSingleton<Logic>();
             services.AddSingleton<CalculationEngine.CalculationEngine>();
+
             services.AddTransient<IContractsService, ContractsService>();
-            services.AddTransient<ITeamsService, TeamsService>();            
+            services.AddTransient<ITeamsService, TeamsService>();
             services.AddTransient<IGameService, GameService>();
             services.AddTransient<IFactoriesService, FactoriesService>();
-            services.AddAutoMapper(c => c.AddProfile<BaseProfile>(), typeof(Startup));
             services.AddTransient<IAuthenticationService, AuthenticationService>();
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddTransient<ITokenGenerator, TokenGenerator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

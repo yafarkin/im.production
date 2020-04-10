@@ -1,4 +1,4 @@
-﻿using IM.Production.Services;
+﻿using Epam.ImitationGames.Production.Domain.Authentication;
 
 namespace Epam.ImitationGames.Production.Domain.Services
 {

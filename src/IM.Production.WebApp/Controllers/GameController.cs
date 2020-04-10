@@ -2,11 +2,14 @@
 using Epam.ImitationGames.Production.Domain.Services;
 using Microsoft.Extensions.Configuration;
 using IM.Production.WebApp.Dtos;
+using Microsoft.AspNetCore.Authorization;
+using Epam.ImitationGames.Production.Domain.Authorization;
 
 namespace IM.Production.WebApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = Roles.Admin)]
     public class GameController : ControllerBase
     {
         private readonly IGameService _service;
@@ -22,6 +25,7 @@ namespace IM.Production.WebApp.Controllers
         [Route("get-game-config")]
         public GameConfigDto GetGameConfig()
         {
+            //TODO Remove dependency from IConfiguration and inject IOptions<GameOptions>
             var result = new GameConfigDto();
             _config.GetSection("Game").Bind(result);
             return result;
