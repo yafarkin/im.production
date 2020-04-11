@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{89C13833-3A06-4BED-96E8-166A929DE883}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.Domain", "src\IM.Production.Domain\IM.Production.Domain.csproj", "{4EC7D8AB-5474-428A-9858-DAD822535B63}"
@@ -24,9 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.WebApp.Tests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.Authentication", "src\IM.Production.Authentication\IM.Production.Authentication.csproj", "{7EFD1F54-D9D2-439A-A485-9E5E35923BF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IM.Production.Authentication.Tests", "src\IM.Production.Authentication.Tests\IM.Production.Authentication.Tests.csproj", "{31620FB7-9CCF-41C5-BF2F-81696F16D6CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.Authentication.Tests", "src\IM.Production.Authentication.Tests\IM.Production.Authentication.Tests.csproj", "{31620FB7-9CCF-41C5-BF2F-81696F16D6CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IM.Production.Services.Tests", "src\IM.Production.Services.Tests\IM.Production.Services.Tests.csproj", "{380C558B-E611-40F7-80F4-8705F8267A93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IM.Production.Services.Tests", "src\IM.Production.Services.Tests\IM.Production.Services.Tests.csproj", "{380C558B-E611-40F7-80F4-8705F8267A93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
