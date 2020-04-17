@@ -1,13 +1,13 @@
-﻿using CalculationEngine;
-using Epam.ImitationGames.Production.Domain.Authentication;
-using Epam.ImitationGames.Production.Domain.Authorization;
-using Epam.ImitationGames.Production.Domain.Services;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Authentication;
 using System.Security.Claims;
+using CalculationEngine;
+using Epam.ImitationGames.Production.Domain.Authentication;
+using Epam.ImitationGames.Production.Domain.Authorization;
+using Epam.ImitationGames.Production.Domain.Services;
+using Microsoft.Extensions.Options;
 
 namespace IM.Production.Services
 {
