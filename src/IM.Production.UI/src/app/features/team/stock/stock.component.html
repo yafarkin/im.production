@@ -1,26 +1,33 @@
-<mat-toolbar>Склад</mat-toolbar>
+
+<button mat-button (click)="navigateToFactories()">Назад</button>
+<mat-toolbar>Склад: {{ factoryId }}</mat-toolbar>
 
 <div class="mat-elevation-z8" matSort>
     <table class="stock-table" mat-table [dataSource]="materialsSource">
 
-        <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Материал </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        <ng-container matColumnDef="key">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Имя </th>
+            <td mat-cell *matCellDef="let element"> {{element.key}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="productionType">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Тип производства </th>
+            <td mat-cell *matCellDef="let element"> {{element.productionType}} </td>
         </ng-container>
 
         <ng-container matColumnDef="amount">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Количество </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Кол-во </th>
             <td mat-cell *matCellDef="let element"> {{element.amount}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="progression">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Количество на след. день </th>
-            <td mat-cell *matCellDef="let element"> {{element.progression}} </td>
+        <ng-container matColumnDef="produceAmountPerDay">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Производит за день </th>
+            <td mat-cell *matCellDef="let element"> {{element.produceAmountPerDay}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="sellPrice">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Цена за шт. </th>
-            <td mat-cell *matCellDef="let element"> {{element.sellPrice}} </td>
+        <ng-container matColumnDef="sellAmountPerDay">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Продают в день </th>
+            <td mat-cell *matCellDef="let element"> {{element.sellAmountPerDay}} </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -14,7 +14,7 @@ const routes: Routes = [
         component: ContractsComponent
     },
     {
-        path: 'stock',
+        path: 'factory-stock/:id',
         component: StockComponent
     }
 ];

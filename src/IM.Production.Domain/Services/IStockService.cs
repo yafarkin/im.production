@@ -6,6 +6,6 @@ namespace Epam.ImitationGames.Production.Domain.Services
 {
     public interface IStockService
     {
-        IEnumerable<MaterialWithPrice> GetMaterials(Guid id);
+        IEnumerable<MaterialOnStock> GetMaterials(string login, Guid factoryIdString);
     }
 }

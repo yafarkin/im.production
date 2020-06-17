@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { StockMaterialDto } from '../models/stock.material.dto';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
+import { StockMaterialDto } from '../models/stock.material.dto';
 import { StockService } from '../services/stock.service';
+import { AuthenticationService } from '../../../services/authentication.service';
+import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
     selector: 'app-stock',
@@ -10,26 +13,27 @@ import { StockService } from '../services/stock.service';
     providers: [StockService]
 })
 export class StockComponent implements OnInit {
-
-    materials: StockMaterialDto[] = [];
+    factoryId: string;
     materialsSource: MatTableDataSource<StockMaterialDto>;
+    displayedColumns: string[] = [
+        'key', 'productionType', 'amount', 'produceAmountPerDay', 'sellAmountPerDay'
+    ];
 
-    constructor(private warehouseService: StockService) { }
+    constructor(private stockService: StockService, private navigationService: NavigationService, private activateRoute: ActivatedRoute, private authService: AuthenticationService)
+    {
+        this.factoryId = activateRoute.snapshot.params['id'];
+    }
 
     ngOnInit() {
-        //TODO: remove it in the future
-        let temp: StockMaterialDto = new StockMaterialDto();
-        temp.name = "Material";
-        temp.amount = 100;
-        temp.progression = 100;
-        temp.sellPrice = 100;
-        this.materials.push(temp);
-
-        this.warehouseService.getMaterials('{123}').subscribe(
+        this.materialsSource = new MatTableDataSource<StockMaterialDto>();
+        this.stockService.getMaterials(this.authService.currentUser.login, this.factoryId).subscribe(
             success => {
-                this.materials = success;
+                this.materialsSource.data = success;
             }
         );
-        this.materialsSource = new MatTableDataSource<StockMaterialDto>(this.materials);
+    }
+
+    navigateToFactories(): void {
+        this.navigationService.navigateToUrl("team/");
     }
 }

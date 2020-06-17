@@ -34,6 +34,8 @@
                     <mat-list-item> Кол-во рабочих: {{factory?.workers}} </mat-list-item>
                 </mat-list>
             </mat-card-content>
+
+            <button mat-button (click)="navigateToFabricStock(factory.id)">Stock</button>
         </mat-card>
     </mat-grid-tile>
 

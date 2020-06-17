@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AutoMapper;
 using Epam.ImitationGames.Production.Domain.Services;
+using IM.Production.Services;
 using IM.Production.WebApp.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,10 +22,10 @@ namespace IM.Production.WebApp.Controllers
         }
 
         [HttpGet]
-        [Route("/{id}")]
-        public IEnumerable<StockMaterialDto> GetMaterials(Guid id)
+        [Route("")]
+        public IEnumerable<StockMaterialDto> GetMaterials(string login, Guid factoryId)
         {
-            var materials = _service.GetMaterials(id);
+            var materials = _service.GetMaterials(login, factoryId);
             return _mapper?.Map<IEnumerable<StockMaterialDto>>(materials);
         }
     }

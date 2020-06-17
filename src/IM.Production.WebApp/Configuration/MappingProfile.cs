@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Epam.ImitationGames.Production.Domain;
+using Epam.ImitationGames.Production.Domain.Production;
 using IM.Production.Services;
 using IM.Production.WebApp.Dtos;
 using System.Linq;
@@ -30,6 +31,12 @@ namespace IM.Production.WebApp.Configuration
                 .ForMember(dest => dest.Factories, opt => opt.MapFrom(src => string.Join(". ", src.Factories.Select(s => s.FactoryDefinition.DisplayName))));
 
             CreateMap<User, UserDto>();
+
+            CreateMap<MaterialWithPrice, StockMaterialDto>()
+                .ForMember(dest => dest.Key, opts => opts.MapFrom(src => src.Material.Key))
+                .ForMember(dest => dest.ProductionType, opts => opts.MapFrom(src => src.Material.ProductionType.Key))
+                .ForMember(dest => dest.Amount, opts => opts.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.Amount, opts => opts.MapFrom(src => src.Material.AmountPerDay));
         }
     }
 }

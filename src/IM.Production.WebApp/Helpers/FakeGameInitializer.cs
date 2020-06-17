@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using CalculationEngine;
 using Epam.ImitationGames.Production.Domain;
 using Epam.ImitationGames.Production.Domain.Bank;
@@ -15,81 +18,67 @@ namespace IM.Production.WebApp.Helpers
             var game = new Game();
             var logic = new Logic(game);
             var rand = new System.Random();
-            var materialList = new List<MaterialWithPrice>();
+            var customerList = new List<Customer>();
+            var metalProductionTypeId = ReferenceData.ProductionTypes[0].Id;
 
-            #region CreateMaterial
-            for (var i = 0; i < 100; i++)
+            Factory GetFactoryForContract(Guid customerId)
             {
-                var material = new MaterialWithPrice();
-                material.Id = new System.Guid();
-                material.Amount = rand.Next(10, 100_000);
-                material.SellPrice = rand.Next(250, 50_000);
-                materialList.Add(material);
-            }
-            #endregion
+                var customers = customerList.Where(customer => customer.ProductionType.Id == metalProductionTypeId && customer.Id != customerId).ToArray();
+                var customersCounts = customers.Select(customer => customer.Contracts.Count()).ToArray();
+                var min = customersCounts[0];
+                var minIndex = 0;
 
-            var canProduceMaterials = new List<Material>();
-            canProduceMaterials.Add(new Material());
-            canProduceMaterials.Add(new Material());
-            canProduceMaterials.Add(new Material());
+                for (var i = 1; i < customersCounts.Length; i++)
+                {
+                    var count = customersCounts[i];
+                    if (count < min)
+                    {
+                        min = count;
+                        minIndex = i;
+                    }
+                }
+
+                return customers[minIndex].Factories.First();
+            }
 
             #region CreateCustomers
-            var customerList = new List<Customer>();
-
-            #region Add customer game
-            {
-                var productionType = new ProductionType();
-                productionType.Key = "GameProductionTypeKey";
-                productionType.DisplayName = "GameProductionTypeDisplayName";
-                var customer = logic.AddNewCustomer("Game", "GamePassword", "GameName");
-                customer.DisplayName = "Game";
-                customerList.Add(customer);
-            }
-            #endregion
-
-            /*
-                ProductionType:
-                * Metallurgical industry
-                * Oil and gas and chemical industry
-                * Electronic industry
-             */
 
             for (var c = 0; c < customersCount; c++)
             {
-                var productionType = new ProductionType();
-                productionType.Key = "key";
-                var randNumber = rand.Next(0, 100);
-                if (randNumber < 30)
-                {
-                    productionType.DisplayName = "Metallurgical";
-                }
-                else if (randNumber >= 30 && randNumber < 60)
-                {
-                    productionType.DisplayName = "Oil and gas and chemical";
-                }
-                else
-                {
-                    productionType.DisplayName = "Electronic";
-                }
-
-                var customer = logic.AddNewCustomer("CustomerLogin" + c, "CustomerPassword" + c,
-                    "CustomerName" + c);
-                customer.DisplayName = "Customer" + c + (char)((rand.Next(0, 100) < 50) ? rand.Next('A', 'Z') : rand.Next('a', 'z')); 
+                var randNumber = rand.Next(0, 3);
+                var customer = logic.AddNewCustomer("CustomerLogin" + c, "CustomerPassword" + c, "CustomerName" + c);
+                customer.DisplayName = "Customer" + c;
                 customerList.Add(customer);
             }
+
             #endregion
 
-            Factory GetFirstFactory(IEnumerable<Factory> factories)
+            #region Give Money And Buy Factories
+
+            for (var c = 0; c < customerList.Count; c++)
             {
-                foreach (var el in factories)
+                var customer = customerList[c];
+
+                if (customer.ProductionType.Id != metalProductionTypeId)
                 {
-                    if (el != null)
-                    {
-                        return el;
-                    }
+                    continue;
                 }
-                return new Factory();
+
+                var backCreadit = new BankCredit(customer, 5_000_000);
+                backCreadit.Percent = 0.0M;
+                logic.TakeDebitOrCredit(customer, backCreadit);
+
+                var defenitions = ReferenceData.GetAvailFactoryDefenitions(customer, false);
+                foreach (var define in defenitions)
+                {
+                    logic.BuyFactoryFromGame(customer, define, 30);
+                }
+
             }
+
+            #endregion
+
+            #region Create Contracts For Each Customer
 
             for (var c = 0; c < customerList.Count; c++)
             {
@@ -97,78 +86,49 @@ namespace IM.Production.WebApp.Helpers
                 var contractsNumber = rand.Next(3, 7);
                 for (var r = 0; r < contractsNumber; r++)
                 {
-                    var materialNumber = rand.Next(1, 99);
-                    if (materialNumber > 0 && materialNumber < materialList.Count)
+                    var materialWithPrice = new MaterialWithPrice
                     {
-                        #region GiveMoneyAndFabrics
-                        var material = ReferenceData.GetMaterialByKey("metall_zelezo");
-                        var materialOnStock = new MaterialOnStock();
-                        materialOnStock.Amount = 150_000;
-                        materialOnStock.Material = material;
-                        var materialWithPrice = new MaterialWithPrice();
-                        materialWithPrice.SellPrice = 1200;
+                        Material = ReferenceData.GetMaterialByKey("metall_ruda"),
+                        SellPrice = 0.01m,
+                        Amount = 10000
+                    };
 
-                        var contract = new Contract(customer, materialWithPrice);
-                        var bfo = new BankCredit(customer, 5_000_000);
-                        bfo.Percent = 0.0M;
-                        logic.TakeDebitOrCredit(customer, bfo);
+                    var flag = 0;
+                    CreateContract:
+                    var contract = new Contract(customer, materialWithPrice);
+                    foreach (var factory in customer.Factories)
+                    {
+                        contract.TotalCountCompleted = 0;
+                        contract.TillDate = (int?)(System.DateTime.Now.Ticks % 10_000_000);
+                        contract.TotalSumm = materialWithPrice.SellPrice * materialWithPrice.Amount;
+                        contract.SourceFactory = factory;
+                        contract.DestinationFactory = GetFactoryForContract(customer.Id);
 
-                        var factoryDefinition = new FactoryDefinition();
-                        factoryDefinition.BaseWorkers = 50;
-                        factoryDefinition.ProductionType = ReferenceData.GetProductionTypeByKey(customer.ProductionType.Key);
-                        factoryDefinition.GenerationLevel = 1;
-                        
-                        var listOfProductionMaterials = new Dictionary<int, List<Material>>();
-                        listOfProductionMaterials.Add(1, new List<Material>() { material });
-                        factoryDefinition.CanProductionMaterials = listOfProductionMaterials;
-                        logic.BuyFactoryFromGame(customer, factoryDefinition, 30);
-                        #endregion
-                        
-                        #region CreateContract
-
-                        if (c > 0)
+                        if (contract?.DestinationFactory != null && contract?.SourceFactory != null)
                         {
-                            foreach (var factory in customer.Factories)
-                            {
-                                contract.SourceFactory = factory;
-                                contract.TillCount =
-                                    (int?)((r * materialNumber + c * System.DateTime.Now.Ticks + 1) / (System.DateTime.Now.Second + 1) % 10_000_000);
-                                contract.TotalCountCompleted = 50;
-                                contract.TillDate =
-                                    (int?)(System.DateTime.Now.Ticks % 10_000_000);
-                                contract.TotalSumm =
-                                    (decimal)(contract.TillCount * contract.TillDate + 1) % 10_000_000;
-
-                                contract.DestinationFactory = GetFirstFactory(customerList[c - 1].Factories);
-
-                                if (contract?.DestinationFactory != null && contract?.SourceFactory != null)
-                                {
-                                    logic.AddContract(contract);
-                                }
-                            }
+                            logic.AddContract(contract);
                         }
-                        else
-                        {
-                            contract.SourceFactory = GetFirstFactory(customer.Factories);
-                            contract.TillCount =
-                                (int?)((r * materialNumber + c * System.DateTime.Now.Ticks + 1) / (System.DateTime.Now.Second + 1) % 10_000_000);
-                            contract.TotalCountCompleted = 50;
-                            contract.TillDate =
-                                (int?)(System.DateTime.Now.Ticks % 10_000_000);
-                            contract.TotalSumm =
-                                (decimal)(contract.TillCount * contract.TillDate + 1) % 10_000_000;
-                            contract.DestinationFactory = (c >= 1) ? GetFirstFactory(customerList[c - 1].Factories) : new Factory();
+                    }
 
-                            if (contract?.DestinationFactory != null && contract?.SourceFactory != null)
-                            {
-                                logic.AddContract(contract);
-                            }
-                        }
-                        #endregion
-
+                    if (c == 0 && flag < 5 || c != 0 && flag < 3)
+                    {
+                        ++flag;
+                        goto CreateContract;
                     }
                 }
             }
+
+            #endregion
+
+            foreach (var customer in customerList)
+            {
+                var contract = customer.Contracts.FirstOrDefault();
+                if (contract != null)
+                {
+                    logic.CloseContract(contract);
+                }
+            }
+
             return game;
         }
     }

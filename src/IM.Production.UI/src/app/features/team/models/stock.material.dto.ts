@@ -1,6 +1,7 @@
 export class StockMaterialDto {
-    public name: string;
+    public key: string;
+    public productionType: number;
     public amount: number;
-    public progression: number;
-    public sellPrice: number;
+    public produceAmountPerDay: number;
+    public sellAmountPerDay: number;
 }

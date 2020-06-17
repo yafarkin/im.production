@@ -65,6 +65,7 @@ namespace IM.Production.WebApp
             services.AddTransient<IFactoriesService, FactoriesService>();
             services.AddAutoMapper(c => c.AddProfile<BaseProfile>(), typeof(Startup));
             services.AddTransient<IAuthenticationService, AuthenticationService>();
+            services.AddTransient<IStockService, StockServie>();
 
             services.AddAutoMapper(typeof(Startup));
         }

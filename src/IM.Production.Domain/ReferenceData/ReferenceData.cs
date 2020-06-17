@@ -453,6 +453,7 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
             var result = Materials.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
             if (null == result)
             {
+                //NOTE(vladimir): not all materials are created
                 //throw new InvalidOperationException($"Отсутствует указанный ключ материала: {key}");
             }
 

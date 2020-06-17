@@ -3,6 +3,7 @@ import { TeamService } from '../services/team.service';
 import { FactoryDto } from '../models/factory.dto';
 import { TeamProgressDto } from '../models/team.progress.dto';
 import { AuthenticationService } from '../../../services/authentication.service';
+import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
     selector: 'app-factories',
@@ -17,7 +18,7 @@ export class FactoriesComponent implements OnInit {
     factories: FactoryDto[];
     factoriesShowAdditionalInfo: boolean[] = [];
 
-    constructor(private teamService: TeamService, private authService: AuthenticationService) { }
+    constructor(private teamService: TeamService, private authService: AuthenticationService,private navigationService: NavigationService) { }
 
     ngOnInit() {
         let login = this.authService.currentUser.login;
@@ -36,4 +37,7 @@ export class FactoriesComponent implements OnInit {
         return this.factoriesShowAdditionalInfo[index];
     }
 
+    navigateToFabricStock(factoryId: string): void {
+        this.navigationService.navigateToFactoryStock(factoryId);
+    }
 }

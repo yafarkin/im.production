@@ -31,25 +31,27 @@ namespace IM.Production.CalculationEngine
             var oilAndGasAndChemicalCount = 0;
             var electronicCount = 0;
             var woodenCount = 0;
-            foreach (var customerInstance in _game.Customers)
+
+            foreach (var customer in _game.Customers)
             {
-                if (customerInstance.ProductionType.DisplayName.Equals("metall"))
+                if (customer.ProductionType.Key.Equals(ReferenceData.ProductionTypes[0].Key))
                 {
                     ++metallurgicalCount;
                 }
-                else if (customerInstance.ProductionType.DisplayName.Equals("neft_gaz"))
-                {
-                    ++oilAndGasAndChemicalCount;
-                }
-                else if (customerInstance.ProductionType.DisplayName.Equals("electronic"))
+                else if (customer.ProductionType.Key.Equals(ReferenceData.ProductionTypes[1].Key))
                 {
                     ++electronicCount;
                 }
-                else if (customerInstance.ProductionType.DisplayName.Equals("derevo"))
+                else if (customer.ProductionType.Key.Equals(ReferenceData.ProductionTypes[2].Key))
                 {
                     ++woodenCount;
                 }
+                else if (customer.ProductionType.Key.Equals(ReferenceData.ProductionTypes[3].Key))
+                {
+                    ++oilAndGasAndChemicalCount;
+                }
             }
+
             return (metallurgicalCount, oilAndGasAndChemicalCount, electronicCount, woodenCount);
         }
 

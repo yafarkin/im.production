@@ -2,9 +2,10 @@
 {
     public class StockMaterialDto
     {
-        public string Name { get; set; }
+        public string Key { get; set; }
+        public string ProductionType { get; set; }
         public int Amount { get; set; }
-        public int Progression { get; set; }
-        public int SellPrice { get; set; }
+        public int ProduceAmountPerDay { get; set; }
+        public int SellAmountPerDay { get; set; }
     }
 }

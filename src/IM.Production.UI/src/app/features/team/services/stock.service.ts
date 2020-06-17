@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { StockMaterialDto } from '../models/dtos/stock.material.dto';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { StockMaterialDto } from '../models/stock.material.dto';
 
 @Injectable()
 export class StockService {
-    private contractUrl: string = "/api/stock/";
+    private stockUrl: string = "/api/stock/";
 
     constructor(private httpClient: HttpClient) { }
 
-    getMaterials(id: string): Observable<StockMaterialDto[]> {
-        return this.httpClient.get<StockMaterialDto[]>(this.contractUrl + id);
+    getMaterials(login: string, factoryId: string): Observable<StockMaterialDto[]> {
+        let params = new HttpParams().set("login", login).set("factoryId", factoryId);
+        return this.httpClient.get<StockMaterialDto[]>(this.stockUrl, {params: params});
     }
 }

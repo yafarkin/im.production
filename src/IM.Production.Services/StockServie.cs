@@ -16,14 +16,11 @@ namespace IM.Production.Services
             _game = game;
         }
 
-        public IEnumerable<MaterialWithPrice> GetMaterials(Guid id)
+        public IEnumerable<MaterialOnStock> GetMaterials(string login, Guid factoryId)
         {
-            var materials = new List<MaterialWithPrice>();
-            _game.Customers
-                .Where(customer => customer.Factories.Any(factory => factory.Id.Equals(id)))
-                .FirstOrDefault().Contracts.ToList()
-                .ForEach(contract => materials.Add(contract.MaterialWithPrice));
-            return materials;
+            var factories = _game.Customers.First(obj => obj.Login.Equals(login)).Factories;
+            var result = factories.FirstOrDefault(factory => factory.Id.Equals(factoryId)).Stock;
+            return result;
         }
     }
 }

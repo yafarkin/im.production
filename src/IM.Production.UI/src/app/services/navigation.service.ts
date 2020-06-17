@@ -15,6 +15,10 @@ export class NavigationService {
         this.router.navigate(['admin']);
     }
 
+    navigateToFactoryStock(factoryId: string) {
+        this.router.navigate(["team/factory-stock/", factoryId], { queryParams: {id: factoryId} });
+    }
+
     navigateToUrl(url: string) {
         this.router.navigate([url]);
     }
