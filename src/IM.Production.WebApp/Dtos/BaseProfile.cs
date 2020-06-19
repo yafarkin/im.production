@@ -3,6 +3,8 @@ using System.Linq;
 using Epam.ImitationGames.Production.Domain;
 using System.Security.Cryptography;
 using System.Text;
+using Epam.ImitationGames.Production.Domain.Production;
+using Epam.ImitationGames.Production.Domain.ReferenceData;
 
 namespace IM.Production.WebApp.Dtos
 {
@@ -46,6 +48,11 @@ namespace IM.Production.WebApp.Dtos
                 opt => opt.MapFrom(src => string.Join(". ", src.Contracts
                                                                 .Select(s => s.Description))));
 
+            CreateMap<FactoryDefinition, FactoryDefinitionDto>()
+                .ForMember(dest => dest.Level, opts => opts.MapFrom(src => src.GenerationLevel))
+                .ForMember(dest => dest.WorkersCount, opts => opts.MapFrom(src => src.BaseWorkers))
+                .ForMember(dest => dest.Cost, opts => opts.MapFrom(src => ReferenceData.DefaultFactoryCost[src.GenerationLevel]))
+                .ForMember(dest => dest.ProductionType, opts => opts.MapFrom(src => ReferenceData.ProductionTypeKeyToEnum[src.ProductionType.Key]));
         }
     }
 }

@@ -105,6 +105,18 @@ namespace Epam.ImitationGames.Production.Domain.ReferenceData
         };
 
         /// <summary>
+        /// Конвертация ключа производства ProductionType в Enum формат, используемый на ui.
+        /// </summary>
+        /// <remarks>Key - ключ производства, Value - значение enum.</remarks>
+        public static readonly IDictionary<string, int> ProductionTypeKeyToEnum = new Dictionary<string, int>
+        {
+            { "metall", 0 },
+            { "electronic", 1 },
+            { "derevo", 2 },
+            { "neft_gaz", 3 }
+        };
+
+        /// <summary>
         /// Стоимость конкретного типа фабрики.
         /// </summary>
         /// <remarks>Key - ID определения фабрики, Value - стоимость фабрики.</remarks>

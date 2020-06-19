@@ -1,64 +1,67 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { AddingFactoryService } from '../services/adding-factory.service';
-import { AddingFactoryDto } from '../models/dtos/adding-factory.dto';
 import { MatSnackBar } from '@angular/material';
+import { ProductionType } from '../models/dtos/production.type.enum';
+import { FactoryDefinition } from '../models/dtos/factory.definition';
+import { TeamService } from '../services/team.service';
 
 @Component({
     selector: 'app-adding-factory',
     templateUrl: './adding-factory.component.html',
     styleUrls: ['./adding-factory.component.scss'],
-    providers: [AddingFactoryService]
+    providers: [TeamService]
 })
 export class AddingFactoryComponent implements OnInit {
-    levels: number[] = [1, 2, 3];
-    productionTypes: string[] = [
-        "Металлургическая промышленность",
-        "Электронная промышленность",
-        "Дерево-обрататывающая промышленность",
-        "Нефте-газо-химическая промышленность"
-    ];
-    maxWorkers: number = 0;
-    addFactoryGroup = new FormGroup({
-        level: new FormControl('', Validators.required),
-        workersAmounts: new FormControl('', [
-            Validators.required, Validators.pattern("[0-9]*"), Validators.minLength(1), Validators.maxLength(30)
-        ]),
-        productionType: new FormControl('', Validators.required),
-        cost: new FormControl('', [
-            Validators.required, Validators.pattern("[0-9]*"), Validators.minLength(1), Validators.maxLength(30)
-        ]),
-    });
+    public login: string = "CustomerLogin0";
+    factoriesDefinitions: FactoryDefinition[];
+    currentIndex: number;
+    currentFactory: FactoryDefinition;
 
-    constructor(private addingFactoryService: AddingFactoryService, private snackBar: MatSnackBar) { }
+    constructor(private teamService: TeamService, private snackBar: MatSnackBar) { }
 
     ngOnInit() {
+        this.currentIndex = 0;
+        this.getFactoriesDefinitions();
     }
 
-    addFactory() {
-        let factory: AddingFactoryDto = new AddingFactoryDto();
-        //TODO: Заполнить модель данными из FormGroup
-        this.addingFactoryService.addFactory(factory).subscribe(
+    public getFactoriesDefinitions(): void {
+        this.teamService.getFactoriesDefinitions(this.login).subscribe(
             success => {
-                this.snackBar.open("Фабрика добавлена!", "", {
+                this.factoriesDefinitions = success;
+                this.currentFactory = this.factoriesDefinitions[this.currentIndex];
+            },
+            error => {
+                this.snackBar.open("Не удалось получить фабрики!", "", {
+                    duration: 3 * 1000
+                });
+            }
+        )
+    }
+
+    public buyFactory(definitionIndex: number): void {
+        this.teamService.buyFactory(this.login, definitionIndex).subscribe(
+            success => {
+                this.snackBar.open("Фабрика куплена.", "", {
                     duration: 3 * 1000
                 });
             },
             error => {
-                this.snackBar.open("Фабрика не добавлена!", "", {
+                this.snackBar.open("Не удалось купить фабрику!", "", {
                     duration: 3 * 1000
                 });
             }
-        );
+        )
     }
 
-    setMaxWorkers() {
-        if (this.addFactoryGroup.value.level == 1) {
-            this.maxWorkers = 10;
-        } else if (this.addFactoryGroup.value.level == 2) {
-            this.maxWorkers = 20;
-        } else if (this.addFactoryGroup.value.level == 3) {
-            this.maxWorkers = 30;
+    public selectPrevious(): void {
+        if (this.currentIndex > 0) {
+            --this.currentIndex;
+        }
+    }
+
+    public selectNext(): void {
+        if (this.currentIndex <  (this.factoriesDefinitions.length - 1)) {
+            ++this.currentIndex;
         }
     }
 }

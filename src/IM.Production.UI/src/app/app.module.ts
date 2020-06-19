@@ -38,7 +38,8 @@ const appRoutes: Routes = [
     { path: 'teams', component: TeamsComponent },
     { path: 'contracts', component: ContractsComponent },
     { path: 'contracts/:id', component: ContractComponent },
-    { path: 'new-team', component: NewTeamComponent }
+    { path: 'new-team', component: NewTeamComponent },
+    { path: 'add', component: AddingFactoryComponent }
 ];
 
 @NgModule({

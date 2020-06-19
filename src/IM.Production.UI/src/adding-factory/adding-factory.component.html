@@ -1,48 +1,64 @@
-<form [formGroup]="addFactoryGroup">
-    <div mat-dialog-content [formGroup]="addFactoryGroup" class="add-factory-form">
-        <mat-grid-list cols="4" rowHeight="8:1">
-            <mat-grid-tile colspan="4">
-                <div mat-dialog-title>Добавление фабрики</div>
-            </mat-grid-tile>
-            <mat-grid-tile colspan="4">
-                <mat-label>Уровень:</mat-label>
-                <mat-form-field>
-                    <mat-select align="center" formControlName="level">
-                        <mat-option *ngFor="let level of levels" [value]="level">
-                            {{level}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </mat-grid-tile>
-            <mat-grid-tile colspan="4">
-                <mat-label>Рабочие: </mat-label>
-                <mat-form-field class="add-factory-form-field">
-                    <input matInput formControlName="workersAmounts" type="text" (click)="setMaxWorkers()">
-                </mat-form-field>
-                <mat-label [(ngModel)]="maxWorkers">/{{maxWorkers}}</mat-label>
-            </mat-grid-tile>
-            <mat-grid-tile colspan="4">
-                <mat-label>Стоимость: </mat-label>
-                <mat-form-field class="add-factory-form-field">
-                    <input matInput formControlName="cost" type="text">
-                </mat-form-field>
-            </mat-grid-tile>
-            <mat-grid-tile colspan="4">
-                <mat-label>Тип производства:</mat-label>
-                <mat-form-field>
-                    <mat-select align="center" formControlName="productionType">
-                        <mat-option *ngFor="let productionType of productionTypes" [value]="productionType">
-                            {{productionType}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </mat-grid-tile>
-            <mat-grid-tile colspan="2">
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <button mat-raised-button color="primary" [disabled]="!addFactoryGroup.valid"
-                (click)="addFactory()">Купить</button>
-            </mat-grid-tile>
-        </mat-grid-list>
-    </div>
-</form>
+<mat-grid-list cols="2" rowHeight="4:1" class="purchase-form">
+    <mat-grid-tile colspan="2">
+        <div mat-dialog-title>
+            Покупка фабрики
+        </div>
+    </mat-grid-tile>
+
+    <mat-grid-tile colspan="2">
+        <mat-label>
+            Уровень:
+        </mat-label>
+        <mat-label>
+            {{currentFactory?.level}}
+        </mat-label>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2">
+        <mat-label>
+            Рабочие:
+        </mat-label>
+        <mat-label>
+            {{currentFactory?.workersCount}}
+        </mat-label>
+        <mat-label>
+            {{currentFactory?.workersCount}}
+        </mat-label>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2">
+        <mat-label>
+            Стоимость:
+        </mat-label>
+        <mat-label>
+            {{currentFactory?.cost}}
+        </mat-label>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2">
+        <mat-label>
+            Тип производства:
+        </mat-label>
+        <mat-label>
+            {{currentFactory?.productionType}}
+        </mat-label>
+    </mat-grid-tile>
+
+    <mat-grid-tile colspan="2">
+        <mat-label>
+            {{currentIndex + 1}} / {{factoriesDefinitions?.length}}
+        </mat-label>
+    </mat-grid-tile>
+
+    <mat-grid-tile colspan="2">
+        <button mat-raised-button color="primary" (click)="selectPrevious()">
+            <i class="material-icons">keyboard_arrow_left</i>
+        </button>
+        <button mat-raised-button color="primary" (click)="selectNext()">
+            <i class="material-icons">keyboard_arrow_right</i>
+        </button>
+    </mat-grid-tile>
+
+    <mat-grid-tile colspan="2">
+        <button mat-raised-button color="primary" (click)="buyFactory(currentIndex)">
+            Купить
+        </button>
+    </mat-grid-tile>
+</mat-grid-list>
