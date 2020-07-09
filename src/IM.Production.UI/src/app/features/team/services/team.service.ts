@@ -4,7 +4,9 @@ import { Observable } from 'rxjs';
 import { TeamProgressDto } from '../models/team.progress.dto';
 import { FactoryDto } from '../models/factory.dto';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class TeamService {
     getFactoriesUrl: string = "/api/team/factories";
     getTeamGameProgressUrl: string = "/api/team/get-team-progress";
